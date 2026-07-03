@@ -1,0 +1,584 @@
+// Amatangazo 2.0 — Data Schema
+// Rwanda jobs / tenders / auctions / classifieds marketplace
+// See amatangazo-data-schema.md for entity rationale and ERD
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
+enum AccountType {
+  INDIVIDUAL
+  BUSINESS
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum PreferredLanguage {
+  EN
+  FR
+  RW
+}
+
+enum ListingCategory {
+  JOB
+  TENDER
+  AUCTION
+  CLASSIFIED
+}
+
+enum ListingStatus {
+  DRAFT
+  PENDING_PAYMENT
+  LIVE
+  EXPIRED
+  REJECTED
+  REMOVED
+}
+
+enum ListingSource {
+  USER_POSTED
+  GOVERNMENT_MIRROR
+}
+
+enum ExperienceLevel {
+  INTERNSHIP
+  ENTRY
+  MID
+  SENIOR
+  NOT_SPECIFIED
+}
+
+enum ApplicationMethod {
+  PLATFORM
+  EXTERNAL_URL
+  EMAIL
+}
+
+enum PaymentType {
+  LISTING_PUBLISH
+  BOOST
+  SUBSCRIPTION
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum ReferralStatus {
+  PENDING
+  CREDITED
+  FRAUD_HOLD
+  REJECTED
+}
+
+enum CreditType {
+  BOOST_CREDIT
+  SUBSCRIPTION_CREDIT
+}
+
+enum CreditStatus {
+  AVAILABLE
+  REDEEMED
+  EXPIRED
+}
+
+enum NotificationChannel {
+  WHATSAPP
+  SMS
+  EMAIL
+}
+
+enum ModerationAction {
+  APPROVE
+  REJECT
+  EDIT
+  REFUND
+  VERIFY_APPROVE
+  VERIFY_REJECT
+  FLAG_FRAUD
+}
+
+enum AiFlagType {
+  POSSIBLE_DUPLICATE
+  POSSIBLE_SCAM
+  POSSIBLE_SPAM
+}
+
+enum PricingTier {
+  PAY_PER_BOOST
+  ANNUAL_SUBSCRIPTION
+  SUBSCRIBER_BOOST_DISCOUNT
+}
+
+enum ScrapeStatus {
+  SUCCESS
+  PARTIAL_FAILURE
+  FAILURE
+}
+
+// ─────────────────────────────────────────────
+// USERS & IDENTITY
+// ─────────────────────────────────────────────
+
+model User {
+  id                String            @id @default(uuid())
+  externalAuthId    String?           @unique // Clerk/NextAuth identity reference
+  phoneNumber       String?           @unique // optional: Google/email-OTP signups won't have one
+  email             String?           @unique
+  name              String
+  businessName      String?
+  accountType       AccountType       @default(INDIVIDUAL)
+  isAdmin           Boolean           @default(false)
+  preferredLanguage PreferredLanguage @default(EN)
+
+  // Verification (P1 — manual review, non-gating)
+  verificationStatus       VerificationStatus @default(UNVERIFIED)
+  verificationDocumentUrl  String?
+  verificationSubmittedAt  DateTime?
+  verificationReviewedAt   DateTime?
+  verificationReviewedBy   String?
+  verificationRejectReason String?
+
+  // Referrals
+  referralCode     String  @unique @default(cuid())
+  referredByUserId String?
+  referredBy       User?   @relation("UserReferrals", fields: [referredByUserId], references: [id])
+  referredUsers    User[]  @relation("UserReferrals")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  listings               Listing[]
+  payments               Payment[]
+  subscriptions          Subscription[]
+  savedSearches          SavedSearch[]
+  notificationLogs       NotificationLog[]
+  referralsGiven         Referral[]        @relation("Referrer")
+  referralAsReferred     Referral?         @relation("ReferredUser")
+  referralCredits        ReferralCredit[]
+  moderationActionsTaken ModerationLog[]   @relation("AdminActor")
+  moderationActionsOnMe  ModerationLog[]   @relation("TargetUser")
+
+  // Better Auth core/plugin fields
+  emailVerified       Boolean   @default(false)
+  image               String?
+  phoneNumberVerified Boolean?
+  sessions            Session[]
+  accounts            Account[]
+
+  @@index([verificationStatus, verificationSubmittedAt]) // supports SLA-breach queue query
+  @@index([accountType])
+  @@map("User")
+}
+
+// ─────────────────────────────────────────────
+// LISTINGS (core + category detail tables)
+// ─────────────────────────────────────────────
+
+model Listing {
+  id       String          @id @default(uuid())
+  category ListingCategory
+  posterId String
+  poster   User            @relation(fields: [posterId], references: [id])
+
+  title       String
+  description String
+  status      ListingStatus @default(DRAFT)
+  source      ListingSource @default(USER_POSTED)
+  sourceUrl   String? // backlink for GOVERNMENT_MIRROR tenders
+
+  location String
+  language PreferredLanguage @default(EN)
+
+  publishedAt DateTime?
+  expiresAt   DateTime?
+
+  // Denormalized for fast "currently featured" queries — see data-schema.md for how this is kept in sync
+  isCurrentlyBoosted Boolean   @default(false)
+  boostExpiresAt     DateTime?
+
+  viewCount        Int @default(0)
+  applicationCount Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  jobDetails        JobDetails?
+  tenderDetails     TenderDetails?
+  auctionDetails    AuctionDetails?
+  classifiedDetails ClassifiedDetails?
+
+  images           ListingImage[]
+  payments         Payment[]
+  boosts           Boost[]
+  aiFlags          AiFlag[]
+  notificationLogs NotificationLog[]
+  moderationLogs   ModerationLog[]   @relation("TargetListing")
+
+  @@index([category, status])
+  @@index([status, isCurrentlyBoosted])
+  @@index([posterId])
+  @@index([expiresAt])
+}
+
+model JobDetails {
+  listingId String  @id
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  sector              String
+  experienceLevel     ExperienceLevel   @default(NOT_SPECIFIED)
+  applicationDeadline DateTime
+  applicationMethod   ApplicationMethod @default(PLATFORM)
+  applicationUrl      String?
+  applicationEmail    String?
+  salaryRangeMin      Int?
+  salaryRangeMax      Int?
+
+  @@index([sector])
+  @@index([applicationDeadline])
+}
+
+model TenderDetails {
+  listingId String  @id
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  sector             String
+  budgetMin          Int?
+  budgetMax          Int?
+  submissionDeadline DateTime
+  eligibilitySummary String?
+  requiredDocuments  String?
+  documentUrl        String?
+
+  // AI summarization (P1)
+  aiSummaryDeadline    String?
+  aiSummaryBudget      String?
+  aiSummaryEligibility String?
+  aiSummaryDocuments   String?
+  aiSummaryGeneratedAt DateTime?
+
+  @@index([sector])
+  @@index([submissionDeadline])
+}
+
+model AuctionDetails {
+  listingId String  @id
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  startingPrice               Int?
+  currency                    String   @default("RWF")
+  auctionDate                 DateTime // drives the countdown display — informational only, no bid mechanism
+  auctionLocation             String
+  registrationContactPhone    String?
+  registrationContactWhatsapp String?
+  registrationContactEmail    String?
+
+  @@index([auctionDate])
+}
+
+model ClassifiedDetails {
+  listingId String  @id
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  subcategory String
+  price       Int?
+
+  @@index([subcategory])
+}
+
+model ListingImage {
+  id        String  @id @default(uuid())
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  url       String
+  sortOrder Int     @default(0)
+
+  @@index([listingId])
+}
+
+// ─────────────────────────────────────────────
+// PAYMENTS, BOOSTS, SUBSCRIPTIONS
+// ─────────────────────────────────────────────
+
+model Payment {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  listingId String?
+  listing   Listing? @relation(fields: [listingId], references: [id])
+
+  type                 PaymentType
+  amount               Int
+  currency             String        @default("RWF")
+  pawapayTransactionId String?       @unique
+  status               PaymentStatus @default(PENDING)
+  payerPhoneNumber     String? // mobile money number used — supports T4.3 referral fraud detection
+
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  boost             Boost?
+  subscription      Subscription?
+  referralTriggered Referral?     @relation("TriggeringPayment")
+
+  @@index([status])
+  @@index([userId])
+  @@index([payerPhoneNumber])
+}
+
+model Subscription {
+  id        String  @id @default(uuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  paymentId String  @unique
+  payment   Payment @relation(fields: [paymentId], references: [id])
+
+  status                 SubscriptionStatus @default(ACTIVE)
+  startedAt              DateTime           @default(now())
+  expiresAt              DateTime
+  pricePaid              Int
+  boostsIncludedPerMonth Int                @default(2)
+
+  boosts Boost[]
+
+  @@index([userId, status])
+}
+
+model Boost {
+  id             String        @id @default(uuid())
+  listingId      String
+  listing        Listing       @relation(fields: [listingId], references: [id])
+  paymentId      String?       @unique
+  payment        Payment?      @relation(fields: [paymentId], references: [id])
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  startsAt      DateTime @default(now())
+  endsAt        DateTime
+  pricePaid     Int // 10000 standard, 8000 subscriber discount, 0 if from monthly allotment
+  fromAllotment Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+  @@index([endsAt])
+  @@index([subscriptionId, createdAt]) // supports "boosts used this month" queries — no-rollover enforcement
+}
+
+// ─────────────────────────────────────────────
+// REFERRALS
+// ─────────────────────────────────────────────
+
+model Referral {
+  id             String @id @default(uuid())
+  referrerUserId String
+  referrer       User   @relation("Referrer", fields: [referrerUserId], references: [id])
+  referredUserId String @unique
+  referredUser   User   @relation("ReferredUser", fields: [referredUserId], references: [id])
+
+  status              ReferralStatus @default(PENDING)
+  creditType          CreditType?
+  creditValue         Int?
+  triggeringPaymentId String?        @unique
+  triggeringPayment   Payment?       @relation("TriggeringPayment", fields: [triggeringPaymentId], references: [id])
+  fraudFlagReason     String?
+
+  createdAt  DateTime  @default(now())
+  creditedAt DateTime?
+
+  credit ReferralCredit?
+
+  @@index([referrerUserId, status])
+}
+
+model ReferralCredit {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  referralId String   @unique
+  referral   Referral @relation(fields: [referralId], references: [id])
+
+  amount     Int
+  status     CreditStatus @default(AVAILABLE)
+  expiresAt  DateTime
+  redeemedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, status])
+}
+
+// ─────────────────────────────────────────────
+// NOTIFICATIONS (P1)
+// ─────────────────────────────────────────────
+
+model SavedSearch {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  category ListingCategory
+  filters  Json // { sector, location, keyword, budgetBand, ... }
+  channel  NotificationChannel @default(SMS)
+
+  createdAt      DateTime  @default(now())
+  lastNotifiedAt DateTime?
+
+  notifications NotificationLog[]
+
+  @@index([userId])
+}
+
+model NotificationLog {
+  id            String              @id @default(uuid())
+  userId        String
+  user          User                @relation(fields: [userId], references: [id])
+  savedSearchId String?
+  savedSearch   SavedSearch?        @relation(fields: [savedSearchId], references: [id])
+  listingId     String?
+  listing       Listing?            @relation(fields: [listingId], references: [id])
+  channel       NotificationChannel
+  sentAt        DateTime            @default(now())
+  status        String // "sent" | "failed"
+
+  @@index([userId, listingId])
+}
+
+// ─────────────────────────────────────────────
+// TRUST, MODERATION & AI FLAGGING
+// ─────────────────────────────────────────────
+
+model ModerationLog {
+  id      String @id @default(uuid())
+  adminId String
+  admin   User   @relation("AdminActor", fields: [adminId], references: [id])
+
+  listingId    String?
+  listing      Listing? @relation("TargetListing", fields: [listingId], references: [id])
+  targetUserId String?
+  targetUser   User?    @relation("TargetUser", fields: [targetUserId], references: [id])
+
+  action ModerationAction
+  reason String?
+
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+  @@index([targetUserId])
+  @@index([adminId])
+}
+
+model AiFlag {
+  id        String  @id @default(uuid())
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id])
+
+  flagType        AiFlagType
+  confidenceScore Float
+  reviewed        Boolean    @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([listingId, reviewed])
+}
+
+// ─────────────────────────────────────────────
+// ADMIN-CONFIGURABLE PRICING
+// ─────────────────────────────────────────────
+
+model PricingConfig {
+  id               String           @id @default(uuid())
+  tier             PricingTier
+  category         ListingCategory? // null = applies to all categories
+  price            Int
+  updatedByAdminId String?
+  updatedAt        DateTime         @updatedAt
+  createdAt        DateTime         @default(now())
+
+  @@unique([tier, category])
+}
+
+// ─────────────────────────────────────────────
+// GOVERNMENT TENDER SCRAPER MONITORING
+// ─────────────────────────────────────────────
+
+model UmucyoScrapeLog {
+  id             String       @id @default(uuid())
+  runAt          DateTime     @default(now())
+  status         ScrapeStatus
+  tendersFound   Int          @default(0)
+  tendersCreated Int          @default(0)
+  errorMessage   String?
+
+  @@index([runAt])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
