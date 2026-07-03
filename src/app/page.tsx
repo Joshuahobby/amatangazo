@@ -1,65 +1,109 @@
-import Image from "next/image";
+import { getTranslations } from "next-intl/server";
+import Link from "next/link";
 
-export default function Home() {
+import { prisma } from "@/lib/prisma";
+
+const CATEGORIES = [
+  { key: "JOB", href: "/listings?category=JOB", color: "var(--cat-job)" },
+  { key: "TENDER", href: "/listings?category=TENDER", color: "var(--cat-tender)" },
+  { key: "AUCTION", href: "/listings?category=AUCTION", color: "var(--cat-auction)" },
+  { key: "CLASSIFIED", href: "/listings?category=CLASSIFIED", color: "var(--cat-classified)" },
+] as const;
+
+export default async function Home() {
+  const t = await getTranslations("home");
+  const tb = await getTranslations("browse");
+
+  const [latest, tenderCount] = await Promise.all([
+    prisma.listing.findMany({
+      where: { status: "LIVE" },
+      orderBy: [{ isCurrentlyBoosted: "desc" }, { publishedAt: "desc" }],
+      take: 6,
+      select: { id: true, title: true, category: true, location: true, isCurrentlyBoosted: true },
+    }),
+    prisma.listing.count({ where: { status: "LIVE", category: "TENDER" } }),
+  ]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="mx-auto max-w-5xl px-4">
+      {/* Hero */}
+      <section className="py-14 text-center sm:py-20">
+        <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+          {t("heroTitle")}
+        </h1>
+        <p className="mx-auto mt-4 max-w-xl text-lg text-muted">{t("heroSubtitle")}</p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/listings"
+            className="rounded-full bg-primary px-6 py-3 font-medium text-primary-contrast transition-colors hover:bg-primary-hover"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            {t("ctaBrowse")}
+          </Link>
+          <Link
+            href="/post/job"
+            className="rounded-full border border-border bg-surface px-6 py-3 font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
+          >
+            {t("ctaPost")}
+          </Link>
+        </div>
+        {tenderCount > 0 && (
+          <p className="mt-4 text-sm text-muted">{t("tenderPitch", { count: tenderCount })}</p>
+        )}
+      </section>
+
+      {/* Category tiles */}
+      <section className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {CATEGORIES.map((cat) => (
+          <Link
+            key={cat.key}
+            href={cat.href}
+            className="group rounded-xl border border-border bg-surface p-5 transition-shadow hover:shadow-md"
+          >
+            <span
+              className="inline-block h-2 w-10 rounded-full"
+              style={{ backgroundColor: cat.color }}
+              aria-hidden
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <span className="mt-3 block font-semibold text-foreground group-hover:text-primary">
+              {tb(`category${cat.key}`)}
+            </span>
+          </Link>
+        ))}
+      </section>
+
+      {/* Latest listings */}
+      {latest.length > 0 && (
+        <section className="mt-14">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">{t("latestTitle")}</h2>
+            <Link href="/listings" className="text-sm font-medium text-primary hover:underline">
+              {t("seeAll")}
+            </Link>
+          </div>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {latest.map((listing) => (
+              <li key={listing.id}>
+                <Link
+                  href={`/listings/${listing.id}`}
+                  className="block rounded-xl border border-border bg-surface p-4 transition-shadow hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="font-medium text-foreground">{listing.title}</span>
+                    {listing.isCurrentlyBoosted && (
+                      <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-contrast">
+                        ★
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-sm text-muted">
+                    {tb(`category${listing.category}`)} · {listing.location}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </main>
   );
 }

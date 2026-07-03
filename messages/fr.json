@@ -139,5 +139,19 @@
     "views": "Vues",
     "applications": "Candidatures",
     "categoryAvg": "moy. catégorie"
+  },
+  "home": {
+    "heroTitle": "Emplois, appels d'offres, enchères et petites annonces — tout le Rwanda au même endroit",
+    "heroSubtitle": "Publiez en quelques minutes, payez par mobile money et touchez acheteurs et candidats dans tout le pays.",
+    "ctaBrowse": "Parcourir les annonces",
+    "ctaPost": "Publier une annonce",
+    "tenderPitch": "{count, plural, one {# appel d'offres public en ligne} other {# appels d'offres publics en ligne}}",
+    "latestTitle": "Dernières annonces",
+    "seeAll": "Voir tout"
+  },
+  "footer": {
+    "browse": "Annonces",
+    "terms": "Conditions",
+    "privacy": "Confidentialité"
   }
 }

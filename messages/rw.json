@@ -139,5 +139,19 @@
     "views": "Abarebye",
     "applications": "Abasabye",
     "categoryAvg": "impuzandengo y'icyiciro"
+  },
+  "home": {
+    "heroTitle": "Akazi, amasoko, cyamunara n'ibyamamazwa — u Rwanda rwose ahantu hamwe",
+    "heroSubtitle": "Tangaza mu minota mike, wishyure na mobile money, ugere ku baguzi n'abashaka akazi mu gihugu hose.",
+    "ctaBrowse": "Reba amatangazo",
+    "ctaPost": "Tangaza",
+    "tenderPitch": "{count, plural, one {Isoko rya Leta # riri kuri interineti} other {Amasoko ya Leta # ari kuri interineti}}",
+    "latestTitle": "Amatangazo aheruka",
+    "seeAll": "Reba byose"
+  },
+  "footer": {
+    "browse": "Amatangazo",
+    "terms": "Amabwiriza",
+    "privacy": "Ibanga"
   }
 }

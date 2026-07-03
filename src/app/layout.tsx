@@ -3,8 +3,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { AuthStatus } from "@/components/auth-status";
-import { LanguageSwitcher } from "@/components/language-switcher";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 
 import "./globals.css";
 
@@ -35,13 +35,11 @@ export default async function RootLayout({
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
-          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 12, padding: 8 }}>
-            <LanguageSwitcher />
-            <AuthStatus />
-          </div>
-          {children}
+          <SiteHeader />
+          <div className="flex-1">{children}</div>
+          <SiteFooter />
         </NextIntlClientProvider>
       </body>
     </html>

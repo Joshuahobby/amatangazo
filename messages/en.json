@@ -139,5 +139,19 @@
     "views": "Views",
     "applications": "Applications",
     "categoryAvg": "category avg"
+  },
+  "home": {
+    "heroTitle": "Jobs, tenders, auctions & classifieds — all of Rwanda in one place",
+    "heroSubtitle": "Post in minutes, pay with mobile money, and reach buyers and job-seekers across the country.",
+    "ctaBrowse": "Browse listings",
+    "ctaPost": "Post a listing",
+    "tenderPitch": "{count, plural, one {# government tender live right now} other {# government tenders live right now}}",
+    "latestTitle": "Latest listings",
+    "seeAll": "See all"
+  },
+  "footer": {
+    "browse": "Browse",
+    "terms": "Terms",
+    "privacy": "Privacy"
   }
 }
