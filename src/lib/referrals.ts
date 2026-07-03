@@ -105,7 +105,21 @@ export async function issueReferralCredit(payment: {
   await notifyUser(referral.referrerUserId, `You earned a RWF ${amount.toLocaleString()} referral credit on Amatangazo.`);
 }
 
-/** No stored "expired" flag — availability is always a query-time check, same pattern as the SLA-breach index. */
+/**
+ * T4.6 (scheduled half) — materialize the EXPIRED status on credits past
+ * their 90-day window. Reads already exclude expired credits at query time
+ * (getAvailableCredits filters expiresAt > now), so this is only for an
+ * accurate stored status in the admin/reporting views. Idempotent.
+ */
+export async function expireStaleCredits() {
+  const result = await prisma.referralCredit.updateMany({
+    where: { status: "AVAILABLE", expiresAt: { lte: new Date() } },
+    data: { status: "EXPIRED" },
+  });
+  return { expired: result.count };
+}
+
+/** No stored "expired" flag at read time — availability is always a query-time check, same pattern as the SLA-breach index. */
 export function getAvailableCredits(userId: string) {
   return prisma.referralCredit.findMany({
     where: { userId, status: "AVAILABLE", expiresAt: { gt: new Date() } },
