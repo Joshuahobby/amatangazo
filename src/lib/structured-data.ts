@@ -2,6 +2,20 @@ import type { ListingWithDetails } from "@/lib/listings";
 
 const SITE_NAME = "Amatangazo";
 
+/**
+ * Serialize a JSON-LD object for safe embedding in a <script> tag.
+ * JSON.stringify does NOT escape `<`, `>`, or `&`, so a listing title
+ * containing `</script>` would break out of the tag — a stored XSS vector,
+ * since posters control title/description. Escape those to their \u forms
+ * (still valid JSON, inert as HTML).
+ */
+export function serializeJsonLd(jsonLd: Record<string, unknown>): string {
+  return JSON.stringify(jsonLd)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
+}
+
 function organizationName(listing: ListingWithDetails) {
   return listing.poster.businessName ?? listing.poster.name;
 }

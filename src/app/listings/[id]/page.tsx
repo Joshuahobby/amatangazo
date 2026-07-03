@@ -9,7 +9,7 @@ import { TenderDetailsSection } from "@/components/listing-details/tender-detail
 import { getCurrentUserId } from "@/lib/auth";
 import { listingInclude } from "@/lib/listings";
 import { prisma } from "@/lib/prisma";
-import { buildListingJsonLd } from "@/lib/structured-data";
+import { buildListingJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
 export default async function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -35,7 +35,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
   return (
     <main style={{ maxWidth: 700, margin: "2rem auto", fontFamily: "sans-serif" }}>
       {jsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
       )}
       <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
         <span style={{ background: "#eee", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>
