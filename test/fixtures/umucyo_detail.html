@@ -1,0 +1,1301 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<script type="text/javaScript" src="/js/common/font.js"></script>
+<script type="text/javaScript" src="/js/common/alert.js"></script>
+<script type="text/javaScript" language="javascript">
+    
+    // mask String
+    var validateTokenNumber="Number";
+    var validateTokenKorean="Korea language";
+    var validateTokenUpperEnglish="Upper english";
+    var validateTokenLowerEnglish="Lower English";
+    var validateTokenNewline="New Line";
+    var validateTokenUnderBar="Underbar";
+    var validateTokenComma="Comma";
+    var validateTokenDot="Dot";
+    var validateTokenDash="Dash";
+    var validateTokenSpace="Space";
+    var validateTokenParentheses ="Small bracket";
+
+    // required message
+    var requiredMessage="Please check the required field.";
+
+    // calrendar.js에서 사용 	
+    var systime ="July 2, 2026 12:54:01";
+    var systimeStr ="02072026125401541";
+    var today ="02072026";
+    // 공통메세지 	
+    var valiTelNoMsg ="It is invalid phone/fax type(10 digits).";
+    var valiDateMsg ="It is invalid date type.";
+    var valiNoMatchDateMsg ="Start date and end date is reversed.";
+    var todayStr ="02/07/2026";
+    // contextPath
+    var contextPath = "/";
+    // 현재언어
+    var langCode = "en";
+     // 날짜포맷
+    var dateFormat = "dd/MM/yyyy";
+     // 날짜구분타입
+    var dateSeparater = "/";
+     // 시간구분타입
+    var timeSeparater = ":";
+     // 화폐구분타입
+    var caliberSeparater = ",";
+     // 화폐구분단위
+    var caliberDigits = 3;
+     // 소수점 구분
+    var caliberPoint = ".";
+     // 입찰, 계약 자리수 구분 메세지
+     var invalidDigitMessage = "Please enter real number of {0} digit(s) and decimal number of {1} digit(s).";
+     // 금액 체크 메세지
+     var invalidMoneyMessage = "Invalid currency";
+     // 수량 체크 메세지
+     var invalidQuantityMessage = "It is invalid quantity type.";
+     // 소수점 체크 메세지
+     var invalidDecimalMessage = "You can enter either real numbers of X digit(s) or integer numbers of X digit(s).";
+     // 확인 메세지
+     var confirmStr = "Confirm";
+     // 취소 메세지
+     var cancelStr = "Cancel";
+     // close message
+     var closeStr = "Close";
+     // 정수 범위 메세지
+     var intRangeStr = "Please enter 14 digits maximum.";
+ 
+	function noEvent() {
+		if (event.keyCode == 116) {
+			event.keyCode= 2;
+			return false;
+		}
+	}
+	document.onkeydown = noEvent;
+	
+if(navigator.userAgent.indexOf("Safari") >-1) { 		
+	document.domain="umucyo.gov.rw";		
+} else {	
+	if( navigator.appName.indexOf("Microsoft") > -1 ) {	
+		document.domain="umucyo.gov.rw";		
+   } else {	
+		document.domain="umucyo.gov.rw";		
+   }		
+}	
+</script>
+
+<script type="text/javascript" src="/js/common/string.js"></script>
+<script type="text/javascript" src="/js/common/date.js"></script>
+<script type="text/javascript" src="/js/common/event.js"></script>
+<script type="text/javascript" src="/js/common/validation.js"></script>
+<script type="text/javascript" src="/js/jquery-1.11.0.min.js"></script>
+<link href="/css/jquery-ui.css" rel="stylesheet" type="text/css" />
+
+
+<script type="text/javascript" src="/js/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="/js/jquery.validate.js"></script>
+
+<script type="text/javascript" src="/js/tytabs.jquery.min.js"></script>
+<script type="text/javascript" src="/js/pop.js" ></script>
+
+<script type="text/javascript" src="/js/eb/EB_addDelClear.js" ></script>
+
+<script type="text/javascript" src="/js/date_picker.js"></script>
+<script type="text/javascript" src="/js/eb_dateCalendar.js"></script>
+<script type="text/javascript" src="/js/common/ajaxUtil.js"></script>
+<script type="text/javascript" src="/js/eb/EB_numChangeWord.js" ></script>
+
+<script type="text/javascript" src="/js/common/pagination.js"></script>
+
+<script type="text/javascript" src="/js/common/format.js"></script>
+
+<script type="text/javascript" src="/js/eb/EB_submOpenCommonFunc.js?v=4" ></script>
+
+<script type="text/javascript" src="/js/eb/EB_procPlan.js" ></script>
+<script type="text/javascript" src="/js/eb/tenderManagement.js?v=2"></script>
+<link href="/css/ebcss/ebcom.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javaScript" language="javascript">
+	var validTodayAfterChk = "Please enter a date from this day onward.";
+	var elDocChkMSG = "This document has not been submitted.";
+	var INFO_EB_019 = "Please limit your total bid size to 30mb, very big sizes might cause failure.";
+	var rssbConfirmMessage = "Would you like to try to check again?";
+	var validWeekend = "Pick another day different from weekend days (Saturday and Sunday) ";
+	var validHolidays ="Pick another day different from public holiday";
+	var validWorkingHours="Pick working hours ( between 09:00  and 17:00)."
+	var bidOpeningSubmitionValidation = "Time between submission deadline and opening of bids must be less than or equal to 1 hour"
+	var OpeningSubmissionValidation = "Opening time should be after submission time."
+	//CR#184_V2 by Mariam on 26.08.2020
+	var validateFutureDt="Please enter a future date."
+	var validateNowAndAfter="Please enter a date from this day onward."
+	//end CR#184_V2	
+    function hideTenderFeeRow(){
+        $("#tenderFeeRow").hide();
+    }
+
+    function showTenderFeeRow(){
+        $("#tenderFeeRow").show();
+    }
+
+    function updateTenderFeeRow(method){
+        if (method === 'SS' || method === 'RFQ') {
+            hideTenderFeeRow();
+        } else {
+            showTenderFeeRow();
+        }
+    }
+</script>
+
+<!-- increase/reduce attachment file size setting from globals_cm.properties -->
+
+
+
+<html>
+<head>
+<title>UMUCYO</title>
+<script type="text/javascript" src="/js/common/file.js"></script>
+<script type="text/javascript">
+this.window.name='main';
+	function openPreviewPop(){
+	    var w = 800;
+	    var h = 600;
+	    var LeftPosition = (screen.width - w) / 2;
+	    var TopPosition = (screen.height - h) / 2;
+	    var retVal;
+	    
+	    var openParam = "toolbar=no,menubar=no,resizable=no,scrollbars=yes,copyhistory=no,location=no,z-lock=no, width=" + w + ",height=" + h + ", top=" + TopPosition + ", left=" + LeftPosition;
+	    retVal = window.open('','InvitPop', openParam);
+	    var form = document.frm_oneServices;
+	    form.action = "/eb/bav/getInvitInfo.do";
+	    form.target = "InvitPop";
+	    form.submit();
+	    retVal.focus();
+	}
+	
+	function SearchListOfAdvertisingAll(){
+		var form = document.frm_moveService;
+// 		form.action = "/eb/bav/selectListAdvertisingListForGU.do?"+util_decodeUrl(form.searchConditions.value);
+		form.action = util_decodeUrl(form.searchConditions.value);
+		form.target = "main";
+		form.submit();
+	}
+	
+	//CR#1187
+	function fn_submissionForm(){
+		var form = document.frm_oneServices;
+		var flag = "";
+       	if(flag > 0){
+       		openBlacklstInfoPop();
+       		return;
+       	}
+       	form.action = "/eb/bsb/selectBidsSubmissionStatus.do";
+		form.target = "main";
+		form.submit();
+	}
+	
+	//CR#1187
+ 	function openBlacklstInfoPop(){
+		var mUrl = "https://www.umucyo.gov.rw";
+		var w = 900;
+        var h = 400;
+        var LeftPosition = (screen.width - w) / 2;
+        var TopPosition = (screen.height - h) / 2;        
+        var openParam = "toolbar=no,menubar=no,resizable=no,scrollbars=yes,copyhistory=no,location=no,z-lock=no, width=" + w + ",height=" + h + ", top=" + TopPosition + ", left=" + LeftPosition;
+        var retVal = window.open('','pop', openParam);
+        var form = document.movefrm;
+        form.supTin.value="";
+        form.supNid.value="";
+        form.p.value="04/08/2026 10:00";
+    	form.action="" + mUrl + "/um/ubl/blacklistInfoPopup.do";
+        form.target = "pop";
+        form.submit();
+        retVal.focus();
+	}
+
+	function fn_requiredBid(){
+        var w = 600;
+        var h = 400;
+        var LeftPosition = (screen.width - w) / 2;
+        var TopPosition = (screen.height - h) / 2;
+        var retVal;
+        
+        var openParam = "toolbar=no,menubar=no,resizable=no,scrollbars=yes,copyhistory=no,location=no,z-lock=no, width=" + w + ",height=" + h + ", top=" + TopPosition + ", left=" + LeftPosition;
+        retVal = window.open('','mainPop', openParam);
+        var form = document.frm_oneServices;
+        var tendReferNo = form.tendReferNo.value;
+        var tendStageCd = form.tendStageCd.value;
+        
+        
+        form.action = "/eb/bav/selectListReqBidDocView.do";
+        form.target = "mainPop";
+        form.submit();
+        retVal.focus();
+    }
+	
+	function fn_classiPop(i,type){
+        var w = 620;
+        var h = 500;
+        var LeftPosition = (screen.width - w) / 2;
+        var TopPosition = (screen.height - h) / 2;
+        var retVal;
+        
+        var openParam = "toolbar=no,menubar=no,resizable=no,scrollbars=yes,copyhistory=no,location=no,z-lock=no, width=" + w + ",height=" + h + ", top=" + TopPosition + ", left=" + LeftPosition;
+        retVal = window.open('','mainPop', openParam);
+        var formOne = document.frm_oneServices;
+        var i = i;
+        $("[name='frm_moveServices"+i+"']").remove();
+        var form = document.createElement("form");
+        form.setAttribute("method","post");
+        form.setAttribute("name","frm_moveServices"+i);
+        document.body.appendChild(form);
+        
+        var input_tendReferNo = document.createElement("input");  
+        input_tendReferNo.setAttribute("type", "hidden");
+        input_tendReferNo.setAttribute("name", "tendReferNo");
+        input_tendReferNo.setAttribute("value", formOne.tendReferNo.value);
+        form.appendChild(input_tendReferNo);
+        
+        var input_tendStageCd = document.createElement("input");  
+        input_tendStageCd.setAttribute("type", "hidden");
+        input_tendStageCd.setAttribute("name", "tendStageCd");
+        input_tendStageCd.setAttribute("value", formOne.tendStageCd.value);
+        form.appendChild(input_tendStageCd);
+        
+        var input_lotNo = document.createElement("input");  
+        input_lotNo.setAttribute("type", "hidden");
+        input_lotNo.setAttribute("name", "lotNo");
+        input_lotNo.setAttribute("value", i);
+        form.appendChild(input_lotNo);
+        
+        var input_type = document.createElement("input");  
+        input_type.setAttribute("type", "hidden");
+        input_type.setAttribute("name", "type");
+        input_type.setAttribute("value", type);
+        form.appendChild(input_type);
+        
+        var docObj="";
+        $( "#class"+i ).contents().each( function(e){
+            if( $(this).length > 0 ){
+                var docVal = $(this).val();
+                docObj = "<input type='hidden' name='classiLot' id='classiLot"+e+"' value='"+docVal+"' />";
+
+                $(form).append(docObj);
+            }
+        });
+        
+        form.action = "/eb/bav/selectListClasificationGoods.do";
+        form.target = "mainPop";
+        form.submit();
+        
+        retVal.focus();
+    }
+	
+	$(document).ready(function(){  
+        var prelimYn = "Y";
+        if(prelimYn=="Y"){
+            $("#prelimYn").attr("checked", true);
+        }else if(prelimYn=="N"){
+            $("#prelimYn").attr("checked", false);
+        }
+        
+        var adminstYn = "Y";
+        if(adminstYn=="Y"){
+            $("#adminstYn").attr("checked", true);
+        }else if(adminstYn=="N"){
+            $("#adminstYn").attr("checked", false);
+        }
+        
+        $('.tooltip').tooltip();
+    });
+	
+</script>
+
+</head>
+<body>
+<div id="wrap">
+	<!-- Top Menu Start --> 
+     <div id="header">
+         <div class="header_top"> 
+<p class="logo"><a href="https://www.umucyo.gov.rw/pt/index.do" target="main">				
+<img src="/images/logo.png" alt=""></a></p>	
+<div class="util">                                        	
+<ul>														   	
+<li><a href="https://www.umucyo.gov.rw/um/lg/moveLogin.do" target="main">Login</a></li>
+<li><a href="https://www.umucyo.gov.rw/pt/pcm/moveAdminAnnouncementList.do?menuId=PT01010100" target="main">Help</a></li>	
+<li><a href="https://www.umucyo.gov.rw/sp/sgs/moveSpSgsMn.do?menuId=SP01000000" target="main">e-Shopping Mall</a></li>	
+<li><a href="https://www.umucyo.gov.rw/sp/sdm/SPSDMDspsLst.do?menuId=DP01030100" target="main">Disposal</a></li>	
+<li><a href="https://www.umucyo.gov.rw" target="_blank">RPPA</a></li>	
+</ul>													   	
+<a href="/setCmLocale.do?lang=fr" target="main"><img src="/images/fr.gif" alt=""></a>						
+<a href="/setCmLocale.do?lang=en" target="main"><img src="/images/en.gif" alt=""></a>						
+<a href="/setCmLocale.do?lang=rw" target="main"><img src="/images/rewanda.png" alt=""></a>						
+</div>													   	
+</div>													   	
+<div class="wrap_menu clearfix">						
+<ul class="cbp-hsmenu">				   	
+<li><a href="https://www.umucyo.gov.rw/pt/pcm/moveAdminAnnouncementList.do?menuId=PT01010100&amp;leftTopFlag=t" target="main">Help</a></li>
+<li><a href="https://www.umucyo.gov.rw/eb/bpp/selectPageProcurementPlan.do?menuId=EB01010100&amp;leftTopFlag=t" target="main">e-Bidding</a></li>
+<li><a href="https://www.umucyo.gov.rw/ca/main/CAKISSrchItemSrchCondtnFrm.do?menuId=CA01010100&amp;leftTopFlag=t" target="main">e-Catalog</a></li>
+<li><a href="https://www.umucyo.gov.rw/um/upe/reg/moveUMUPEPeRgt.do?menuId=UM01010100&amp;leftTopFlag=t" target="main">PE&nbsp;Registration</a></li>
+<li><a href="https://www.umucyo.gov.rw/um/usr/moveSupplierRequestInsert.do?menuId=UM02010100&amp;leftTopFlag=t" target="main">Supplier&nbsp;Registration</a></li>
+<li><a href="https://www.umucyo.gov.rw/pt/index.do?menuId=PT02090100&amp;leftTopFlag=t" target="main">My&nbsp;Page</a></li>
+</ul>														
+</div>														
+
+     </div>
+     <div class="Location"><p><img src="/images/home_icon.png" /> > e-Bidding > Advertising > <span class="bold">List of advertising (all)</span></p></div>
+     <div id="contents" class="clearfix ">
+
+        <!-- Left Menu Start -->
+        <div id="contents_L">
+            <div id="userinfo">
+	<ul>
+		<li>Welcome to visit</li>
+	</ul>
+</div>
+<h2><span>e-Bidding</span></h2>
+	<ul id="menu">
+		<li><a href="#">Procurement plan</a>
+			<ul>
+			<li><a href="https://www.umucyo.gov.rw/eb/bpp/selectPageProcurementPlan.do?menuId=EB01010100&amp;leftTopFlag=l" target="main">List of procurement plan (all)</a></li>
+			<li><a href="https://www.umucyo.gov.rw/eb/bpp/selectSbdRgtList.do?menuId=EB01010500&amp;leftTopFlag=l" target="main">List of SBD</a></li>
+			</ul>
+		</li>
+		<li><a href="#">Advertising</a>
+			<ul>
+			<li><a class="on" href="https://www.umucyo.gov.rw/eb/bav/selectListAdvertisingListForGU.do?menuId=EB01020100&amp;leftTopFlag=l" target="main">List of advertising (all)</a></li>
+			</ul>
+		</li>
+	</ul>
+
+        </div>
+        <!-- Left Menu End -->
+        
+        <!-- Main Content Start -->
+		<div id="contents_R">
+			<h3 class="clearfix">View Details of One Stage Advertising (Services)</h3>
+			<form id="tendMstVO" name="frm_oneServices" action="/eb/bav/selectAdvertisingDtlInfo.do" method="post">
+			    <div id='classifi'>
+                    
+                        <div id="class1" name="class1">
+                            
+                        </div>
+                    
+                        <div id="class2" name="class2">
+                            
+                        </div>
+                    
+                        <div id="class3" name="class3">
+                            
+                        </div>
+                    
+                        <div id="class4" name="class4">
+                            
+                        </div>
+                    
+                        <div id="class5" name="class5">
+                            
+                        </div>
+                    
+                        <div id="class6" name="class6">
+                            
+                        </div>
+                    
+                        <div id="class7" name="class7">
+                            
+                        </div>
+                    
+                        <div id="class8" name="class8">
+                            
+                        </div>
+                    
+                </div>
+			    <input type="hidden" name="tendReferNo" value="000019/NC/NCB/2025/2026/1417000000"/>
+			    <input type="hidden" name="tendReferNm" value="000019/NC/NCB/2025/2026/UR"/>
+			    <input type="hidden" name="tendStageCd" value="O"/>
+			    <input type="hidden" name="tendMthodCd" value="NCB"/>
+			    <input type="hidden" name="tendTypeCd" value="NC"/>
+			    <input type="hidden" name="pubcatDate" value="30062026"/>
+			    
+			    <input type="hidden" name="tendMstVO.eBBEVEvalAwardVO" id="tendMstVO.eBBEVEvalAwardVO" value="[]"/>
+                
+                <input type="hidden" name="eBBAVInvitVO.title" id="eBBAVInvitVO.title" value="Provision of Security Services for University of Rwanda Campuses"/>
+                <input type="hidden" name="eBBAVInvitVO.prjNm" id="eBBAVInvitVO.prjNm" value="Provision of Security Services for University of Rwanda Campuses"/>
+                <input type="hidden" name="eBBAVInvitVO.prjId" id="eBBAVInvitVO.prjId" value="-"/>
+                <input type="hidden" name="eBBAVInvitVO.loanNo" id="eBBAVInvitVO.loanNo" value="-"/>
+                <input type="hidden" name="eBBAVInvitVO.contnt" id="eBBAVInvitVO.contnt" value="<p><strong>THE TITLE OF THE TENDER</strong><strong><em>: </em></strong><strong>Provision of Security Services for University of Rwanda </strong></p>
+<p><strong>CLIENT: UNIVERISITY OF RWANDA (</strong>UR)</p>
+<ol>
+<li><strong>THE UNIVERSITY OF RWANDA (UR)</strong> hereinafter called Client has funds towards the cost of Provision of Security Services for University of Rwanda. The Client intends to apply a portion of the funds to eligible payments under the contract for which this Bidding Document is issued.</li>
+<li>UR invites eligible bidders to submit bids for the tender of Provision of Security Services for University of Rwanda, as indicated in detail in the statement of Requirements. Participation to the competition is open on equal conditions to all companies specialized in the field with a valid trading license.</li>
+</ol>
+<p>This tender is composed <strong>of Seven (7) lots</strong><strong>.</strong></p>
+<p>3<strong>.</strong>Bid Documents in English may be obtained from e- Procurement system for Rwanda (<a href='http://www.umucyo.gov.rw'>www.umucyo.gov.rw</a>). For submission of their bids, all interested bidder must pay non-refundable fee of ten Thousand Rwandan francs (<strong>10,000 frw)</strong> on the account of Rwanda Revenue Authority (RRA) opened at different commercial banks.</p>
+<p>4.All bids will be submitted online using the E- Procurement system before 28 April 2023 at 11:00 am local time. Late bids will not be accepted by the system. Bids will be opened automatically by the E &ndash; Procurement system on the same day at 11:30am local time.</p>
+<p>&nbsp;</p>
+<p>5.All interested bidders may obtain some complementary information by writing using the procurement system within three sixths (3/6) of the deadline period for the submission of tenders as of the date of tender notice publication</p>
+<p>6.The amount of the Bid Security shall be ( see the amount in the system)</p>
+<p>7.Compulsory site visit&nbsp; ( see &nbsp;on technical specification)</p>
+<p>8.The language of bids is French or English and its validity must be 120 days from the date of opening;</p>
+<p>&nbsp;</p>
+<p>9.Bidding will be conducted in accordance with the Law N&deg; 031/2022 of 21/11/2022 governing public procurement.</p>
+<p><strong>&nbsp;</strong></p>
+<p><strong>Franҫoise KAYITARE TENGERA</strong></p>
+<p>Deputy Vice Chancellor for Finance</p>"/>
+                
+                <input type="hidden" name="eBBAVContactVO.officerName" id="eBBAVContactVO.officerName" value=""/>
+                <input type="hidden" name="eBBAVContactVO.addr" id="eBBAVContactVO.addr" value=""/>
+                <input type="hidden" name="eBBAVContactVO.telNo" id="eBBAVContactVO.telNo" value=""/>
+                <input type="hidden" name="eBBAVContactVO.peCd" id="eBBAVContactVO.peCd" value=""/>
+                <input type="hidden" name="eBBAVContactVO.tin" id="eBBAVContactVO.tin" value=""/>
+                <input type="hidden" name="eBBAVContactVO.abbrNm" id="eBBAVContactVO.abbrNm" value=""/>
+                <input type="hidden" name="eBBAVContactVO.peType" id="eBBAVContactVO.peType" value=""/>
+                <input type="hidden" name="eBBAVContactVO.pobox" id="eBBAVContactVO.pobox" value=""/>
+                <input type="hidden" name="eBBAVContactVO.faxNo" id="eBBAVContactVO.faxNo" value=""/>
+                <input type="hidden" name="eBBAVContactVO.email" id="eBBAVContactVO.email" value=""/>
+                <input type="hidden" name="eBBAVContactVO.representNm" id="eBBAVContactVO.representNm" value=""/>
+			    
+			    <input type="hidden" name="currentPageNo" value="1">
+                <input type="hidden" name="searchConditions" value="">
+                <input type="hidden" name="submDlineDt" id="submDlineDt" value="04/08/2026 10:00"> <!-- CR#1187-->
+				<div class="titlealign">
+					<p class="list_L">General Information</p>
+				</div>
+				<table class="form_table mb30">
+					<colgroup>
+						<col width="24%">
+						<col width="40%">
+						<col width="18%">
+						<col width="18%">
+					</colgroup>
+					<tbody>
+						<tr>
+							<th><span class="important"> </span>Tender No</th>
+							<td colspan="3">000019/NC/NCB/2025/2026/UR</td>
+						</tr>
+						<tr>
+							<th><span class="important"> </span>Procurement Plan Name  </th>
+							<td colspan="3">
+								Provision of Security Services for University of Rwanda Campuses
+							</td>
+						</tr>
+						<tr>
+							<th><span class="important"> </span>Advertising/Procuring Entity</th>
+							<td colspan="3">
+								UNIVERSITY OF RWANDA
+							</td>
+
+<!--                             <td> -->
+
+<!--                             </td> -->							
+						</tr>
+						<tr>
+							<th><span class="important"> &#42; </span>Tender Name </th>
+							<td colspan="3">
+							    Provision of Security Services for University of Rwanda Campuses
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			
+			
+			<div class="titlealign">
+				<p class="list_L">Tender Information</p>
+			</div>
+			<div class="tableTy1">
+				<table class="article_table mb30">
+					<colgroup>
+						<col width="24%">
+                        <col width="29%">
+                        <col width="19%">
+                        <col width="26%">
+					</colgroup>	
+					<tbody>
+						<tr>
+							<th>
+								<span class="important"> &#42; </span>Tender Type    
+							</th>
+							<td>
+								 Non Consultant Services
+							</td>
+							<th>
+								<span class="important"> &#42; </span>Tender Method
+							</th>
+							<td>
+								National Competitive Bidding
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<span class="important"> &#42; </span>International/National
+							</th>
+							<td>
+								NATIONAL  
+							</td>
+							
+							<th>
+								<span class="important"> &#42; </span>Simplified Y/N 
+							</th>
+							<td>
+								
+                                
+                                    No
+                                
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<span class="important"> &#42; </span>Joint Venture
+							</th>
+							<td>
+								
+                                
+                                    Not Allowed
+                                
+							</td>
+							<th>
+                                <span class="important"> &#42; </span>Bid Validity Period
+                            </th>
+                            <td>
+                                120 Days
+                            </td>
+						</tr>
+						<tr>
+							<th>
+								<span class="important"> &#42; </span>Brief Description 
+							</th>
+							<td colspan="3">
+								rovision of Security Services for University of Rwanda Campuses
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<span class="important"> &#42; </span>Deadline for Bids Submission
+							</th>
+							<td colspan="3">
+								04/08/2026 10:00 (local time)
+							</td>
+						</tr>
+						
+						<tr>
+							<th>
+								<span class="important"> &#42; </span>Opening Date
+							</th>
+							<td>
+								04/08/2026 10:30 (local time)
+							</td>
+							<th>
+								<span class="important"> &#42; </span>Opening Place
+							</th>
+							<td>
+								e-Procurement system
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<span class="important"> &#42; </span>How to Obtain Tender Document
+							</th>
+							<td colspan="3">
+								Downloadable Online
+							</td>
+						</tr>
+                        
+						<tr>
+							<th>
+								<span class="important"> &#42; </span>Tender Fee
+							</th>
+							<td colspan="3">
+								
+                                10,000   
+							</td>
+						</tr>
+                        
+						<tr>
+							<th>
+								<span class="important"> &#42; </span>Tender Security
+							</th>
+							<td>
+								
+                                    Yes
+                                
+                                
+							</td>
+							<th>
+								<span class="important"> &#42; </span>Tender Security (sum of LOTs)
+							</th>
+							<td class="tR">
+							    
+								24,000,000
+							</td>
+						</tr>
+						<tr>
+                            <th>
+                                <span class="important"> &#42; </span>Post Qualification
+                            </th>
+                            <td>
+                                
+                                
+                                    No
+                                
+                            </td>
+							<th>
+								<span class="important"> &#42; </span>Date when exchange rate is applied
+							</th>
+							<td>
+							    04/08/2026
+							</td>
+						</tr>
+                        <tr>
+                            <th>
+                                Local preference
+                            </th>
+                            <td >
+                                 
+                                    Yes
+                                
+                                
+                            </td>
+                            <th>
+                                Margin of Preference
+                            </th>
+                            <td>
+                                15%
+                            </td>
+                        </tr>
+						
+						
+						<tr>
+                            <th>
+                                <span class="important"> &#42; </span>Examination
+                            </th>
+                            <td colspan="3">
+                                <input type="checkbox" name="prelimYn"  id="prelimYn"  value="Y" checked="checked" disabled="disabled"/>Preliminary Examination &nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="checkbox" name="adminstYn" id="adminstYn" value="Y" checked="checked" disabled="disabled"/>Administrative Examination
+                            </td>
+                        </tr>
+                        
+					</tbody>
+				</table>
+			</div>
+
+	        <h4>Services</h4>
+            <table class="article_table mb30">
+                <colgroup>
+                    <col width="10%">
+                    <col width="27.5%">
+                    <col width="14%">
+                    <col width="22.5%">
+                    <col width="13%">
+                    <col width="13%">
+                </colgroup>
+                <thead>
+	                <tr>
+	                    <th class="normal_word">
+	                        <span class="important">&#42; </span>LOT No
+	                    </th>
+	                    <th>
+	                        <span class="important">&#42; </span>Name of Services   
+	                    </th>
+	                    <th class="normal_word">
+	                        <span class="important"> </span>Tender Security Amount
+	                    </th>
+	                    <th>
+	                        <span class="important">&#42; </span>Description
+	                    </th>
+	                    <th class="normal_word">
+	                        <span class="important">&#42; </span>Time Limit of Completion
+	                    </th>
+	                    <th>
+	                       List of Goods & Classification
+	                    </th>
+	                </tr>
+                </thead>
+                <tbody>
+                    
+		                <tr>
+		                    <td class="tC">
+		                        1
+		                        <input type="hidden" id="lotNo1" name="lotNo" value="1" >
+		                    </td>
+		                    <td class="normal_word">
+		                        Provision of Security Services for University of Rwanda Campuses
+		                    </td>
+		                    <td class="tR">
+		                        
+                                5,600,000 FRW
+		                    </td>
+		                    <td class="normal_word">
+		                        <nobr title=" Lot 1 UR Huye Campus" class="tooltip"> Lot 1 UR Huye Campus</nobr>
+		                    </td>
+		                    <td class="tC">
+		                        12
+		                        
+                                
+                                    Months
+                                
+                                
+		                    </td>
+		                    <td class="tC">
+                                <div id='classifi1'>
+                                    <a href="javascript:fn_classiPop(1,'NC');">
+                                            4 Selected
+                                    </a>
+                                </div>
+                            </td>
+		                </tr>
+                    
+		                <tr>
+		                    <td class="tC">
+		                        2
+		                        <input type="hidden" id="lotNo2" name="lotNo" value="2" >
+		                    </td>
+		                    <td class="normal_word">
+		                        Provision of Security Services for University of Rwanda Campuses
+		                    </td>
+		                    <td class="tR">
+		                        
+                                2,400,000 FRW
+		                    </td>
+		                    <td class="normal_word">
+		                        <nobr title="LOT 2 UR Nyagatare Campus" class="tooltip">LOT 2 UR Nyagatare Campus</nobr>
+		                    </td>
+		                    <td class="tC">
+		                        12
+		                        
+                                
+                                    Months
+                                
+                                
+		                    </td>
+		                    <td class="tC">
+                                <div id='classifi2'>
+                                    <a href="javascript:fn_classiPop(2,'NC');">
+                                            4 Selected
+                                    </a>
+                                </div>
+                            </td>
+		                </tr>
+                    
+		                <tr>
+		                    <td class="tC">
+		                        3
+		                        <input type="hidden" id="lotNo3" name="lotNo" value="3" >
+		                    </td>
+		                    <td class="normal_word">
+		                        Provision of Security Services for University of Rwanda Campuses
+		                    </td>
+		                    <td class="tR">
+		                        
+                                3,140,000 FRW
+		                    </td>
+		                    <td class="normal_word">
+		                        <nobr title="UR Rukara Campus" class="tooltip">UR Rukara Campus</nobr>
+		                    </td>
+		                    <td class="tC">
+		                        12
+		                        
+                                
+                                    Months
+                                
+                                
+		                    </td>
+		                    <td class="tC">
+                                <div id='classifi3'>
+                                    <a href="javascript:fn_classiPop(3,'NC');">
+                                            4 Selected
+                                    </a>
+                                </div>
+                            </td>
+		                </tr>
+                    
+		                <tr>
+		                    <td class="tC">
+		                        4
+		                        <input type="hidden" id="lotNo4" name="lotNo" value="4" >
+		                    </td>
+		                    <td class="normal_word">
+		                        Provision of Security Services for University of Rwanda Campuses
+		                    </td>
+		                    <td class="tR">
+		                        
+                                3,800,000 FRW
+		                    </td>
+		                    <td class="normal_word">
+		                        <nobr title="UR Remera, Rwamagana and Kicukiro Campuses" class="tooltip">UR Remera, Rwamagana and Kicukiro Campuses</nobr>
+		                    </td>
+		                    <td class="tC">
+		                        12
+		                        
+                                
+                                    Months
+                                
+                                
+		                    </td>
+		                    <td class="tC">
+                                <div id='classifi4'>
+                                    <a href="javascript:fn_classiPop(4,'NC');">
+                                            4 Selected
+                                    </a>
+                                </div>
+                            </td>
+		                </tr>
+                    
+		                <tr>
+		                    <td class="tC">
+		                        5
+		                        <input type="hidden" id="lotNo5" name="lotNo" value="5" >
+		                    </td>
+		                    <td class="normal_word">
+		                        Provision of Security Services for University of Rwanda Campuses
+		                    </td>
+		                    <td class="tR">
+		                        
+                                4,000,000 FRW
+		                    </td>
+		                    <td class="normal_word">
+		                        <nobr title="UR Nyarugenge Campus" class="tooltip">UR Nyarugenge Campus</nobr>
+		                    </td>
+		                    <td class="tC">
+		                        12
+		                        
+                                
+                                    Months
+                                
+                                
+		                    </td>
+		                    <td class="tC">
+                                <div id='classifi5'>
+                                    <a href="javascript:fn_classiPop(5,'NC');">
+                                            4 Selected
+                                    </a>
+                                </div>
+                            </td>
+		                </tr>
+                    
+		                <tr>
+		                    <td class="tC">
+		                        6
+		                        <input type="hidden" id="lotNo6" name="lotNo" value="6" >
+		                    </td>
+		                    <td class="normal_word">
+		                        Provision of Security Services for University of Rwanda Campuses
+		                    </td>
+		                    <td class="tR">
+		                        
+                                1,800,000 FRW
+		                    </td>
+		                    <td class="normal_word">
+		                        <nobr title="UR Gikondo Campus" class="tooltip">UR Gikondo Campus</nobr>
+		                    </td>
+		                    <td class="tC">
+		                        12
+		                        
+                                
+                                    Months
+                                
+                                
+		                    </td>
+		                    <td class="tC">
+                                <div id='classifi6'>
+                                    <a href="javascript:fn_classiPop(6,'NC');">
+                                            4 Selected
+                                    </a>
+                                </div>
+                            </td>
+		                </tr>
+                    
+		                <tr>
+		                    <td class="tC">
+		                        7
+		                        <input type="hidden" id="lotNo7" name="lotNo" value="7" >
+		                    </td>
+		                    <td class="normal_word">
+		                        Provision of Security Services for University of Rwanda Campuses
+		                    </td>
+		                    <td class="tR">
+		                        
+                                2,200,000 FRW
+		                    </td>
+		                    <td class="normal_word">
+		                        <nobr title="UR Busogo and Rubirizi Campuses" class="tooltip">UR Busogo and Rubirizi Campuses</nobr>
+		                    </td>
+		                    <td class="tC">
+		                        12
+		                        
+                                
+                                    Months
+                                
+                                
+		                    </td>
+		                    <td class="tC">
+                                <div id='classifi7'>
+                                    <a href="javascript:fn_classiPop(7,'NC');">
+                                            4 Selected
+                                    </a>
+                                </div>
+                            </td>
+		                </tr>
+                    
+		                <tr>
+		                    <td class="tC">
+		                        8
+		                        <input type="hidden" id="lotNo8" name="lotNo" value="8" >
+		                    </td>
+		                    <td class="normal_word">
+		                        Provision of Security Services for University of Rwanda Campuses
+		                    </td>
+		                    <td class="tR">
+		                        
+                                1,060,000 FRW
+		                    </td>
+		                    <td class="normal_word">
+		                        <nobr title="UR Headquarters" class="tooltip">UR Headquarters</nobr>
+		                    </td>
+		                    <td class="tC">
+		                        12
+		                        
+                                
+                                    Months
+                                
+                                
+		                    </td>
+		                    <td class="tC">
+                                <div id='classifi8'>
+                                    <a href="javascript:fn_classiPop(8,'NC');">
+                                            4 Selected
+                                    </a>
+                                </div>
+                            </td>
+		                </tr>
+                       
+                </tbody>
+            </table>
+			
+			
+			
+			
+            
+            
+			
+			<h4>Tender Document</h4>
+			<table class="article_table mb30">
+				<colgroup>
+					<col width="10%">
+                    <col width="30%">
+                    <col width="30%">
+                    <col width="30%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th>
+							No
+						</th>
+						<th>
+							Document Name
+						</th>
+						<th>
+                           Upload Date
+                        </th>
+						<th>
+							File
+						</th>
+					</tr>
+				</thead>
+				<tbody >
+					
+						<tr>
+							<td class="tC">
+							    1
+							</td>
+							<td>
+								Tender Document
+							</td>
+							<!-- tender document modDt added by aimkay -->
+                             <td>
+                                  30/06/2026 23:30 
+                             </td>
+                            <!--tender document modDt added by aimkay  -->
+							<td class="tC">
+                                <a href="javascript:void(0)" onClick="javascript:util_fileIdDownload('062026233020659-7e91');">
+                                    30-06-26 PTC 04 DAO FOR SECURITY SERVICES 20 OK.docx
+                                </a>
+							</td>
+						</tr>
+					
+				</tbody>
+				<iframe name="attachFileFrame" width="0" height="0" frameborder="0"></iframe>
+                <div id="deleteFilesDiv"/>
+			</table>
+			
+			 <!-- adding price schedule download link started by aimkay on 31.10.2018 -->
+                <h4>Price Schedule  </h4>
+                <table class="article_table mb30" id="rfpTable">
+                    <colgroup>
+                        <col width="10%">
+                        <col width="40%">
+                        <col width="50%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th> <span class="important"> &#42; </span>LOT No.</th>
+                            <th> <span class="important"> &#42; </span>Document Name</th>
+                            <th> <span class="important"> &#42;</span> Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         
+                            <tr>
+                                <td class="tC">
+                                   1
+                                </td>
+                                <td class="tC">
+                                   * Price Schedule_new
+                                </td>
+                                
+                                 <td>
+                                    
+                                    <a href="javascript:util_priceFileIdDownload('000019@NC@NCB@2025@2026@1417000000_O_1');" >Download it and Fill it</a>
+
+
+                                 </td>    
+                            </tr>
+                            
+                            <tr>
+                                <td class="tC">
+                                   2
+                                </td>
+                                <td class="tC">
+                                   * Price Schedule_new
+                                </td>
+                                
+                                 <td>
+                                    
+                                    <a href="javascript:util_priceFileIdDownload('000019@NC@NCB@2025@2026@1417000000_O_2');" >Download it and Fill it</a>
+
+
+                                 </td>    
+                            </tr>
+                            
+                            <tr>
+                                <td class="tC">
+                                   3
+                                </td>
+                                <td class="tC">
+                                   * Price Schedule_new
+                                </td>
+                                
+                                 <td>
+                                    
+                                    <a href="javascript:util_priceFileIdDownload('000019@NC@NCB@2025@2026@1417000000_O_3');" >Download it and Fill it</a>
+
+
+                                 </td>    
+                            </tr>
+                            
+                            <tr>
+                                <td class="tC">
+                                   4
+                                </td>
+                                <td class="tC">
+                                   * Price Schedule_new
+                                </td>
+                                
+                                 <td>
+                                    
+                                    <a href="javascript:util_priceFileIdDownload('000019@NC@NCB@2025@2026@1417000000_O_4');" >Download it and Fill it</a>
+
+
+                                 </td>    
+                            </tr>
+                            
+                            <tr>
+                                <td class="tC">
+                                   5
+                                </td>
+                                <td class="tC">
+                                   * Price Schedule_new
+                                </td>
+                                
+                                 <td>
+                                    
+                                    <a href="javascript:util_priceFileIdDownload('000019@NC@NCB@2025@2026@1417000000_O_5');" >Download it and Fill it</a>
+
+
+                                 </td>    
+                            </tr>
+                            
+                            <tr>
+                                <td class="tC">
+                                   6
+                                </td>
+                                <td class="tC">
+                                   * Price Schedule_new
+                                </td>
+                                
+                                 <td>
+                                    
+                                    <a href="javascript:util_priceFileIdDownload('000019@NC@NCB@2025@2026@1417000000_O_6');" >Download it and Fill it</a>
+
+
+                                 </td>    
+                            </tr>
+                            
+                            <tr>
+                                <td class="tC">
+                                   7
+                                </td>
+                                <td class="tC">
+                                   * Price Schedule_new
+                                </td>
+                                
+                                 <td>
+                                    
+                                    <a href="javascript:util_priceFileIdDownload('000019@NC@NCB@2025@2026@1417000000_O_7');" >Download it and Fill it</a>
+
+
+                                 </td>    
+                            </tr>
+                            
+                            <tr>
+                                <td class="tC">
+                                   8
+                                </td>
+                                <td class="tC">
+                                   * Price Schedule_new
+                                </td>
+                                
+                                 <td>
+                                    
+                                    <a href="javascript:util_priceFileIdDownload('000019@NC@NCB@2025@2026@1417000000_O_8');" >Download it and Fill it</a>
+
+
+                                 </td>    
+                            </tr>
+                             
+                      
+                    </tbody>
+                    <iframe name="attachFileFrame" width="0" height="0" frameborder="0"></iframe>
+                    <div id="deleteFilesDiv"/>
+                </table>
+                <!-- adding price schedule download link  end by aimkay on 31.10.2018  -->
+			
+			
+			<h4>Required Bidding Documents</h4>
+			<table class="article_table mb10">
+				<thead>
+				<tr>
+					<th>
+						<span class="important">&#42; </span>Required bidding document to be submitted by bidder
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td>
+					    
+                           
+                              18 Selected
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                           
+                        
+                        <a href="javascript:fn_requiredBid();" class="btn_W ">View</a>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			
+			<!-- Blue Button Start -->
+			<div class="alignwrap mb30">
+		         <p class="fR">   
+		            
+					<a href="javascript:openPreviewPop();" class="button sky">View Tender Notice</a>
+					<a href="javascript:SearchListOfAdvertisingAll();" class="button sky">Back to the List</a>
+		         </p>
+		    </div> 
+		    </form>
+		    <form id="command" name="frm_moveService" action="/eb/bav/selectAdvertisingDtlInfo.do" method="post">
+                <input type="hidden" name="isBack" value="">
+                <input type="hidden" name="currentPageNo" value="1">
+                <input type="hidden" name="searchConditions" value="">
+            </form>
+            
+            <!-- CR#1187 -->
+			<form name="movefrm" method="post">
+				<input type="hidden" name="supTin" value=""/>
+				<input type="hidden" name="supNid" value=""/>
+				<input type="hidden" name="p" value=""/>
+			 </form> 
+		</div>
+		<!-- Main Content End -->
+		
+	</div>
+    <div id="footer">
+<div class="footerin">
+<span class="footLogo"><img src="/images/minecofin.png" alt=""></span>
+<div class="btmMenu">
+<p>  ©  2026  Ministry of Finance and Economic Planning 	& RPPA  </p>
+</div>
+</div>
+</div>
+<script type="text/javaScript" language="javascript">
+
+    if ((navigator.userAgent.indexOf('MSIE 6')>0) && (navigator.userAgent.indexOf('MSIE 7')==-1)){
+
+        util_messageAlertWithExec("This page can behave abnomally on IE 6 and 7. Therefore you should use other browsers or version upgrade such as IE 8 with compatibility option, Crome or Firefox.", "fn_moveMain()");
+
+		   function fn_moveMain(){
+		       location.href='https://www.umucyo.gov.rw/pt/index.do'
+		   }
+    }
+
+</script>
+ 
+</div><!-- //wrap -->  
+
+</body>
+</html>
