@@ -374,66 +374,79 @@ export async function handleDepositCompleted(pawapayTransactionId: string) {
   if (!payment) throw new Error(`No payment found for deposit ${pawapayTransactionId}`);
   if (payment.status === "COMPLETED") return payment;
 
-  await prisma.payment.update({
-    where: { id: payment.id },
-    data: { status: "COMPLETED", completedAt: new Date() },
+  // The payment is flipped to COMPLETED in the SAME transaction as the domain
+  // writes it pays for (listing -> LIVE, boost, subscription). Doing them
+  // atomically is what makes the idempotency guard above sound: a crash can
+  // never leave the payment COMPLETED while the listing is stuck in
+  // PENDING_PAYMENT — either everything commits or nothing does, and a webhook
+  // retry re-runs the whole thing. External/best-effort side effects
+  // (notification SMS, referral credit) run after the commit.
+  const outcome = await prisma.$transaction(async (tx) => {
+    await tx.payment.update({
+      where: { id: payment.id },
+      data: { status: "COMPLETED", completedAt: new Date() },
+    });
+
+    if (payment.type === "LISTING_PUBLISH" && payment.listingId) {
+      const listing = await tx.listing.update({
+        where: { id: payment.listingId },
+        data: { status: "LIVE", publishedAt: new Date() },
+      });
+      await activateBoost(tx, {
+        listingId: listing.id,
+        category: listing.category,
+        pricePaid: payment.amount,
+        paymentId: payment.id,
+      });
+      return { published: { id: listing.id, title: listing.title }, viaSubscription: false };
+    }
+
+    if (payment.type === "BOOST" && payment.listingId) {
+      const listing = await tx.listing.findUniqueOrThrow({ where: { id: payment.listingId } });
+      await activateBoost(tx, {
+        listingId: listing.id,
+        category: listing.category,
+        pricePaid: payment.amount,
+        paymentId: payment.id,
+      });
+      return { published: null, viaSubscription: false };
+    }
+
+    if (payment.type === "SUBSCRIPTION") {
+      const now = new Date();
+      await tx.subscription.create({
+        data: {
+          userId: payment.userId,
+          paymentId: payment.id,
+          status: "ACTIVE",
+          startedAt: now,
+          expiresAt: new Date(now.getTime() + SUBSCRIPTION_DURATION_MS),
+          pricePaid: payment.amount,
+        },
+      });
+      if (payment.listingId) {
+        const listing = await tx.listing.update({
+          where: { id: payment.listingId },
+          data: { status: "LIVE", publishedAt: now },
+        });
+        return { published: { id: listing.id, title: listing.title }, viaSubscription: true };
+      }
+    }
+
+    return { published: null, viaSubscription: false };
   });
 
-  if (payment.type === "LISTING_PUBLISH" && payment.listingId) {
-    const listing = await prisma.listing.update({
-      where: { id: payment.listingId },
-      data: { status: "LIVE", publishedAt: new Date() },
-    });
-    await prisma.$transaction((tx) =>
-      activateBoost(tx, {
-        listingId: listing.id,
-        category: listing.category,
-        pricePaid: payment.amount,
-        paymentId: payment.id,
-      }),
-    );
-
-    const url = `${APP_BASE_URL}/listings/${listing.id}`;
-    await notifyUser(payment.userId, listingPublishedMessage(listing.title, url));
-  }
-
-  if (payment.type === "BOOST" && payment.listingId) {
-    const listing = await prisma.listing.findUniqueOrThrow({ where: { id: payment.listingId } });
-    await prisma.$transaction((tx) =>
-      activateBoost(tx, {
-        listingId: listing.id,
-        category: listing.category,
-        pricePaid: payment.amount,
-        paymentId: payment.id,
-      }),
-    );
-  }
-
-  if (payment.type === "SUBSCRIPTION") {
-    const now = new Date();
-    await prisma.subscription.create({
-      data: {
-        userId: payment.userId,
-        paymentId: payment.id,
-        status: "ACTIVE",
-        startedAt: now,
-        expiresAt: new Date(now.getTime() + SUBSCRIPTION_DURATION_MS),
-        pricePaid: payment.amount,
-      },
-    });
-
-    if (payment.listingId) {
-      const listing = await prisma.listing.update({
-        where: { id: payment.listingId },
-        data: { status: "LIVE", publishedAt: now },
-      });
-      const url = `${APP_BASE_URL}/listings/${listing.id}`;
-      await notifyUser(payment.userId, subscriptionActivatedMessage(listing.title, url));
-    }
+  if (outcome.published) {
+    const url = `${APP_BASE_URL}/listings/${outcome.published.id}`;
+    const message = outcome.viaSubscription
+      ? subscriptionActivatedMessage(outcome.published.title, url)
+      : listingPublishedMessage(outcome.published.title, url);
+    await notifyUser(payment.userId, message);
   }
 
   // Referral conversions are keyed off a paying user's first LISTING_PUBLISH
   // or SUBSCRIPTION payment — a re-boost (BOOST type) isn't a conversion.
+  // issueReferralCredit is itself idempotent (acts only on a PENDING referral).
   if (payment.type === "LISTING_PUBLISH" || payment.type === "SUBSCRIPTION") {
     await issueReferralCredit(payment);
   }
