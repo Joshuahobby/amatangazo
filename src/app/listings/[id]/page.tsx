@@ -33,39 +33,38 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
   const tc = await getTranslations("common");
 
   return (
-    <main style={{ maxWidth: 700, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      {jsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
-      )}
-      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-        <span style={{ background: "#eee", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>
-          {listing.category}
-        </span>
-        {listing.isCurrentlyBoosted && (
-          <span style={{ background: "#ffe9a8", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>{tc("featured")}</span>
-        )}
+    <main className="page max-w-3xl">
+      {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />}
+      <div className="flex flex-wrap gap-2">
+        <span className="badge-neutral">{listing.category}</span>
+        {listing.isCurrentlyBoosted && <span className="badge-featured">{tc("featured")}</span>}
         {listing.status !== "LIVE" && (
-          <span style={{ background: "#fdd", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>
+          <span className="badge bg-red-100 text-red-800">
             {listing.status} {t("onlyVisibleToYou")}
           </span>
         )}
       </div>
 
-      <h1>{listing.title}</h1>
-      <p style={{ color: "#666" }}>{listing.location}</p>
+      <h1 className="page-title mt-3">{listing.title}</h1>
+      <p className="page-subtitle">{listing.location}</p>
 
       {listing.images.length > 0 && (
-        <div style={{ display: "flex", gap: 8, overflowX: "auto", margin: "16px 0" }}>
+        <div className="my-4 flex gap-2 overflow-x-auto">
           {listing.images.map((image) => (
             // eslint-disable-next-line @next/next/no-img-element -- R2 URLs, not part of Next's image optimization domain list yet
-            <img key={image.id} src={image.url} alt={listing.title} style={{ height: 160, borderRadius: 8 }} />
+            <img
+              key={image.id}
+              src={image.url}
+              alt={listing.title}
+              className="h-40 shrink-0 rounded-lg border border-border object-cover"
+            />
           ))}
         </div>
       )}
 
-      <p style={{ whiteSpace: "pre-wrap" }}>{listing.description}</p>
+      <p className="mt-4 whitespace-pre-wrap text-foreground">{listing.description}</p>
 
-      <hr />
+      <div className="my-6 border-t border-border" />
 
       {listing.category === "JOB" && <JobDetailsSection listing={listing} />}
       {listing.category === "TENDER" && <TenderDetailsSection listing={listing} />}
@@ -74,11 +73,13 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
 
       {isOwner && listing.status === "LIVE" && <BoostButton listingId={listing.id} />}
 
-      <hr />
+      <div className="my-6 border-t border-border" />
 
-      <p>
+      <p className="text-sm text-foreground">
         {t("postedBy")} <strong>{listing.poster.businessName ?? listing.poster.name}</strong>
-        {listing.poster.verificationStatus === "VERIFIED" && ` ✓ ${t("verified")}`}
+        {listing.poster.verificationStatus === "VERIFIED" && (
+          <span className="ml-1 text-primary">✓ {t("verified")}</span>
+        )}
       </p>
     </main>
   );

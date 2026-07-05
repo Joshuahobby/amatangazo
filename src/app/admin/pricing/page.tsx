@@ -47,28 +47,30 @@ export default function AdminPricingPage() {
 
   return (
     <div>
-      <h1>Pricing</h1>
-      <p style={{ color: "#666" }}>
+      <h1 className="page-title">Pricing</h1>
+      <p className="page-subtitle">
         Changes apply immediately — checkout reads these rates on every request, no deploy needed.
       </p>
-      {message && <p>{message}</p>}
-      <table style={{ borderCollapse: "collapse" }}>
+      {message && <p className="mt-2 text-sm text-primary">{message}</p>}
+      <table className="admin-table mt-4 max-w-lg">
         <tbody>
           {rows.map((row) => (
             <tr key={row.tier}>
-              <td style={{ padding: 8 }}>{tierLabels[row.tier] ?? row.tier}</td>
-              <td style={{ padding: 8 }}>
-                <input
-                  type="number"
-                  min={0}
-                  value={drafts[row.tier] ?? ""}
-                  onChange={(e) => setDrafts({ ...drafts, [row.tier]: e.target.value })}
-                  style={{ width: 120 }}
-                />{" "}
-                RWF
+              <td>{tierLabels[row.tier] ?? row.tier}</td>
+              <td>
+                <span className="inline-flex items-center gap-1.5">
+                  <input
+                    type="number"
+                    min={0}
+                    value={drafts[row.tier] ?? ""}
+                    onChange={(e) => setDrafts({ ...drafts, [row.tier]: e.target.value })}
+                    className="input w-28 py-1"
+                  />
+                  RWF
+                </span>
               </td>
-              <td style={{ padding: 8 }}>
-                <button type="button" onClick={() => handleSave(row.tier)} disabled={savingTier === row.tier}>
+              <td>
+                <button type="button" onClick={() => handleSave(row.tier)} disabled={savingTier === row.tier} className="btn-outline btn-sm">
                   Save
                 </button>
               </td>

@@ -15,16 +15,18 @@ export function AuthStatus() {
 
   if (!session) {
     return (
-      <span style={{ fontFamily: "sans-serif", fontSize: 13 }}>
-        <Link href="/login">{t("login")}</Link>
-      </span>
+      <Link href="/login" className="link">
+        {t("login")}
+      </Link>
     );
   }
 
   return (
-    <span style={{ fontFamily: "sans-serif", fontSize: 13 }}>
-      <Link href="/dashboard" style={{ marginRight: 8 }}>{t("dashboard")}</Link>
-      {session.user.name || session.user.email}{" "}
+    <span className="flex items-center gap-3">
+      <Link href="/dashboard" className="link">
+        {t("dashboard")}
+      </Link>
+      <span className="text-muted">{session.user.name || session.user.email}</span>
       <button
         type="button"
         onClick={async () => {
@@ -32,6 +34,7 @@ export function AuthStatus() {
           router.push("/login");
           router.refresh();
         }}
+        className="btn-outline btn-sm"
       >
         {t("signOut")}
       </button>

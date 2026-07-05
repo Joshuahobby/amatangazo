@@ -11,7 +11,7 @@ export async function AuctionDetailsSection({ listing }: { listing: ListingWithD
   return (
     <>
       <AuctionCountdown auctionDate={details.auctionDate.toISOString()} />
-      <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "4px 16px", marginTop: 12 }}>
+      <dl className="detail-grid mt-3">
         <dt>{t("auctionDate")}</dt>
         <dd>{details.auctionDate.toLocaleString()}</dd>
         <dt>{t("auctionLocation")}</dt>
@@ -28,7 +28,9 @@ export async function AuctionDetailsSection({ listing }: { listing: ListingWithD
           <>
             <dt>{t("registrationPhone")}</dt>
             <dd>
-              <a href={`tel:${details.registrationContactPhone}`}>{details.registrationContactPhone}</a>
+              <a href={`tel:${details.registrationContactPhone}`} className="link">
+                {details.registrationContactPhone}
+              </a>
             </dd>
           </>
         )}
@@ -42,7 +44,9 @@ export async function AuctionDetailsSection({ listing }: { listing: ListingWithD
           <>
             <dt>{t("email")}</dt>
             <dd>
-              <a href={`mailto:${details.registrationContactEmail}`}>{details.registrationContactEmail}</a>
+              <a href={`mailto:${details.registrationContactEmail}`} className="link">
+                {details.registrationContactEmail}
+              </a>
             </dd>
           </>
         )}

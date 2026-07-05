@@ -2,22 +2,34 @@ import Link from "next/link";
 
 import { requireAdmin } from "@/lib/admin";
 
+const links = [
+  { href: "/admin", label: "Admin" },
+  { href: "/admin/moderation", label: "Moderation" },
+  { href: "/admin/pricing", label: "Pricing" },
+  { href: "/admin/referrals", label: "Referrals" },
+  { href: "/admin/umucyo", label: "Umucyo" },
+  { href: "/admin/notifications", label: "Notifications" },
+  { href: "/admin/tender-summaries", label: "AI Summaries" },
+  { href: "/admin/verification", label: "Verification" },
+];
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
 
   return (
-    <div style={{ fontFamily: "sans-serif" }}>
-      <nav style={{ display: "flex", gap: 16, padding: 16, borderBottom: "1px solid #ddd" }}>
-        <Link href="/admin">Admin</Link>
-        <Link href="/admin/moderation">Moderation</Link>
-        <Link href="/admin/pricing">Pricing</Link>
-        <Link href="/admin/referrals">Referrals</Link>
-        <Link href="/admin/umucyo">Umucyo</Link>
-        <Link href="/admin/notifications">Notifications</Link>
-        <Link href="/admin/tender-summaries">AI Summaries</Link>
-        <Link href="/admin/verification">Verification</Link>
+    <div>
+      <nav className="flex flex-wrap gap-1 border-b border-border bg-surface px-4 py-2">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-background hover:text-foreground"
+          >
+            {link.label}
+          </Link>
+        ))}
       </nav>
-      <div style={{ padding: 16 }}>{children}</div>
+      <div className="mx-auto max-w-5xl px-4 py-6">{children}</div>
     </div>
   );
 }

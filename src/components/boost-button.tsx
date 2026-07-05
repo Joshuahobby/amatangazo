@@ -67,31 +67,33 @@ export function BoostButton({ listingId }: { listingId: string }) {
   if (!info) return null;
 
   return (
-    <div style={{ border: "1px dashed #ccc", borderRadius: 8, padding: 12, marginTop: 12 }}>
+    <div className="card border-dashed">
       {info.isCurrentlyBoosted && info.boostExpiresAt && (
-        <p>Currently featured until {new Date(info.boostExpiresAt).toLocaleString()}.</p>
+        <p className="text-sm text-muted">Currently featured until {new Date(info.boostExpiresAt).toLocaleString()}.</p>
       )}
-      {message && <p>{message}</p>}
-      {info.availableCredits.map((credit) => (
-        <button
-          key={credit.id}
-          type="button"
-          onClick={() => handleRedeemCredit(credit.id)}
-          disabled={submitting}
-          style={{ marginRight: 8 }}
-        >
-          Use RWF {credit.amount.toLocaleString()} referral credit
-        </button>
-      ))}
-      {info.quote.kind === "FROM_ALLOTMENT" ? (
-        <button type="button" onClick={handleRedeem} disabled={submitting}>
-          Boost now (free — monthly allotment)
-        </button>
-      ) : (
-        <button type="button" onClick={handleSimulatePay} disabled={submitting}>
-          Boost now — RWF {info.quote.price.toLocaleString()} (simulated, no live PawaPay account)
-        </button>
-      )}
+      {message && <p className="mt-1 text-sm text-foreground">{message}</p>}
+      <div className="mt-2 flex flex-wrap gap-2">
+        {info.availableCredits.map((credit) => (
+          <button
+            key={credit.id}
+            type="button"
+            onClick={() => handleRedeemCredit(credit.id)}
+            disabled={submitting}
+            className="btn-accent btn-sm"
+          >
+            Use RWF {credit.amount.toLocaleString()} referral credit
+          </button>
+        ))}
+        {info.quote.kind === "FROM_ALLOTMENT" ? (
+          <button type="button" onClick={handleRedeem} disabled={submitting} className="btn-primary btn-sm">
+            Boost now (free — monthly allotment)
+          </button>
+        ) : (
+          <button type="button" onClick={handleSimulatePay} disabled={submitting} className="btn-primary btn-sm">
+            Boost now — RWF {info.quote.price.toLocaleString()} (simulated, no live PawaPay account)
+          </button>
+        )}
+      </div>
     </div>
   );
 }

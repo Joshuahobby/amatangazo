@@ -10,7 +10,7 @@ export function ApplyLink({ listingId, href, label }: { listingId: string; href:
   }
 
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" onClick={track}>
+    <a href={href} target="_blank" rel="noopener noreferrer" onClick={track} className="link">
       {label}
     </a>
   );

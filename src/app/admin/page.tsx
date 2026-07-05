@@ -1,8 +1,11 @@
 export default function AdminHomePage() {
   return (
     <div>
-      <h1>Admin</h1>
-      <p>Moderation (Epic 5), referrals (Epic 4), and verification (P1) dashboards land here as those epics build out.</p>
+      <h1 className="page-title">Admin</h1>
+      <p className="page-subtitle">
+        Moderation, pricing, referrals, Umucyo mirroring, notifications, AI summaries, and verification dashboards
+        are in the nav above.
+      </p>
     </div>
   );
 }

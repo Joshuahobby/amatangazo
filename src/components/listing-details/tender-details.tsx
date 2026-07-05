@@ -10,12 +10,12 @@ export async function TenderDetailsSection({ listing }: { listing: ListingWithDe
   return (
     <>
       {listing.source === "GOVERNMENT_MIRROR" && (
-        <p style={{ background: "#eef", padding: 8, borderRadius: 4 }}>
+        <p className="mb-4 rounded-lg bg-cat-tender/10 px-3 py-2 text-sm text-foreground">
           {t("governmentSource")}
           {listing.sourceUrl && (
             <>
               {" — "}
-              <a href={listing.sourceUrl} target="_blank" rel="noopener noreferrer">
+              <a href={listing.sourceUrl} target="_blank" rel="noopener noreferrer" className="link">
                 {t("viewOriginalNotice")}
               </a>
             </>
@@ -23,9 +23,9 @@ export async function TenderDetailsSection({ listing }: { listing: ListingWithDe
         </p>
       )}
       {details.aiSummaryGeneratedAt && (
-        <section style={{ background: "#f6f9f6", border: "1px solid #cde3cd", borderRadius: 8, padding: 12, marginBottom: 12 }}>
-          <p style={{ margin: "0 0 8px", fontWeight: "bold" }}>{t("aiSummaryTitle")}</p>
-          <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "4px 16px", margin: 0, fontSize: 14 }}>
+        <section className="card mb-4 border-primary/30 bg-primary/5">
+          <p className="mb-2 font-semibold text-foreground">{t("aiSummaryTitle")}</p>
+          <dl className="detail-grid">
             <dt>{t("submissionDeadline")}</dt>
             <dd>{details.aiSummaryDeadline}</dd>
             <dt>{t("budgetBand")}</dt>
@@ -35,10 +35,10 @@ export async function TenderDetailsSection({ listing }: { listing: ListingWithDe
             <dt>{t("requiredDocuments")}</dt>
             <dd>{details.aiSummaryDocuments}</dd>
           </dl>
-          <p style={{ margin: "8px 0 0", fontSize: 12, color: "#666" }}>{t("aiSummaryDisclaimer")}</p>
+          <p className="mt-2 text-xs text-muted">{t("aiSummaryDisclaimer")}</p>
         </section>
       )}
-      <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "4px 16px" }}>
+      <dl className="detail-grid">
         <dt>{t("sector")}</dt>
         <dd>{details.sector}</dd>
         {(details.budgetMin || details.budgetMax) && (
@@ -67,7 +67,7 @@ export async function TenderDetailsSection({ listing }: { listing: ListingWithDe
           <>
             <dt>{t("tenderDocument")}</dt>
             <dd>
-              <a href={details.documentUrl} target="_blank" rel="noopener noreferrer">
+              <a href={details.documentUrl} target="_blank" rel="noopener noreferrer" className="link">
                 {t("download")}
               </a>
             </dd>

@@ -27,51 +27,51 @@ export default function AdminReferralsPage() {
       .then(setData);
   }, []);
 
-  if (!data) return <p>Loading...</p>;
+  if (!data) return <p className="text-muted">Loading...</p>;
 
   return (
     <div>
-      <h1>Referrals</h1>
+      <h1 className="page-title">Referrals</h1>
 
-      <div style={{ display: "flex", gap: 16, margin: "16px 0" }}>
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16 }}>
-          <p style={{ fontSize: 24, fontWeight: "bold" }}>{data.totalReferrals}</p>
-          <p>Total referrals</p>
+      <div className="my-4 flex flex-wrap gap-3">
+        <div className="stat-card">
+          <p className="stat-value">{data.totalReferrals}</p>
+          <p className="stat-label">Total referrals</p>
         </div>
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16 }}>
-          <p style={{ fontSize: 24, fontWeight: "bold" }}>{data.statusCounts.CREDITED ?? 0}</p>
-          <p>Converted</p>
+        <div className="stat-card">
+          <p className="stat-value">{data.statusCounts.CREDITED ?? 0}</p>
+          <p className="stat-label">Converted</p>
         </div>
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16 }}>
-          <p style={{ fontSize: 24, fontWeight: "bold" }}>{data.statusCounts.FRAUD_HOLD ?? 0}</p>
-          <p>Fraud holds</p>
+        <div className="stat-card">
+          <p className="stat-value">{data.statusCounts.FRAUD_HOLD ?? 0}</p>
+          <p className="stat-label">Fraud holds</p>
         </div>
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16 }}>
-          <p style={{ fontSize: 24, fontWeight: "bold" }}>RWF {data.creditsIssuedTotal.toLocaleString()}</p>
-          <p>Total credit cost ({data.creditsIssuedCount} credits)</p>
+        <div className="stat-card">
+          <p className="stat-value">RWF {data.creditsIssuedTotal.toLocaleString()}</p>
+          <p className="stat-label">Total credit cost ({data.creditsIssuedCount} credits)</p>
         </div>
       </div>
 
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
+      <table className="admin-table">
         <thead>
           <tr>
-            <th style={{ textAlign: "left", padding: 8 }}>Referrer</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Referred</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Status</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Credit</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Note</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Date</th>
+            <th>Referrer</th>
+            <th>Referred</th>
+            <th>Status</th>
+            <th>Credit</th>
+            <th>Note</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
           {data.recentReferrals.map((r) => (
             <tr key={r.id}>
-              <td style={{ padding: 8 }}>{r.referrer.name}</td>
-              <td style={{ padding: 8 }}>{r.referredUser.name}</td>
-              <td style={{ padding: 8 }}>{r.status}</td>
-              <td style={{ padding: 8 }}>{r.creditValue ? `RWF ${r.creditValue.toLocaleString()}` : "—"}</td>
-              <td style={{ padding: 8 }}>{r.fraudFlagReason ?? "—"}</td>
-              <td style={{ padding: 8 }}>{new Date(r.createdAt).toLocaleDateString()}</td>
+              <td>{r.referrer.name}</td>
+              <td>{r.referredUser.name}</td>
+              <td>{r.status}</td>
+              <td>{r.creditValue ? `RWF ${r.creditValue.toLocaleString()}` : "—"}</td>
+              <td>{r.fraudFlagReason ?? "—"}</td>
+              <td>{new Date(r.createdAt).toLocaleDateString()}</td>
             </tr>
           ))}
         </tbody>

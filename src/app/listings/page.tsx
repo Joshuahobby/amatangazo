@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { SaveSearchButton } from "@/components/save-search-button";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { SaveSearchButton } from "@/components/save-search-button";
 import { experienceLevels, listingCategories } from "@/lib/validations/listing";
 
 type SearchResultListing = {
@@ -56,11 +56,15 @@ export default function ListingsSearchPage() {
   }, [q, category, location, sector, experienceLevel]);
 
   return (
-    <main style={{ maxWidth: 800, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      <h1>{t("title")}</h1>
+    <main className="page max-w-3xl">
+      <h1 className="page-title">{t("title")}</h1>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-        <button type="button" onClick={() => setCategory("")} style={{ fontWeight: category === "" ? "bold" : "normal" }}>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setCategory("")}
+          className={category === "" ? "btn-primary btn-sm" : "btn-outline btn-sm"}
+        >
           {t("all")}
         </button>
         {listingCategories.map((c) => (
@@ -68,21 +72,26 @@ export default function ListingsSearchPage() {
             key={c}
             type="button"
             onClick={() => setCategory(c)}
-            style={{ fontWeight: category === c ? "bold" : "normal" }}
+            className={category === c ? "btn-primary btn-sm" : "btn-outline btn-sm"}
           >
             {t(`category${c}`)}
           </button>
         ))}
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-        <input placeholder={t("searchKeyword")} value={q} onChange={(e) => setQ(e.target.value)} />
-        <input placeholder={t("location")} value={location} onChange={(e) => setLocation(e.target.value)} />
+      <div className="mt-4 flex flex-wrap gap-2">
+        <input placeholder={t("searchKeyword")} value={q} onChange={(e) => setQ(e.target.value)} className="input w-auto flex-1" />
+        <input
+          placeholder={t("location")}
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="input w-auto flex-1"
+        />
         {(category === "JOB" || category === "TENDER") && (
-          <input placeholder={t("sector")} value={sector} onChange={(e) => setSector(e.target.value)} />
+          <input placeholder={t("sector")} value={sector} onChange={(e) => setSector(e.target.value)} className="input w-auto flex-1" />
         )}
         {category === "JOB" && (
-          <select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)}>
+          <select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)} className="input w-auto flex-1">
             <option value="">{t("anyExperienceLevel")}</option>
             {experienceLevels.map((level) => (
               <option key={level} value={level}>
@@ -94,25 +103,21 @@ export default function ListingsSearchPage() {
       </div>
 
       {category !== "" && (
-        <p>
+        <p className="mt-3">
           <SaveSearchButton category={category} filters={{ keyword: q, location, sector, experienceLevel }} />
         </p>
       )}
 
-      <p style={{ color: "#666" }}>{loading ? t("searching") : t("results", { count: total })}</p>
+      <p className="mt-4 text-sm text-muted">{loading ? t("searching") : t("results", { count: total })}</p>
 
-      <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+      <ul className="mt-3 flex flex-col gap-3">
         {results.map((listing) => (
-          <li key={listing.id} style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12 }}>
-            <Link href={`/listings/${listing.id}`} style={{ fontWeight: "bold" }}>
+          <li key={listing.id} className="card">
+            <Link href={`/listings/${listing.id}`} className="font-semibold text-foreground hover:text-primary">
               {listing.title}
             </Link>
-            {listing.isCurrentlyBoosted && (
-              <span style={{ marginLeft: 8, background: "#ffe9a8", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>
-                {tc("featured")}
-              </span>
-            )}
-            <p style={{ margin: "4px 0", color: "#666" }}>
+            {listing.isCurrentlyBoosted && <span className="badge-featured ml-2">{tc("featured")}</span>}
+            <p className="mt-1 text-sm text-muted">
               {listing.category} · {listing.location}
               {listing.jobDetails && ` · ${listing.jobDetails.sector} · ${listing.jobDetails.experienceLevel}`}
               {listing.tenderDetails && ` · ${listing.tenderDetails.sector}`}

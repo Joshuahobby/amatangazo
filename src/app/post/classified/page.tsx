@@ -54,23 +54,23 @@ export default function PostClassifiedPage() {
   if (listingId) return <PostResult listingId={listingId} category="CLASSIFIED" />;
 
   return (
-    <main style={{ maxWidth: 500, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      <h1>{t("classifiedTitle")}</h1>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <main className="page">
+      <h1 className="page-title">{t("classifiedTitle")}</h1>
+      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <BaseListingFields value={base} onChange={setBase} />
 
-        <label>
+        <label className="field">
           Subcategory
           <input
             name="subcategory"
             required
             value={details.subcategory}
             onChange={(e) => setDetails({ ...details, subcategory: e.target.value })}
-            style={{ display: "block", width: "100%" }}
+            className="input font-normal"
           />
         </label>
 
-        <label>
+        <label className="field">
           Price (RWF, optional)
           <input
             name="price"
@@ -78,12 +78,12 @@ export default function PostClassifiedPage() {
             min={0}
             value={details.price}
             onChange={(e) => setDetails({ ...details, price: e.target.value })}
-            style={{ display: "block", width: "100%" }}
+            className="input font-normal"
           />
         </label>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" disabled={submitting}>
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? t("posting") : t("submitClassified")}
         </button>
       </form>

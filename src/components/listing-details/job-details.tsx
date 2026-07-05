@@ -9,7 +9,7 @@ export async function JobDetailsSection({ listing }: { listing: ListingWithDetai
   const t = await getTranslations("listing");
 
   return (
-    <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "4px 16px" }}>
+    <dl className="detail-grid">
       <dt>{t("sector")}</dt>
       <dd>{details.sector}</dd>
       <dt>{t("experienceLevel")}</dt>

@@ -23,13 +23,15 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <span style={{ display: "inline-flex", gap: 4 }}>
+    <span className="flex items-center gap-1 text-xs">
       {locales.map(({ code, label }) => (
         <button
           key={code}
           type="button"
           onClick={() => switchTo(code)}
-          style={{ fontWeight: locale === code ? "bold" : "normal", fontSize: 12 }}
+          className={`rounded px-1.5 py-0.5 transition-colors ${
+            locale === code ? "bg-primary text-primary-contrast font-semibold" : "text-muted hover:text-foreground"
+          }`}
         >
           {label}
         </button>

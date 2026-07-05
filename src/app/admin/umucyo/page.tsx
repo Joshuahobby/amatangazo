@@ -44,37 +44,35 @@ export default function AdminUmucyoPage() {
 
   return (
     <div>
-      <h1>Umucyo tender mirror</h1>
-      <p style={{ color: "#666" }}>
+      <h1 className="page-title">Umucyo tender mirror</h1>
+      <p className="page-subtitle">
         {mirroredCount} government tenders mirrored. Runs are rate-limited and logged below — a run that finds zero
         tenders is recorded as a failure, since that usually means the source markup changed.
       </p>
 
-      <button type="button" onClick={handleRun} disabled={running} style={{ marginBottom: 12 }}>
+      <button type="button" onClick={handleRun} disabled={running} className="btn-primary btn-sm mt-4">
         {running ? "Running..." : "Run scrape now"}
       </button>
-      {message && <p>{message}</p>}
+      {message && <p className="mt-2 text-sm text-muted">{message}</p>}
 
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
+      <table className="admin-table mt-4">
         <thead>
           <tr>
-            <th style={{ textAlign: "left", padding: 8 }}>Run at</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Status</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Found</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Created</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Error</th>
+            <th>Run at</th>
+            <th>Status</th>
+            <th>Found</th>
+            <th>Created</th>
+            <th>Error</th>
           </tr>
         </thead>
         <tbody>
           {logs.map((log) => (
             <tr key={log.id}>
-              <td style={{ padding: 8 }}>{new Date(log.runAt).toLocaleString()}</td>
-              <td style={{ padding: 8 }}>{log.status}</td>
-              <td style={{ padding: 8 }}>{log.tendersFound}</td>
-              <td style={{ padding: 8 }}>{log.tendersCreated}</td>
-              <td style={{ padding: 8, maxWidth: 400, overflow: "hidden", textOverflow: "ellipsis" }}>
-                {log.errorMessage ?? "—"}
-              </td>
+              <td>{new Date(log.runAt).toLocaleString()}</td>
+              <td>{log.status}</td>
+              <td>{log.tendersFound}</td>
+              <td>{log.tendersCreated}</td>
+              <td className="max-w-xs truncate">{log.errorMessage ?? "—"}</td>
             </tr>
           ))}
         </tbody>

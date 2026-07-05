@@ -30,32 +30,41 @@ export function SaveSearchButton({ category, filters }: { category: string; filt
 
   if (state === "saved") {
     return (
-      <p style={{ fontSize: 13 }}>
-        {t("saved")} <Link href="/saved-searches">{t("manageLink")}</Link>
+      <p className="text-sm text-muted">
+        {t("saved")}{" "}
+        <Link href="/saved-searches" className="link">
+          {t("manageLink")}
+        </Link>
       </p>
     );
   }
   if (state === "unauthenticated") {
     return (
-      <p style={{ fontSize: 13 }}>
-        <Link href="/login">{t("loginToSave")}</Link>
+      <p className="text-sm">
+        <Link href="/login" className="link">
+          {t("loginToSave")}
+        </Link>
       </p>
     );
   }
 
   return (
-    <span style={{ display: "inline-flex", gap: 8, alignItems: "center", fontSize: 13 }}>
-      <select value={channel} onChange={(e) => setChannel(e.target.value as (typeof channels)[number])}>
+    <span className="inline-flex items-center gap-2 text-sm">
+      <select
+        value={channel}
+        onChange={(e) => setChannel(e.target.value as (typeof channels)[number])}
+        className="input w-auto py-1"
+      >
         {channels.map((c) => (
           <option key={c} value={c}>
             {t(`channel${c}`)}
           </option>
         ))}
       </select>
-      <button type="button" onClick={handleSave} disabled={state === "saving"}>
+      <button type="button" onClick={handleSave} disabled={state === "saving"} className="btn-outline btn-sm">
         {t("save")}
       </button>
-      {state === "error" && <span style={{ color: "red" }}>{t("error")}</span>}
+      {state === "error" && <span className="text-red-600">{t("error")}</span>}
     </span>
   );
 }

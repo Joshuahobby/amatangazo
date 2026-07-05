@@ -52,3 +52,102 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
+
+/*
+ * Reusable component classes so every page shares one visual language.
+ * Interior pages use these instead of bespoke inline styles.
+ */
+@layer components {
+  .page {
+    @apply mx-auto w-full max-w-3xl px-4 py-8;
+  }
+  .page-title {
+    @apply text-2xl font-bold tracking-tight text-foreground;
+  }
+  .page-subtitle {
+    @apply mt-1 text-sm text-muted;
+  }
+
+  .card {
+    @apply rounded-xl border border-border bg-surface p-4;
+  }
+
+  /*
+   * Tailwind v4's @apply can only reference real utilities, not custom
+   * classes defined here — so each button variant repeats the shared base
+   * styles rather than composing off a `.btn` class (that pattern 400s the
+   * CSS build under v4, unlike v3's @layer components).
+   */
+  .btn-primary {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 bg-primary text-primary-contrast hover:bg-primary-hover;
+  }
+  .btn-accent {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 bg-accent text-accent-contrast hover:bg-accent-hover;
+  }
+  .btn-outline {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 border border-border bg-surface text-foreground hover:border-primary hover:text-primary;
+  }
+  .btn-danger {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 border border-red-300 bg-surface text-red-700 hover:bg-red-50;
+  }
+  .btn-sm {
+    @apply px-3 py-1 text-xs;
+  }
+
+  .input {
+    @apply block w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary;
+  }
+  .field {
+    @apply flex flex-col gap-1 text-sm font-medium text-foreground;
+  }
+
+  .link {
+    @apply font-medium text-primary hover:underline;
+  }
+
+  /* Used both standalone (className="badge bg-...") and via the variants below. */
+  .badge {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium;
+  }
+  .badge-neutral {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-border/60 text-foreground;
+  }
+  .badge-featured {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-accent text-accent-contrast;
+  }
+  .badge-status {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium border border-border text-muted;
+  }
+
+  .admin-table {
+    @apply w-full border-collapse text-sm;
+  }
+  .admin-table th {
+    @apply border-b border-border px-2 py-2 text-left font-semibold text-muted;
+  }
+  .admin-table td {
+    @apply border-b border-border/60 px-2 py-2 align-top;
+  }
+
+  /* Stat tile used on admin/referrals dashboards. */
+  .stat-card {
+    @apply rounded-xl border border-border bg-surface p-4 flex-1;
+  }
+  .stat-card .stat-value {
+    @apply text-2xl font-bold text-foreground;
+  }
+  .stat-card .stat-label {
+    @apply text-sm text-muted;
+  }
+
+  /* Label/value grid used on listing detail pages (job/tender/auction/classified specs). */
+  .detail-grid {
+    @apply grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm;
+  }
+  .detail-grid dt {
+    @apply font-medium text-muted;
+  }
+  .detail-grid dd {
+    @apply text-foreground;
+  }
+}

@@ -28,15 +28,16 @@ export default function AdminTenderSummariesPage() {
 
   return (
     <div>
-      <h1>AI Tender Summaries</h1>
-      <p>
-        Summarized: <strong>{done}</strong> · Missing: <strong>{missing ?? "..."}</strong>
+      <h1 className="page-title">AI Tender Summaries</h1>
+      <p className="page-subtitle">
+        Summarized: <strong className="text-foreground">{done}</strong> · Missing:{" "}
+        <strong className="text-foreground">{missing ?? "..."}</strong>
       </p>
-      <button type="button" onClick={runBatch} disabled={running || missing === 0}>
+      <button type="button" onClick={runBatch} disabled={running || missing === 0} className="btn-primary btn-sm mt-3">
         {running ? "Summarizing..." : "Summarize next 10"}
       </button>
       {lastRun && (
-        <p style={{ fontSize: 13, color: "#666" }}>
+        <p className="mt-2 text-sm text-muted">
           Processed {lastRun.processed} · {lastRun.remaining} remaining
         </p>
       )}

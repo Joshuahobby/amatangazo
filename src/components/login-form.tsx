@@ -80,17 +80,17 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
   }
 
   return (
-    <main style={{ maxWidth: 400, margin: "3rem auto", fontFamily: "sans-serif" }}>
-      <h1>{t("title")}</h1>
+    <main className="mx-auto w-full max-w-sm px-4 py-16">
+      <h1 className="page-title text-center">{t("title")}</h1>
 
-      <section style={{ marginBottom: 24 }}>
+      <section className="mt-8">
         {googleConfigured ? (
-          <button type="button" onClick={handleGoogleSignIn} style={{ width: "100%" }}>
+          <button type="button" onClick={handleGoogleSignIn} className="btn-outline w-full">
             {t("signInWithGoogle")}
           </button>
         ) : (
-          <form onSubmit={handleSimulateGoogleSignIn} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <p style={{ fontSize: 13, color: "#666" }}>
+          <form onSubmit={handleSimulateGoogleSignIn} className="flex flex-col gap-2">
+            <p className="text-xs text-muted">
               Google isn&apos;t configured yet (T0.6) — simulate a Google sign-in instead:
             </p>
             <input
@@ -99,62 +99,66 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
               value={devEmail}
               onChange={(e) => setDevEmail(e.target.value)}
               required
+              className="input"
             />
             <input
               type="text"
               placeholder="Name (optional)"
               value={devName}
               onChange={(e) => setDevName(e.target.value)}
+              className="input"
             />
-            {googleError && <p style={{ color: "red" }}>{googleError}</p>}
-            <button type="submit" disabled={googleSubmitting}>
+            {googleError && <p className="text-sm text-red-600">{googleError}</p>}
+            <button type="submit" disabled={googleSubmitting} className="btn-outline">
               Simulate Google sign-in
             </button>
           </form>
         )}
       </section>
 
-      <hr />
+      <div className="my-6 border-t border-border" />
 
-      <section style={{ marginTop: 24 }}>
-        <h2 style={{ fontSize: 16 }}>{t("orUseEmail")}</h2>
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-muted">{t("orUseEmail")}</h2>
         {step === "enterEmail" && (
-          <form onSubmit={handleSendCode} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <form onSubmit={handleSendCode} className="flex flex-col gap-2">
             <input
               type="email"
               placeholder={t("emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="input"
             />
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <button type="submit" disabled={submitting}>
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            <button type="submit" disabled={submitting} className="btn-primary">
               {t("sendCode")}
             </button>
           </form>
         )}
         {step === "enterCode" && (
-          <form onSubmit={handleVerifyCode} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {devCode && (
-              <p style={{ fontSize: 13, color: "#666" }}>Dev mode — your code is {devCode}</p>
-            )}
+          <form onSubmit={handleVerifyCode} className="flex flex-col gap-2">
+            {devCode && <p className="text-xs text-muted">Dev mode — your code is {devCode}</p>}
             <input
               type="text"
               placeholder={t("codePlaceholder")}
               value={code}
               onChange={(e) => setCode(e.target.value)}
               required
+              className="input"
             />
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <button type="submit" disabled={submitting}>
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            <button type="submit" disabled={submitting} className="btn-primary">
               {t("verify")}
             </button>
           </form>
         )}
       </section>
 
-      <p style={{ marginTop: 24, fontSize: 13 }}>
-        <Link href="/login/phone">{t("usePhoneInstead")}</Link>
+      <p className="mt-6 text-center text-sm">
+        <Link href="/login/phone" className="link">
+          {t("usePhoneInstead")}
+        </Link>
       </p>
     </main>
   );

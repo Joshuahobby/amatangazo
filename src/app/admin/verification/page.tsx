@@ -41,51 +41,35 @@ export default function AdminVerificationPage() {
 
   return (
     <div>
-      <h1>Verification queue</h1>
-      <p>
-        Pending: <strong>{queue.length}</strong>
-        {slaBreachedCount > 0 && (
-          <span style={{ color: "red", marginLeft: 12 }}>⚠ {slaBreachedCount} past the 48h SLA</span>
-        )}
+      <h1 className="page-title">Verification queue</h1>
+      <p className="page-subtitle">
+        Pending: <strong className="text-foreground">{queue.length}</strong>
+        {slaBreachedCount > 0 && <span className="ml-3 text-red-600">⚠ {slaBreachedCount} past the 48h SLA</span>}
       </p>
 
-      <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+      <ul className="mt-4 flex flex-col gap-3">
         {queue.map((entry) => (
-          <li
-            key={entry.id}
-            style={{
-              border: entry.slaBreached ? "2px solid #d33" : "1px solid #ddd",
-              borderRadius: 8,
-              padding: 12,
-            }}
-          >
-            <strong>{entry.name ?? entry.contact}</strong> · {entry.accountType}
-            {entry.isSubscriber && (
-              <span style={{ marginLeft: 8, background: "#e6f0ff", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>
-                Subscriber
-              </span>
-            )}
-            {entry.slaBreached && (
-              <span style={{ marginLeft: 8, background: "#fdd", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>
-                SLA breached
-              </span>
-            )}
-            <p style={{ margin: "4px 0", fontSize: 13, color: "#666" }}>
+          <li key={entry.id} className={`card ${entry.slaBreached ? "border-2 border-red-400" : ""}`}>
+            <span className="font-semibold text-foreground">{entry.name ?? entry.contact}</span>
+            <span className="text-muted"> · {entry.accountType}</span>
+            {entry.isSubscriber && <span className="badge bg-cat-tender/15 text-cat-tender ml-2">Subscriber</span>}
+            {entry.slaBreached && <span className="badge bg-red-100 text-red-800 ml-2">SLA breached</span>}
+            <p className="mt-1 text-sm text-muted">
               {entry.contact} · paid RWF {entry.totalPaid.toLocaleString()} · submitted{" "}
               {entry.submittedAt ? new Date(entry.submittedAt).toLocaleString() : "?"}
             </p>
             {entry.documentUrl && (
-              <p style={{ margin: "4px 0", fontSize: 13 }}>
-                <a href={entry.documentUrl} target="_blank" rel="noopener noreferrer">
+              <p className="mt-1 text-sm">
+                <a href={entry.documentUrl} target="_blank" rel="noopener noreferrer" className="link">
                   View document
                 </a>
               </p>
             )}
-            <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-              <button type="button" onClick={() => review(entry.id, "VERIFIED")}>
+            <div className="mt-3 flex gap-2">
+              <button type="button" onClick={() => review(entry.id, "VERIFIED")} className="btn-primary btn-sm">
                 Approve
               </button>
-              <button type="button" onClick={() => review(entry.id, "REJECTED")}>
+              <button type="button" onClick={() => review(entry.id, "REJECTED")} className="btn-danger btn-sm">
                 Reject
               </button>
             </div>

@@ -38,29 +38,32 @@ export default function SavedSearchesPage() {
 
   if (unauthenticated) {
     return (
-      <main style={{ maxWidth: 600, margin: "2rem auto", fontFamily: "sans-serif" }}>
+      <main className="page max-w-xl">
         <p>
-          <Link href="/login">{t("loginToSave")}</Link>
+          <Link href="/login" className="link">
+            {t("loginToSave")}
+          </Link>
         </p>
       </main>
     );
   }
 
   return (
-    <main style={{ maxWidth: 600, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      <h1>{t("title")}</h1>
-      {searches === null && <p>...</p>}
-      {searches?.length === 0 && <p>{t("empty")}</p>}
-      <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+    <main className="page max-w-xl">
+      <h1 className="page-title">{t("title")}</h1>
+      {searches === null && <p className="mt-4 text-muted">...</p>}
+      {searches?.length === 0 && <p className="mt-4 text-muted">{t("empty")}</p>}
+      <ul className="mt-4 flex flex-col gap-3">
         {searches?.map((search) => (
-          <li key={search.id} style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12 }}>
-            <strong>{search.category}</strong> · {search.channel}
-            <p style={{ margin: "4px 0", color: "#666", fontSize: 13 }}>
+          <li key={search.id} className="card">
+            <span className="font-semibold text-foreground">{search.category}</span>
+            <span className="text-muted"> · {search.channel}</span>
+            <p className="mt-1 text-sm text-muted">
               {Object.entries(search.filters)
                 .map(([k, v]) => `${k}: ${v}`)
                 .join(" · ") || t("noFilters")}
             </p>
-            <button type="button" onClick={() => handleDelete(search.id)} style={{ fontSize: 12 }}>
+            <button type="button" onClick={() => handleDelete(search.id)} className="btn-danger btn-sm mt-2">
               {t("delete")}
             </button>
           </li>

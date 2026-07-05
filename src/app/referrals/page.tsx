@@ -27,16 +27,18 @@ export default function ReferralsPage() {
       .then(setData);
   }, []);
 
-  if (!data) return <p style={{ padding: 24 }}>Loading...</p>;
+  if (!data) return <p className="page text-muted">Loading...</p>;
 
   return (
-    <main style={{ maxWidth: 600, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      <h1>Referrals</h1>
+    <main className="page max-w-xl">
+      <h1 className="page-title">Referrals</h1>
 
-      <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, marginBottom: 16 }}>
-        <p>Share your link — you earn a credit when someone you refer makes their first paid listing or subscribes.</p>
-        <div style={{ display: "flex", gap: 8 }}>
-          <input readOnly value={data.referralLink} style={{ flex: 1 }} />
+      <div className="card mt-4">
+        <p className="text-sm text-foreground">
+          Share your link — you earn a credit when someone you refer makes their first paid listing or subscribes.
+        </p>
+        <div className="mt-3 flex gap-2">
+          <input readOnly value={data.referralLink} className="input flex-1" />
           <button
             type="button"
             onClick={() => {
@@ -44,58 +46,59 @@ export default function ReferralsPage() {
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             }}
+            className="btn-outline"
           >
             {copied ? "Copied!" : "Copy"}
           </button>
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, flex: 1 }}>
-          <p style={{ fontSize: 24, fontWeight: "bold" }}>{data.referralCount}</p>
-          <p>Referred signups</p>
+      <div className="mt-4 flex gap-3">
+        <div className="card flex-1">
+          <p className="text-2xl font-bold text-foreground">{data.referralCount}</p>
+          <p className="text-sm text-muted">Referred signups</p>
         </div>
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, flex: 1 }}>
-          <p style={{ fontSize: 24, fontWeight: "bold" }}>{data.convertedCount}</p>
-          <p>Converted (earned credit)</p>
+        <div className="card flex-1">
+          <p className="text-2xl font-bold text-foreground">{data.convertedCount}</p>
+          <p className="text-sm text-muted">Converted (earned credit)</p>
         </div>
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, flex: 1 }}>
-          <p style={{ fontSize: 24, fontWeight: "bold" }}>RWF {data.availableCreditTotal.toLocaleString()}</p>
-          <p>Available credit</p>
+        <div className="card flex-1">
+          <p className="text-2xl font-bold text-foreground">RWF {data.availableCreditTotal.toLocaleString()}</p>
+          <p className="text-sm text-muted">Available credit</p>
         </div>
       </div>
 
       {data.availableCredits.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
-          <h2 style={{ fontSize: 16 }}>Available credits</h2>
-          <ul>
+        <div className="mt-4">
+          <h2 className="text-sm font-semibold text-muted">Available credits</h2>
+          <ul className="mt-2 flex flex-col gap-1 text-sm text-foreground">
             {data.availableCredits.map((c) => (
               <li key={c.id}>
                 RWF {c.amount.toLocaleString()} — expires {new Date(c.expiresAt).toLocaleDateString()}
               </li>
             ))}
           </ul>
-          <p style={{ fontSize: 13, color: "#666" }}>
+          <p className="mt-1 text-xs text-muted">
             Apply a credit from any listing&apos;s checkout page or its boost button.
           </p>
         </div>
       )}
 
-      <h2 style={{ fontSize: 16 }}>Referral history</h2>
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
+      <h2 className="mt-6 text-sm font-semibold text-muted">Referral history</h2>
+      <table className="admin-table mt-2">
         <thead>
           <tr>
-            <th style={{ textAlign: "left", padding: 8 }}>Referred user</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Status</th>
-            <th style={{ textAlign: "left", padding: 8 }}>Date</th>
+            <th>Referred user</th>
+            <th>Status</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
           {data.referrals.map((r) => (
             <tr key={r.id}>
-              <td style={{ padding: 8 }}>{r.referredUser.name}</td>
-              <td style={{ padding: 8 }}>{r.status}</td>
-              <td style={{ padding: 8 }}>{new Date(r.createdAt).toLocaleDateString()}</td>
+              <td>{r.referredUser.name}</td>
+              <td>{r.status}</td>
+              <td>{new Date(r.createdAt).toLocaleDateString()}</td>
             </tr>
           ))}
         </tbody>

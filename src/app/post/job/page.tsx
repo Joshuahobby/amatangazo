@@ -73,23 +73,23 @@ export default function PostJobPage() {
   if (listingId) return <PostResult listingId={listingId} category="JOB" />;
 
   return (
-    <main style={{ maxWidth: 500, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      <h1>{t("jobTitle")}</h1>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <main className="page">
+      <h1 className="page-title">{t("jobTitle")}</h1>
+      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <BaseListingFields value={base} onChange={setBase} />
 
-        <label>
+        <label className="field">
           Sector
           <input
             name="sector"
             required
             value={details.sector}
             onChange={(e) => setDetails({ ...details, sector: e.target.value })}
-            style={{ display: "block", width: "100%" }}
+            className="input font-normal"
           />
         </label>
 
-        <label>
+        <label className="field">
           Experience level
           <select
             name="experienceLevel"
@@ -97,7 +97,7 @@ export default function PostJobPage() {
             onChange={(e) =>
               setDetails({ ...details, experienceLevel: e.target.value as JobDetailsValue["experienceLevel"] })
             }
-            style={{ display: "block", width: "100%" }}
+            className="input font-normal"
           >
             {experienceLevels.map((level) => (
               <option key={level} value={level}>
@@ -107,7 +107,7 @@ export default function PostJobPage() {
           </select>
         </label>
 
-        <label>
+        <label className="field">
           Application deadline
           <input
             name="applicationDeadline"
@@ -115,11 +115,11 @@ export default function PostJobPage() {
             type="date"
             value={details.applicationDeadline}
             onChange={(e) => setDetails({ ...details, applicationDeadline: e.target.value })}
-            style={{ display: "block", width: "100%" }}
+            className="input font-normal"
           />
         </label>
 
-        <label>
+        <label className="field">
           Application method
           <select
             name="applicationMethod"
@@ -127,7 +127,7 @@ export default function PostJobPage() {
             onChange={(e) =>
               setDetails({ ...details, applicationMethod: e.target.value as JobDetailsValue["applicationMethod"] })
             }
-            style={{ display: "block", width: "100%" }}
+            className="input font-normal"
           >
             {applicationMethods.map((method) => (
               <option key={method} value={method}>
@@ -138,7 +138,7 @@ export default function PostJobPage() {
         </label>
 
         {details.applicationMethod === "EXTERNAL_URL" && (
-          <label>
+          <label className="field">
             Application URL
             <input
               name="applicationUrl"
@@ -146,13 +146,13 @@ export default function PostJobPage() {
               type="url"
               value={details.applicationUrl}
               onChange={(e) => setDetails({ ...details, applicationUrl: e.target.value })}
-              style={{ display: "block", width: "100%" }}
+              className="input font-normal"
             />
           </label>
         )}
 
         {details.applicationMethod === "EMAIL" && (
-          <label>
+          <label className="field">
             Application email
             <input
               name="applicationEmail"
@@ -160,12 +160,12 @@ export default function PostJobPage() {
               type="email"
               value={details.applicationEmail}
               onChange={(e) => setDetails({ ...details, applicationEmail: e.target.value })}
-              style={{ display: "block", width: "100%" }}
+              className="input font-normal"
             />
           </label>
         )}
 
-        <label>
+        <label className="field">
           Salary range min (RWF, optional)
           <input
             name="salaryRangeMin"
@@ -173,11 +173,11 @@ export default function PostJobPage() {
             min={0}
             value={details.salaryRangeMin}
             onChange={(e) => setDetails({ ...details, salaryRangeMin: e.target.value })}
-            style={{ display: "block", width: "100%" }}
+            className="input font-normal"
           />
         </label>
 
-        <label>
+        <label className="field">
           Salary range max (RWF, optional)
           <input
             name="salaryRangeMax"
@@ -185,12 +185,12 @@ export default function PostJobPage() {
             min={0}
             value={details.salaryRangeMax}
             onChange={(e) => setDetails({ ...details, salaryRangeMax: e.target.value })}
-            style={{ display: "block", width: "100%" }}
+            className="input font-normal"
           />
         </label>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" disabled={submitting}>
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? t("posting") : t("submitJob")}
         </button>
       </form>

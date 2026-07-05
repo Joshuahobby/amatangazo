@@ -8,7 +8,7 @@ export async function ClassifiedDetailsSection({ listing }: { listing: ListingWi
   const t = await getTranslations("listing");
 
   return (
-    <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "4px 16px" }}>
+    <dl className="detail-grid">
       <dt>{t("subcategory")}</dt>
       <dd>{details.subcategory}</dd>
       {details.price && (

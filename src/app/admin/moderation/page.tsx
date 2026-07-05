@@ -57,45 +57,44 @@ export default function AdminModerationPage() {
 
   return (
     <div>
-      <h1>Moderation</h1>
+      <h1 className="page-title">Moderation</h1>
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+      <div className="mt-4 flex gap-2">
         {(["flagged", "pending", "all"] as Filter[]).map((f) => (
-          <button key={f} type="button" onClick={() => setFilter(f)} style={{ fontWeight: filter === f ? "bold" : "normal" }}>
+          <button
+            key={f}
+            type="button"
+            onClick={() => setFilter(f)}
+            className={filter === f ? "btn-primary btn-sm" : "btn-outline btn-sm"}
+          >
             {f === "flagged" ? "AI-flagged" : f === "pending" ? "Awaiting payment/draft" : "All recent"}
           </button>
         ))}
       </div>
 
-      {message && <p>{message}</p>}
-      {listings.length === 0 && <p style={{ color: "#666" }}>Nothing in this queue.</p>}
+      {message && <p className="mt-2 text-sm text-primary">{message}</p>}
+      {listings.length === 0 && <p className="mt-4 text-sm text-muted">Nothing in this queue.</p>}
 
-      <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+      <ul className="mt-4 flex flex-col gap-3">
         {listings.map((listing) => (
-          <li key={listing.id} style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12 }}>
-            <div style={{ display: "flex", gap: 8, alignItems: "baseline", flexWrap: "wrap" }}>
-              <Link href={`/listings/${listing.id}`} style={{ fontWeight: "bold" }}>
+          <li key={listing.id} className="card">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <Link href={`/listings/${listing.id}`} className="font-semibold text-foreground hover:text-primary">
                 {listing.title}
               </Link>
-              <span style={{ fontSize: 12, background: "#eee", padding: "2px 6px", borderRadius: 4 }}>
-                {listing.category}
-              </span>
-              <span style={{ fontSize: 12, background: "#eee", padding: "2px 6px", borderRadius: 4 }}>
-                {listing.status}
-              </span>
+              <span className="badge-neutral">{listing.category}</span>
+              <span className="badge-neutral">{listing.status}</span>
               {listing.source === "GOVERNMENT_MIRROR" && (
-                <span style={{ fontSize: 12, background: "#eef", padding: "2px 6px", borderRadius: 4 }}>
-                  Gov mirror
-                </span>
+                <span className="badge bg-cat-tender/15 text-cat-tender">Gov mirror</span>
               )}
             </div>
 
-            <p style={{ margin: "4px 0", color: "#666", fontSize: 13 }}>
+            <p className="mt-1 text-sm text-muted">
               By {listing.poster.businessName ?? listing.poster.name} · {new Date(listing.createdAt).toLocaleString()}
             </p>
 
             {listing.aiFlags.length > 0 && (
-              <p style={{ margin: "4px 0", color: "#a00", fontSize: 13 }}>
+              <p className="mt-1 text-sm text-red-700">
                 {listing.aiFlags
                   .map((flag) => `${flag.flagType} (${Math.round(flag.confidenceScore * 100)}%)`)
                   .join(" · ")}
@@ -103,20 +102,20 @@ export default function AdminModerationPage() {
             )}
 
             {listing.moderationLogs.length > 0 && (
-              <p style={{ margin: "4px 0", color: "#666", fontSize: 12 }}>
+              <p className="mt-1 text-xs text-muted">
                 Last: {listing.moderationLogs[0].action} by {listing.moderationLogs[0].admin.name}
                 {listing.moderationLogs[0].reason ? ` — ${listing.moderationLogs[0].reason}` : ""}
               </p>
             )}
 
-            <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-              <button type="button" disabled={busyId === listing.id} onClick={() => act(listing.id, "APPROVE")}>
+            <div className="mt-3 flex gap-2">
+              <button type="button" disabled={busyId === listing.id} onClick={() => act(listing.id, "APPROVE")} className="btn-primary btn-sm">
                 Approve
               </button>
-              <button type="button" disabled={busyId === listing.id} onClick={() => act(listing.id, "REJECT")}>
+              <button type="button" disabled={busyId === listing.id} onClick={() => act(listing.id, "REJECT")} className="btn-danger btn-sm">
                 Reject
               </button>
-              <button type="button" disabled={busyId === listing.id} onClick={() => act(listing.id, "REFUND")}>
+              <button type="button" disabled={busyId === listing.id} onClick={() => act(listing.id, "REFUND")} className="btn-outline btn-sm">
                 Refund
               </button>
             </div>

@@ -53,43 +53,47 @@ export default function PhoneLoginPage() {
   }
 
   return (
-    <main style={{ maxWidth: 400, margin: "3rem auto", fontFamily: "sans-serif" }}>
-      <h1>{t("phoneTitle")}</h1>
+    <main className="mx-auto w-full max-w-sm px-4 py-16">
+      <h1 className="page-title text-center">{t("phoneTitle")}</h1>
 
       {step === "enterPhone" && (
-        <form onSubmit={handleSendCode} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <form onSubmit={handleSendCode} className="mt-8 flex flex-col gap-2">
           <input
             type="tel"
             placeholder="2507XXXXXXXX"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             required
+            className="input"
           />
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          <button type="submit" disabled={submitting}>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <button type="submit" disabled={submitting} className="btn-primary">
             {t("sendCode")}
           </button>
         </form>
       )}
       {step === "enterCode" && (
-        <form onSubmit={handleVerifyCode} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {devCode && <p style={{ fontSize: 13, color: "#666" }}>Dev mode — your code is {devCode}</p>}
+        <form onSubmit={handleVerifyCode} className="mt-8 flex flex-col gap-2">
+          {devCode && <p className="text-xs text-muted">Dev mode — your code is {devCode}</p>}
           <input
             type="text"
             placeholder={t("codePlaceholder")}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             required
+            className="input"
           />
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          <button type="submit" disabled={submitting}>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <button type="submit" disabled={submitting} className="btn-primary">
             {t("verify")}
           </button>
         </form>
       )}
 
-      <p style={{ marginTop: 24, fontSize: 13 }}>
-        <Link href="/login">{t("backToLogin")}</Link>
+      <p className="mt-6 text-center text-sm">
+        <Link href="/login" className="link">
+          {t("backToLogin")}
+        </Link>
       </p>
     </main>
   );

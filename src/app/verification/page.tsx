@@ -80,57 +80,59 @@ export default function VerificationPage() {
 
   if (unauthenticated) {
     return (
-      <main style={{ maxWidth: 500, margin: "2rem auto", fontFamily: "sans-serif" }}>
+      <main className="page max-w-sm">
         <p>
-          <Link href="/login">{t("loginFirst")}</Link>
+          <Link href="/login" className="link">
+            {t("loginFirst")}
+          </Link>
         </p>
       </main>
     );
   }
-  if (!info) return <main style={{ maxWidth: 500, margin: "2rem auto", fontFamily: "sans-serif" }}>...</main>;
+  if (!info) return <main className="page max-w-sm text-muted">...</main>;
 
   return (
-    <main style={{ maxWidth: 500, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      <h1>{t("title")}</h1>
+    <main className="page max-w-sm">
+      <h1 className="page-title">{t("title")}</h1>
 
-      {info.status === "VERIFIED" && <p style={{ color: "green", fontWeight: "bold" }}>✓ {t("statusVerified")}</p>}
+      {info.status === "VERIFIED" && <p className="mt-4 font-bold text-primary">✓ {t("statusVerified")}</p>}
       {info.status === "PENDING" && (
-        <p style={{ color: "#996600" }}>
+        <p className="mt-4 text-accent-hover">
           {t("statusPending")}
           {info.submittedAt && ` (${new Date(info.submittedAt).toLocaleDateString()})`}
         </p>
       )}
-      {info.status === "REJECTED" && <p style={{ color: "red" }}>{t("statusRejected")}</p>}
-      {info.status === "UNVERIFIED" && <p>{t("statusUnverified")}</p>}
+      {info.status === "REJECTED" && <p className="mt-4 text-red-600">{t("statusRejected")}</p>}
+      {info.status === "UNVERIFIED" && <p className="mt-4 text-foreground">{t("statusUnverified")}</p>}
 
       {(info.status === "UNVERIFIED" || info.status === "REJECTED") && (
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 16 }}>
-          <p style={{ fontSize: 13, color: "#666" }}>{t("instructions")}</p>
+        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3">
+          <p className="text-xs text-muted">{t("instructions")}</p>
           {!r2Unavailable && (
-            <label>
+            <label className="field">
               {t("documentLabel")}
               <input
                 type="file"
                 accept="image/*,application/pdf"
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                style={{ display: "block" }}
+                className="text-sm font-normal text-muted"
               />
             </label>
           )}
           {(r2Unavailable || !file) && (
-            <label>
+            <label className="field">
               {t("documentUrlLabel")}
               <input
                 type="url"
                 value={documentUrl}
                 onChange={(e) => setDocumentUrl(e.target.value)}
                 placeholder="https://..."
-                style={{ display: "block", width: "100%" }}
+                className="input font-normal"
               />
             </label>
           )}
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          <button type="submit" disabled={submitting || (!file && !documentUrl)}>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <button type="submit" disabled={submitting || (!file && !documentUrl)} className="btn-primary">
             {submitting ? "..." : t("submit")}
           </button>
         </form>

@@ -17,13 +17,17 @@ export function PostResult({
 }) {
   const t = useTranslations("post");
   return (
-    <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, marginTop: 16 }}>
-      <p>
+    <div className="card mt-4">
+      <p className="text-sm text-foreground">
         {t.rich("createdAsDraft", { b: (chunks) => <strong>{chunks}</strong> })}
       </p>
-      <div style={{ display: "flex", gap: 12 }}>
-        <Link href={`/checkout/${listingId}`}>{t("continueToCheckout")}</Link>
-        <Link href={`/listings/${listingId}`}>{t("previewListing")}</Link>
+      <div className="mt-3 flex gap-3">
+        <Link href={`/checkout/${listingId}`} className="btn-primary btn-sm">
+          {t("continueToCheckout")}
+        </Link>
+        <Link href={`/listings/${listingId}`} className="btn-outline btn-sm">
+          {t("previewListing")}
+        </Link>
       </div>
       {categoriesWithImages.includes(category) && <ImageUpload listingId={listingId} />}
     </div>

@@ -20,8 +20,8 @@ export function BaseListingFields({
 }) {
   const t = useTranslations("post");
   return (
-    <fieldset style={{ display: "flex", flexDirection: "column", gap: 12, border: "none", padding: 0 }}>
-      <label>
+    <fieldset className="flex flex-col gap-4 border-none p-0">
+      <label className="field">
         {t("fieldTitle")}
         <input
           name="title"
@@ -30,10 +30,10 @@ export function BaseListingFields({
           maxLength={200}
           value={value.title}
           onChange={(e) => onChange({ ...value, title: e.target.value })}
-          style={{ display: "block", width: "100%" }}
+          className="input font-normal"
         />
       </label>
-      <label>
+      <label className="field">
         {t("fieldDescription")}
         <textarea
           name="description"
@@ -42,26 +42,26 @@ export function BaseListingFields({
           rows={5}
           value={value.description}
           onChange={(e) => onChange({ ...value, description: e.target.value })}
-          style={{ display: "block", width: "100%" }}
+          className="input font-normal"
         />
       </label>
-      <label>
+      <label className="field">
         {t("fieldLocation")}
         <input
           name="location"
           required
           value={value.location}
           onChange={(e) => onChange({ ...value, location: e.target.value })}
-          style={{ display: "block", width: "100%" }}
+          className="input font-normal"
         />
       </label>
-      <label>
+      <label className="field">
         {t("fieldLanguage")}
         <select
           name="language"
           value={value.language}
           onChange={(e) => onChange({ ...value, language: e.target.value as BaseListingValue["language"] })}
-          style={{ display: "block", width: "100%" }}
+          className="input font-normal"
         >
           {preferredLanguages.map((lang) => (
             <option key={lang} value={lang}>

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it, vi } from "vitest";
 
 import { handleDepositCompleted, handleDepositFailed } from "@/lib/checkout";
 import { prisma } from "@/lib/prisma";
@@ -8,6 +8,14 @@ import { prisma } from "@/lib/prisma";
 // Integration test — needs the local Postgres (prisma dev). Skips cleanly when
 // no DB is reachable so `npm test` stays green in a vendorless CI. Guards the
 // payment-completion atomicity + idempotency fix in handleDepositCompleted.
+//
+// The local dev DB (PGlite-backed `prisma dev`) is noticeably slower on
+// transactional writes than the default 5s Vitest timeout allows for, even
+// though it's fully functional (verified manually against the same code
+// paths via HTTP). Raise the timeout for this file rather than the query
+// logic — this is real DB latency in this specific dev environment, not a
+// hang in application code.
+vi.setConfig({ testTimeout: 20_000, hookTimeout: 20_000 });
 let dbReachable = false;
 try {
   await prisma.$queryRaw`SELECT 1`;

@@ -25,15 +25,15 @@ export function AuctionCountdown({ auctionDate }: { auctionDate: string }) {
   }, [auctionDate]);
 
   if (!remaining) {
-    return <p style={{ fontWeight: "bold" }}>{t("auctionPassed")}</p>;
+    return <p className="font-bold text-foreground">{t("auctionPassed")}</p>;
   }
 
   return (
-    <div style={{ display: "flex", gap: 16, fontWeight: "bold" }}>
+    <div className="flex items-baseline gap-4 font-bold text-cat-auction">
       <span>{remaining.days}d</span>
       <span>{remaining.hours}h</span>
       <span>{remaining.minutes}m</span>
-      <span style={{ fontWeight: "normal", color: "#666" }}>{t("untilAuction")}</span>
+      <span className="font-normal text-muted">{t("untilAuction")}</span>
     </div>
   );
 }

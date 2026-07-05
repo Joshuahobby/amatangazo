@@ -118,13 +118,15 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     }
   }
 
-  if (!info) return <p style={{ padding: 24 }}>{tc("loading")}</p>;
+  if (!info) return <p className="page text-muted">{tc("loading")}</p>;
 
   if (phase === "done" || info.listingStatus === "LIVE") {
     return (
-      <main style={{ maxWidth: 500, margin: "2rem auto", fontFamily: "sans-serif" }}>
-        <h1>{t("listingIsLive")}</h1>
-        <Link href={`/listings/${id}`}>{t("viewListing")}</Link>
+      <main className="page max-w-sm text-center">
+        <h1 className="page-title">{t("listingIsLive")}</h1>
+        <Link href={`/listings/${id}`} className="btn-primary mt-4 inline-flex">
+          {t("viewListing")}
+        </Link>
       </main>
     );
   }
@@ -132,74 +134,81 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   const breakEvenListings = Math.ceil(info.pricing.annualSubscription / info.pricing.payPerBoost);
 
   return (
-    <main style={{ maxWidth: 500, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      <h1>{t("title")}</h1>
+    <main className="page max-w-sm">
+      <h1 className="page-title">{t("title")}</h1>
 
-      {phase === "waiting" && (
-        <p>{t("waiting")}</p>
-      )}
+      {phase === "waiting" && <p className="mt-4 text-sm text-muted">{t("waiting")}</p>}
 
       {phase !== "waiting" && info.hasActiveSubscription && (
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, marginBottom: 16 }}>
-          <p>{t("hasSubscription")}</p>
-          <button type="button" onClick={handleFreePublish} disabled={submitting}>
+        <div className="card mt-4">
+          <p className="text-sm text-foreground">{t("hasSubscription")}</p>
+          <button type="button" onClick={handleFreePublish} disabled={submitting} className="btn-primary btn-sm mt-3">
             {t("publishForFree")}
           </button>
         </div>
       )}
 
       {phase !== "waiting" && !info.hasActiveSubscription && info.availableCredits.length > 0 && (
-        <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, marginBottom: 16 }}>
-          <p>{t("hasCredit")}</p>
-          {info.availableCredits.map((credit) => (
-            <button
-              key={credit.id}
-              type="button"
-              onClick={() => handleRedeemCredit(credit.id)}
-              disabled={submitting}
-              style={{ marginRight: 8 }}
-            >
-              {t("useCredit", { amount: credit.amount.toLocaleString() })}
-            </button>
-          ))}
+        <div className="card mt-4">
+          <p className="text-sm text-foreground">{t("hasCredit")}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {info.availableCredits.map((credit) => (
+              <button
+                key={credit.id}
+                type="button"
+                onClick={() => handleRedeemCredit(credit.id)}
+                disabled={submitting}
+                className="btn-accent btn-sm"
+              >
+                {t("useCredit", { amount: credit.amount.toLocaleString() })}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
       {phase !== "waiting" && !info.hasActiveSubscription && (
         <>
-          <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
-            <label style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, flex: 1 }}>
+          <div className="mt-4 flex gap-3">
+            <label
+              className={`card flex-1 cursor-pointer ${tier === "PAY_PER_BOOST" ? "border-primary" : ""}`}
+            >
               <input
                 type="radio"
                 name="tier"
                 checked={tier === "PAY_PER_BOOST"}
                 onChange={() => setTier("PAY_PER_BOOST")}
-              />{" "}
+                className="mr-1.5"
+              />
               {t("payPerListing")}
-              <p style={{ fontWeight: "bold" }}>RWF {info.pricing.payPerBoost.toLocaleString()}</p>
-              <p style={{ fontSize: 13, color: "#666" }}>{t("payPerListingDetail")}</p>
+              <p className="mt-1 font-bold text-foreground">RWF {info.pricing.payPerBoost.toLocaleString()}</p>
+              <p className="mt-1 text-xs text-muted">{t("payPerListingDetail")}</p>
             </label>
-            <label style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, flex: 1 }}>
+            <label
+              className={`card flex-1 cursor-pointer ${tier === "ANNUAL_SUBSCRIPTION" ? "border-primary" : ""}`}
+            >
               <input
                 type="radio"
                 name="tier"
                 checked={tier === "ANNUAL_SUBSCRIPTION"}
                 onChange={() => setTier("ANNUAL_SUBSCRIPTION")}
-              />{" "}
+                className="mr-1.5"
+              />
               {t("annualSubscription")}
-              <p style={{ fontWeight: "bold" }}>RWF {info.pricing.annualSubscription.toLocaleString()}{t("perYear")}</p>
-              <p style={{ fontSize: 13, color: "#666" }}>
-                {t("subscriptionDetail", { count: breakEvenListings })}
+              <p className="mt-1 font-bold text-foreground">
+                RWF {info.pricing.annualSubscription.toLocaleString()}
+                {t("perYear")}
               </p>
+              <p className="mt-1 text-xs text-muted">{t("subscriptionDetail", { count: breakEvenListings })}</p>
             </label>
           </div>
 
-          <label>
+          <label className="field mt-4">
             {t("provider")}
             <select
               value={provider}
               onChange={(e) => setProvider(e.target.value as PawaPayProvider)}
-              style={{ display: "block", width: "100%" }}
+              className="input font-normal"
             >
               {pawapayProviders.map((p) => (
                 <option key={p} value={p}>
@@ -208,36 +217,46 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
               ))}
             </select>
           </label>
-          <label>
+          <label className="field mt-3">
             {t("phoneNumber")}
             <input
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="2507XXXXXXXX"
-              style={{ display: "block", width: "100%" }}
+              className="input font-normal"
             />
           </label>
 
           {error && (
-            <p style={{ color: "red" }}>
+            <p className="mt-3 text-sm text-red-600">
               {error}
               {phase === "failed" && ` ${t("tryAgainBelow")}`}
             </p>
           )}
 
-          <button type="button" onClick={handlePay} disabled={submitting} style={{ marginTop: 12 }}>
+          <button type="button" onClick={handlePay} disabled={submitting} className="btn-primary mt-4 w-full">
             {t("payWithMobileMoney")}
           </button>
 
-          <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px dashed #ccc" }}>
-            <p style={{ fontSize: 13, color: "#666" }}>
+          <div className="mt-6 border-t border-dashed border-border pt-4">
+            <p className="text-xs text-muted">
               No live PawaPay sandbox account in this environment (T2.1) — simulate the outcome instead:
             </p>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button type="button" onClick={() => handleSimulatePayment("COMPLETED")} disabled={submitting}>
+            <div className="mt-2 flex gap-2">
+              <button
+                type="button"
+                onClick={() => handleSimulatePayment("COMPLETED")}
+                disabled={submitting}
+                className="btn-outline btn-sm"
+              >
                 Simulate success
               </button>
-              <button type="button" onClick={() => handleSimulatePayment("FAILED")} disabled={submitting}>
+              <button
+                type="button"
+                onClick={() => handleSimulatePayment("FAILED")}
+                disabled={submitting}
+                className="btn-outline btn-sm"
+              >
                 Simulate failure
               </button>
             </div>

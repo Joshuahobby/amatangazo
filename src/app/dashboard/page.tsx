@@ -37,48 +37,40 @@ export default function DashboardPage() {
 
   if (unauthenticated) {
     return (
-      <main style={{ maxWidth: 700, margin: "2rem auto", fontFamily: "sans-serif" }}>
+      <main className="page max-w-3xl">
         <p>
-          <Link href="/login">{t("loginFirst")}</Link>
+          <Link href="/login" className="link">
+            {t("loginFirst")}
+          </Link>
         </p>
       </main>
     );
   }
 
   return (
-    <main style={{ maxWidth: 700, margin: "2rem auto", fontFamily: "sans-serif" }}>
-      <h1>{t("title")}</h1>
-      {listings === null && <p>...</p>}
-      {listings?.length === 0 && <p>{t("empty")}</p>}
+    <main className="page max-w-3xl">
+      <h1 className="page-title">{t("title")}</h1>
+      {listings === null && <p className="mt-4 text-muted">...</p>}
+      {listings?.length === 0 && <p className="mt-4 text-muted">{t("empty")}</p>}
 
-      <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+      <ul className="mt-4 flex flex-col gap-3">
         {listings?.map((listing) => {
           const bench = benchmarks[listing.category];
           return (
-            <li key={listing.id} style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12 }}>
-              <Link href={`/listings/${listing.id}`} style={{ fontWeight: "bold" }}>
+            <li key={listing.id} className="card">
+              <Link href={`/listings/${listing.id}`} className="font-semibold text-foreground hover:text-primary">
                 {listing.title}
               </Link>
-              <span style={{ marginLeft: 8, fontSize: 12, color: "#666" }}>
+              <span className="ml-2 text-xs text-muted">
                 {listing.category} · {listing.status}
                 {listing.isCurrentlyBoosted && " · ★"}
               </span>
-              <p style={{ margin: "6px 0 0", fontSize: 14 }}>
+              <p className="mt-1.5 text-sm text-foreground">
                 {t("views")}: <strong>{listing.viewCount}</strong>
-                {bench && (
-                  <span style={{ color: "#666" }}>
-                    {" "}
-                    ({t("categoryAvg")}: {bench.avgViews})
-                  </span>
-                )}
+                {bench && <span className="text-muted"> ({t("categoryAvg")}: {bench.avgViews})</span>}
                 {" · "}
                 {t("applications")}: <strong>{listing.applicationCount}</strong>
-                {bench && (
-                  <span style={{ color: "#666" }}>
-                    {" "}
-                    ({t("categoryAvg")}: {bench.avgApplications})
-                  </span>
-                )}
+                {bench && <span className="text-muted"> ({t("categoryAvg")}: {bench.avgApplications})</span>}
               </p>
             </li>
           );

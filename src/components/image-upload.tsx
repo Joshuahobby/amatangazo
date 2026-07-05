@@ -63,20 +63,30 @@ export function ImageUpload({ listingId, initialImages = [] }: { listingId: stri
   }
 
   return (
-    <div style={{ marginTop: 16 }}>
-      <label>
+    <div className="mt-4">
+      <label className="field">
         {t("addPhoto")}
-        <input type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} style={{ display: "block" }} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          disabled={uploading}
+          className="text-sm font-normal text-muted"
+        />
       </label>
-      {uploading && <p>Uploading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {uploading && <p className="mt-1 text-sm text-muted">Uploading...</p>}
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
       {images.length > 0 && (
-        <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+        <div className="mt-2 flex flex-wrap gap-2">
           {images.map((image) => (
-            <div key={image.id} style={{ position: "relative" }}>
+            <div key={image.id} className="relative">
               {/* eslint-disable-next-line @next/next/no-img-element -- R2 URLs, not part of Next's image optimization domain list yet */}
-              <img src={image.url} alt="" style={{ height: 100, borderRadius: 4 }} />
-              <button type="button" onClick={() => handleDelete(image.id)} style={{ position: "absolute", top: 2, right: 2 }}>
+              <img src={image.url} alt="" className="h-24 rounded-lg border border-border object-cover" />
+              <button
+                type="button"
+                onClick={() => handleDelete(image.id)}
+                className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-foreground/70 text-xs text-white"
+              >
                 ×
               </button>
             </div>

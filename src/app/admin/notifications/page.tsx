@@ -45,39 +45,39 @@ export default function AdminNotificationsPage() {
 
   return (
     <div>
-      <h1>Notifications</h1>
-      <p>
-        Saved searches: <strong>{savedSearchCount}</strong>
+      <h1 className="page-title">Notifications</h1>
+      <p className="page-subtitle">
+        Saved searches: <strong className="text-foreground">{savedSearchCount}</strong>
       </p>
-      <button type="button" onClick={runDigest} disabled={running}>
+      <button type="button" onClick={runDigest} disabled={running} className="btn-primary btn-sm mt-3">
         {running ? "Running digest..." : "Run digest now"}
       </button>
       {lastRun && (
-        <p style={{ fontSize: 13, color: "#666" }}>
+        <p className="mt-2 text-sm text-muted">
           Checked {lastRun.searchesChecked} searches · {lastRun.searchesMatched} matched · {lastRun.notificationsSent}{" "}
           sent · {lastRun.notificationsFailed} failed
         </p>
       )}
 
-      <h2 style={{ marginTop: 24 }}>Recent notifications</h2>
-      <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 13 }}>
+      <h2 className="mt-6 text-sm font-semibold text-muted">Recent notifications</h2>
+      <table className="admin-table mt-2">
         <thead>
-          <tr style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>
-            <th style={{ padding: 4 }}>Sent</th>
-            <th style={{ padding: 4 }}>User</th>
-            <th style={{ padding: 4 }}>Channel</th>
-            <th style={{ padding: 4 }}>Listing</th>
-            <th style={{ padding: 4 }}>Status</th>
+          <tr>
+            <th>Sent</th>
+            <th>User</th>
+            <th>Channel</th>
+            <th>Listing</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
           {logs.map((log) => (
-            <tr key={log.id} style={{ borderBottom: "1px solid #eee" }}>
-              <td style={{ padding: 4 }}>{new Date(log.sentAt).toLocaleString()}</td>
-              <td style={{ padding: 4 }}>{log.user.name ?? log.user.email ?? log.user.phoneNumber}</td>
-              <td style={{ padding: 4 }}>{log.channel}</td>
-              <td style={{ padding: 4 }}>{log.listing?.title?.slice(0, 50) ?? "—"}</td>
-              <td style={{ padding: 4, color: log.status === "sent" ? "green" : "red" }}>{log.status}</td>
+            <tr key={log.id}>
+              <td>{new Date(log.sentAt).toLocaleString()}</td>
+              <td>{log.user.name ?? log.user.email ?? log.user.phoneNumber}</td>
+              <td>{log.channel}</td>
+              <td>{log.listing?.title?.slice(0, 50) ?? "—"}</td>
+              <td className={log.status === "sent" ? "text-primary" : "text-red-600"}>{log.status}</td>
             </tr>
           ))}
         </tbody>
