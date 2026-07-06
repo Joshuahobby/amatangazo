@@ -53,7 +53,7 @@ export default function PhoneLoginPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-sm px-4 py-16">
+    <main className="page-sm">
       <h1 className="page-title text-center">{t("phoneTitle")}</h1>
 
       {step === "enterPhone" && (
@@ -66,7 +66,7 @@ export default function PhoneLoginPage() {
             required
             className="input"
           />
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="form-error">{error}</p>}
           <button type="submit" disabled={submitting} className="btn-primary">
             {t("sendCode")}
           </button>
@@ -83,7 +83,7 @@ export default function PhoneLoginPage() {
             required
             className="input"
           />
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="form-error">{error}</p>}
           <button type="submit" disabled={submitting} className="btn-primary">
             {t("verify")}
           </button>

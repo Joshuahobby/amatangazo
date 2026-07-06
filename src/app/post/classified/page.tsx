@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { BaseListingFields, initialBaseListingValue, type BaseListingValue } from "@/components/base-listing-fields";
+import { formatListingFormErrors } from "@/lib/listing-form-error";
 import { PostResult } from "@/components/post-result";
 
 type ClassifiedDetailsValue = {
@@ -19,7 +20,7 @@ const initialDetails: ClassifiedDetailsValue = {
 export default function PostClassifiedPage() {
   const [base, setBase] = useState<BaseListingValue>(initialBaseListingValue);
   const [details, setDetails] = useState<ClassifiedDetailsValue>(initialDetails);
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
   const [listingId, setListingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const t = useTranslations("post");
@@ -27,7 +28,7 @@ export default function PostClassifiedPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setSubmitting(true);
-    setError(null);
+    setErrors([]);
 
     const res = await fetch("/api/listings", {
       method: "POST",
@@ -45,7 +46,7 @@ export default function PostClassifiedPage() {
     setSubmitting(false);
     const data = await res.json();
     if (!res.ok) {
-      setError(JSON.stringify(data.error));
+      setErrors(formatListingFormErrors(data, t));
       return;
     }
     setListingId(data.listing.id);
@@ -60,7 +61,7 @@ export default function PostClassifiedPage() {
         <BaseListingFields value={base} onChange={setBase} />
 
         <label className="field">
-          Subcategory
+          {t("fieldSubcategory")}
           <input
             name="subcategory"
             required
@@ -71,7 +72,7 @@ export default function PostClassifiedPage() {
         </label>
 
         <label className="field">
-          Price (RWF, optional)
+          {t("fieldPrice")}
           <input
             name="price"
             type="number"
@@ -82,7 +83,13 @@ export default function PostClassifiedPage() {
           />
         </label>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {errors.length > 0 && (
+          <ul className="list-disc pl-4 form-error">
+            {errors.map((message, index) => (
+              <li key={index}>{message}</li>
+            ))}
+          </ul>
+        )}
         <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? t("posting") : t("submitClassified")}
         </button>

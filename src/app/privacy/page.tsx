@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Privacy Policy — Amatangazo" };
  */
 export default function PrivacyPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12">
+    <main className="page">
       <div className="mb-6 rounded-lg border border-accent bg-accent/10 px-4 py-3 text-sm text-foreground">
         Draft — placeholder policy pending a data-protection review (Rwanda Law No. 058/2021).
       </div>

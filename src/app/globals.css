@@ -25,6 +25,10 @@
   --cat-tender: #1d5fa8;
   --cat-auction: #b0430f;
   --cat-classified: #6b3fa0;
+
+  --danger: #b42318;
+  --danger-surface: #fceae7;
+  --danger-border: #e9a79d;
 }
 
 @theme inline {
@@ -43,6 +47,9 @@
   --color-cat-tender: var(--cat-tender);
   --color-cat-auction: var(--cat-auction);
   --color-cat-classified: var(--cat-classified);
+  --color-danger: var(--danger);
+  --color-danger-surface: var(--danger-surface);
+  --color-danger-border: var(--danger-border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -54,12 +61,36 @@ body {
 }
 
 /*
+ * Platform-wide keyboard focus indicator. One rule covers every interactive
+ * element — including bespoke links like the hero CTAs — so individual
+ * component classes don't each need to re-declare a ring.
+ */
+@layer base {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+/*
  * Reusable component classes so every page shares one visual language.
  * Interior pages use these instead of bespoke inline styles.
  */
 @layer components {
+  /*
+   * Page scaffolds. Pick the variant by content width — don't stack a
+   * max-w-* utility on top of .page (that only works by cascade-layer
+   * accident). The marketing landing page is the one sanctioned exception
+   * to these scaffolds; see docs/design-system.md.
+   */
   .page {
     @apply mx-auto w-full max-w-3xl px-4 py-8;
+  }
+  .page-md {
+    @apply mx-auto w-full max-w-xl px-4 py-8;
+  }
+  .page-sm {
+    @apply mx-auto w-full max-w-sm px-4 py-8;
   }
   .page-title {
     @apply text-2xl font-bold tracking-tight text-foreground;
@@ -88,14 +119,22 @@ body {
     @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 border border-border bg-surface text-foreground hover:border-primary hover:text-primary;
   }
   .btn-danger {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 border border-red-300 bg-surface text-red-700 hover:bg-red-50;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 border border-danger-border bg-surface text-danger hover:bg-danger-surface;
   }
   .btn-sm {
     @apply px-3 py-1 text-xs;
   }
+  /* Marketing-scale pill, e.g. landing hero CTAs. Combine: "btn-primary btn-lg". */
+  .btn-lg {
+    @apply rounded-full px-6 py-3 text-base;
+  }
 
   .input {
-    @apply block w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary;
+    @apply block w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus:border-primary;
+  }
+  /* Inline validation message under a field or form. */
+  .form-error {
+    @apply text-sm text-danger;
   }
   .field {
     @apply flex flex-col gap-1 text-sm font-medium text-foreground;
@@ -117,6 +156,22 @@ body {
   }
   .badge-status {
     @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium border border-border text-muted;
+  }
+  .badge-danger {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-danger-surface text-danger;
+  }
+  /* Category-tinted badges, one per listing type. */
+  .badge-cat-job {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-cat-job/15 text-cat-job;
+  }
+  .badge-cat-tender {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-cat-tender/15 text-cat-tender;
+  }
+  .badge-cat-auction {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-cat-auction/15 text-cat-auction;
+  }
+  .badge-cat-classified {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-cat-classified/15 text-cat-classified;
   }
 
   .admin-table {

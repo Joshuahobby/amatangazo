@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { BaseListingFields, initialBaseListingValue, type BaseListingValue } from "@/components/base-listing-fields";
+import { formatListingFormErrors } from "@/lib/listing-form-error";
 import { PostResult } from "@/components/post-result";
 
 type TenderDetailsValue = {
@@ -29,7 +30,7 @@ const initialDetails: TenderDetailsValue = {
 export default function PostTenderPage() {
   const [base, setBase] = useState<BaseListingValue>(initialBaseListingValue);
   const [details, setDetails] = useState<TenderDetailsValue>(initialDetails);
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
   const [listingId, setListingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const t = useTranslations("post");
@@ -37,7 +38,7 @@ export default function PostTenderPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setSubmitting(true);
-    setError(null);
+    setErrors([]);
 
     const res = await fetch("/api/listings", {
       method: "POST",
@@ -60,7 +61,7 @@ export default function PostTenderPage() {
     setSubmitting(false);
     const data = await res.json();
     if (!res.ok) {
-      setError(JSON.stringify(data.error));
+      setErrors(formatListingFormErrors(data, t));
       return;
     }
     setListingId(data.listing.id);
@@ -75,7 +76,7 @@ export default function PostTenderPage() {
         <BaseListingFields value={base} onChange={setBase} />
 
         <label className="field">
-          Sector
+          {t("fieldSector")}
           <input
             name="sector"
             required
@@ -86,7 +87,7 @@ export default function PostTenderPage() {
         </label>
 
         <label className="field">
-          Budget min (RWF, optional)
+          {t("fieldBudgetMin")}
           <input
             name="budgetMin"
             type="number"
@@ -98,7 +99,7 @@ export default function PostTenderPage() {
         </label>
 
         <label className="field">
-          Budget max (RWF, optional)
+          {t("fieldBudgetMax")}
           <input
             name="budgetMax"
             type="number"
@@ -110,7 +111,7 @@ export default function PostTenderPage() {
         </label>
 
         <label className="field">
-          Submission deadline
+          {t("fieldSubmissionDeadline")}
           <input
             name="submissionDeadline"
             required
@@ -122,7 +123,7 @@ export default function PostTenderPage() {
         </label>
 
         <label className="field">
-          Eligibility summary (optional)
+          {t("fieldEligibilitySummary")}
           <textarea
             name="eligibilitySummary"
             rows={3}
@@ -133,7 +134,7 @@ export default function PostTenderPage() {
         </label>
 
         <label className="field">
-          Required documents (optional)
+          {t("fieldRequiredDocuments")}
           <textarea
             name="requiredDocuments"
             rows={3}
@@ -144,7 +145,7 @@ export default function PostTenderPage() {
         </label>
 
         <label className="field">
-          Tender document URL (optional — R2 upload lands in T1.9)
+          {t("fieldDocumentUrl")}
           <input
             name="documentUrl"
             type="url"
@@ -154,7 +155,13 @@ export default function PostTenderPage() {
           />
         </label>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {errors.length > 0 && (
+          <ul className="list-disc pl-4 form-error">
+            {errors.map((message, index) => (
+              <li key={index}>{message}</li>
+            ))}
+          </ul>
+        )}
         <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? t("posting") : t("submitTender")}
         </button>

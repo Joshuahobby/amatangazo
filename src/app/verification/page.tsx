@@ -12,6 +12,7 @@ type VerificationInfo = {
 
 export default function VerificationPage() {
   const t = useTranslations("verification");
+  const tc = useTranslations("common");
   const [info, setInfo] = useState<VerificationInfo | null>(null);
   const [unauthenticated, setUnauthenticated] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -80,7 +81,7 @@ export default function VerificationPage() {
 
   if (unauthenticated) {
     return (
-      <main className="page max-w-sm">
+      <main className="page-sm">
         <p>
           <Link href="/login" className="link">
             {t("loginFirst")}
@@ -89,10 +90,10 @@ export default function VerificationPage() {
       </main>
     );
   }
-  if (!info) return <main className="page max-w-sm text-muted">...</main>;
+  if (!info) return <main className="page-sm text-muted">{tc("loading")}</main>;
 
   return (
-    <main className="page max-w-sm">
+    <main className="page-sm">
       <h1 className="page-title">{t("title")}</h1>
 
       {info.status === "VERIFIED" && <p className="mt-4 font-bold text-primary">✓ {t("statusVerified")}</p>}
@@ -102,7 +103,7 @@ export default function VerificationPage() {
           {info.submittedAt && ` (${new Date(info.submittedAt).toLocaleDateString()})`}
         </p>
       )}
-      {info.status === "REJECTED" && <p className="mt-4 text-red-600">{t("statusRejected")}</p>}
+      {info.status === "REJECTED" && <p className="mt-4 text-danger">{t("statusRejected")}</p>}
       {info.status === "UNVERIFIED" && <p className="mt-4 text-foreground">{t("statusUnverified")}</p>}
 
       {(info.status === "UNVERIFIED" || info.status === "REJECTED") && (
@@ -131,9 +132,9 @@ export default function VerificationPage() {
               />
             </label>
           )}
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="form-error">{error}</p>}
           <button type="submit" disabled={submitting || (!file && !documentUrl)} className="btn-primary">
-            {submitting ? "..." : t("submit")}
+            {submitting ? t("submitting") : t("submit")}
           </button>
         </form>
       )}

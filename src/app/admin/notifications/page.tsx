@@ -77,7 +77,7 @@ export default function AdminNotificationsPage() {
               <td>{log.user.name ?? log.user.email ?? log.user.phoneNumber}</td>
               <td>{log.channel}</td>
               <td>{log.listing?.title?.slice(0, 50) ?? "—"}</td>
-              <td className={log.status === "sent" ? "text-primary" : "text-red-600"}>{log.status}</td>
+              <td className={log.status === "sent" ? "text-primary" : "text-danger"}>{log.status}</td>
             </tr>
           ))}
         </tbody>

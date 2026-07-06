@@ -74,8 +74,8 @@ export function ImageUpload({ listingId, initialImages = [] }: { listingId: stri
           className="text-sm font-normal text-muted"
         />
       </label>
-      {uploading && <p className="mt-1 text-sm text-muted">Uploading...</p>}
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {uploading && <p className="mt-1 text-sm text-muted">{t("uploading")}</p>}
+      {error && <p className="mt-1 form-error">{error}</p>}
       {images.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-2">
           {images.map((image) => (

@@ -213,7 +213,7 @@ export async function initiateListingCheckout(params: {
   provider: PawaPayProvider;
 }): Promise<InitiateCheckoutResult> {
   if (!isPawaPayConfigured()) {
-    return { ok: false, error: "Payments aren't configured yet (T2.1: PawaPay merchant account/API token)" };
+    return { ok: false, error: "Mobile money payments aren't available right now. Please try again later." };
   }
 
   const pending = await createPendingListingPayment({ ...params, payerPhoneNumber: params.phoneNumber });
@@ -337,7 +337,7 @@ export async function initiateBoostCheckout(params: {
   provider: PawaPayProvider;
 }): Promise<InitiateCheckoutResult> {
   if (!isPawaPayConfigured()) {
-    return { ok: false, error: "Payments aren't configured yet (T2.1: PawaPay merchant account/API token)" };
+    return { ok: false, error: "Mobile money payments aren't available right now. Please try again later." };
   }
 
   const pending = await createPendingBoostPayment({ ...params, payerPhoneNumber: params.phoneNumber });

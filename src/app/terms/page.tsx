@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Terms of Service — Amatangazo" };
  */
 export default function TermsPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12">
+    <main className="page">
       <div className="mb-6 rounded-lg border border-accent bg-accent/10 px-4 py-3 text-sm text-foreground">
         Draft — placeholder terms pending legal review. Not the final agreement.
       </div>

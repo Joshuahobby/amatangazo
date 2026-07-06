@@ -53,7 +53,7 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const parsed = createListingSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return NextResponse.json({ error: { issues: parsed.error.issues } }, { status: 400 });
   }
 
   try {
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ listing }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.flatten() }, { status: 400 });
+      return NextResponse.json({ error: { issues: error.issues } }, { status: 400 });
     }
     console.error("Failed to create listing", error);
     return NextResponse.json({ error: "Failed to create listing" }, { status: 500 });

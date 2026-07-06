@@ -85,7 +85,7 @@ export default function AdminModerationPage() {
               <span className="badge-neutral">{listing.category}</span>
               <span className="badge-neutral">{listing.status}</span>
               {listing.source === "GOVERNMENT_MIRROR" && (
-                <span className="badge bg-cat-tender/15 text-cat-tender">Gov mirror</span>
+                <span className="badge-cat-tender">Gov mirror</span>
               )}
             </div>
 
@@ -94,7 +94,7 @@ export default function AdminModerationPage() {
             </p>
 
             {listing.aiFlags.length > 0 && (
-              <p className="mt-1 text-sm text-red-700">
+              <p className="mt-1 form-error">
                 {listing.aiFlags
                   .map((flag) => `${flag.flagType} (${Math.round(flag.confidenceScore * 100)}%)`)
                   .join(" · ")}

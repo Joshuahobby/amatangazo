@@ -65,7 +65,7 @@ export function BaseListingFields({
         >
           {preferredLanguages.map((lang) => (
             <option key={lang} value={lang}>
-              {lang}
+              {t(`language${lang}`)}
             </option>
           ))}
         </select>

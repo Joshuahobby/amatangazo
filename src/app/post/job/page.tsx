@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { BaseListingFields, initialBaseListingValue, type BaseListingValue } from "@/components/base-listing-fields";
+import { formatListingFormErrors } from "@/lib/listing-form-error";
 import { PostResult } from "@/components/post-result";
 import { applicationMethods, experienceLevels } from "@/lib/validations/listing";
 
@@ -32,7 +33,7 @@ const initialDetails: JobDetailsValue = {
 export default function PostJobPage() {
   const [base, setBase] = useState<BaseListingValue>(initialBaseListingValue);
   const [details, setDetails] = useState<JobDetailsValue>(initialDetails);
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
   const [listingId, setListingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const t = useTranslations("post");
@@ -40,7 +41,7 @@ export default function PostJobPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setSubmitting(true);
-    setError(null);
+    setErrors([]);
 
     const res = await fetch("/api/listings", {
       method: "POST",
@@ -64,7 +65,7 @@ export default function PostJobPage() {
     setSubmitting(false);
     const data = await res.json();
     if (!res.ok) {
-      setError(JSON.stringify(data.error));
+      setErrors(formatListingFormErrors(data, t));
       return;
     }
     setListingId(data.listing.id);
@@ -79,7 +80,7 @@ export default function PostJobPage() {
         <BaseListingFields value={base} onChange={setBase} />
 
         <label className="field">
-          Sector
+          {t("fieldSector")}
           <input
             name="sector"
             required
@@ -90,7 +91,7 @@ export default function PostJobPage() {
         </label>
 
         <label className="field">
-          Experience level
+          {t("fieldExperienceLevel")}
           <select
             name="experienceLevel"
             value={details.experienceLevel}
@@ -101,14 +102,14 @@ export default function PostJobPage() {
           >
             {experienceLevels.map((level) => (
               <option key={level} value={level}>
-                {level}
+                {t(`experienceLevel${level}`)}
               </option>
             ))}
           </select>
         </label>
 
         <label className="field">
-          Application deadline
+          {t("fieldApplicationDeadline")}
           <input
             name="applicationDeadline"
             required
@@ -120,7 +121,7 @@ export default function PostJobPage() {
         </label>
 
         <label className="field">
-          Application method
+          {t("fieldApplicationMethod")}
           <select
             name="applicationMethod"
             value={details.applicationMethod}
@@ -131,7 +132,7 @@ export default function PostJobPage() {
           >
             {applicationMethods.map((method) => (
               <option key={method} value={method}>
-                {method}
+                {t(`applicationMethod${method}`)}
               </option>
             ))}
           </select>
@@ -139,7 +140,7 @@ export default function PostJobPage() {
 
         {details.applicationMethod === "EXTERNAL_URL" && (
           <label className="field">
-            Application URL
+            {t("fieldApplicationUrl")}
             <input
               name="applicationUrl"
               required
@@ -153,7 +154,7 @@ export default function PostJobPage() {
 
         {details.applicationMethod === "EMAIL" && (
           <label className="field">
-            Application email
+            {t("fieldApplicationEmail")}
             <input
               name="applicationEmail"
               required
@@ -166,7 +167,7 @@ export default function PostJobPage() {
         )}
 
         <label className="field">
-          Salary range min (RWF, optional)
+          {t("fieldSalaryRangeMin")}
           <input
             name="salaryRangeMin"
             type="number"
@@ -178,7 +179,7 @@ export default function PostJobPage() {
         </label>
 
         <label className="field">
-          Salary range max (RWF, optional)
+          {t("fieldSalaryRangeMax")}
           <input
             name="salaryRangeMax"
             type="number"
@@ -189,7 +190,13 @@ export default function PostJobPage() {
           />
         </label>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {errors.length > 0 && (
+          <ul className="list-disc pl-4 form-error">
+            {errors.map((message, index) => (
+              <li key={index}>{message}</li>
+            ))}
+          </ul>
+        )}
         <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? t("posting") : t("submitJob")}
         </button>

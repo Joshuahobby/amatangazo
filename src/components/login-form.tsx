@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { authClient } from "@/lib/auth-client";
+import { isDevEnvironment } from "@/lib/env";
 
 type Step = "enterEmail" | "enterCode";
 
@@ -41,7 +42,7 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
     setGoogleSubmitting(false);
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setGoogleError(data.error ?? "Simulated Google sign-in failed");
+      setGoogleError(data.error ?? "Test sign-in failed");
       return;
     }
     router.push("/");
@@ -80,7 +81,7 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-sm px-4 py-16">
+    <main className="page-sm">
       <h1 className="page-title text-center">{t("title")}</h1>
 
       <section className="mt-8">
@@ -89,30 +90,32 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
             {t("signInWithGoogle")}
           </button>
         ) : (
-          <form onSubmit={handleSimulateGoogleSignIn} className="flex flex-col gap-2">
-            <p className="text-xs text-muted">
-              Google isn&apos;t configured yet (T0.6) — simulate a Google sign-in instead:
-            </p>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              value={devEmail}
-              onChange={(e) => setDevEmail(e.target.value)}
-              required
-              className="input"
-            />
-            <input
-              type="text"
-              placeholder="Name (optional)"
-              value={devName}
-              onChange={(e) => setDevName(e.target.value)}
-              className="input"
-            />
-            {googleError && <p className="text-sm text-red-600">{googleError}</p>}
-            <button type="submit" disabled={googleSubmitting} className="btn-outline">
-              Simulate Google sign-in
-            </button>
-          </form>
+          isDevEnvironment && (
+            <form onSubmit={handleSimulateGoogleSignIn} className="flex flex-col gap-2">
+              <p className="text-xs text-muted">
+                Google sign-in isn&apos;t set up in this environment. Sign in as a test user instead:
+              </p>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={devEmail}
+                onChange={(e) => setDevEmail(e.target.value)}
+                required
+                className="input"
+              />
+              <input
+                type="text"
+                placeholder="Name (optional)"
+                value={devName}
+                onChange={(e) => setDevName(e.target.value)}
+                className="input"
+              />
+              {googleError && <p className="form-error">{googleError}</p>}
+              <button type="submit" disabled={googleSubmitting} className="btn-outline">
+                Sign in as test user
+              </button>
+            </form>
+          )
         )}
       </section>
 
@@ -130,7 +133,7 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
               required
               className="input"
             />
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="form-error">{error}</p>}
             <button type="submit" disabled={submitting} className="btn-primary">
               {t("sendCode")}
             </button>
@@ -147,7 +150,7 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
               required
               className="input"
             />
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="form-error">{error}</p>}
             <button type="submit" disabled={submitting} className="btn-primary">
               {t("verify")}
             </button>

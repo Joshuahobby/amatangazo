@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
+import { isDevEnvironment } from "@/lib/env";
 import { pawapayProviders, type PawaPayProvider } from "@/lib/pawapay";
 
 type CheckoutInfo = {
@@ -14,6 +15,17 @@ type CheckoutInfo = {
 };
 
 type Tier = "PAY_PER_BOOST" | "ANNUAL_SUBSCRIPTION";
+
+/** API error bodies are either a plain string or a Zod `.flatten()` shape — never render the latter directly. */
+function describeApiError(error: unknown, fallback: string): string {
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object") {
+    const flat = error as { formErrors?: string[]; fieldErrors?: Record<string, string[]> };
+    const message = flat.formErrors?.[0] ?? Object.values(flat.fieldErrors ?? {}).flat()[0];
+    if (message) return message;
+  }
+  return fallback;
+}
 
 export default function CheckoutPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -40,12 +52,12 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
       if (status.listingStatus === "LIVE") {
         setPhase("done");
       } else if (status.latestPayment?.status === "FAILED") {
-        setError("Payment failed or was declined.");
+        setError(t("paymentFailed"));
         setPhase("failed");
       }
     }, 2000);
     return () => clearInterval(interval);
-  }, [phase, id]);
+  }, [phase, id, t]);
 
   async function handleFreePublish() {
     setSubmitting(true);
@@ -54,7 +66,8 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     setSubmitting(false);
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error ?? "Could not publish");
+      setError(describeApiError(data.error, t("couldNotPublish")));
+      setPhase("failed");
       return;
     }
     setPhase("done");
@@ -71,7 +84,8 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     setSubmitting(false);
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error ?? "Could not redeem credit");
+      setError(describeApiError(data.error, t("couldNotRedeemCredit")));
+      setPhase("failed");
       return;
     }
     setPhase("done");
@@ -88,7 +102,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     setSubmitting(false);
     const data = await res.json();
     if (!res.ok) {
-      setError(data.error);
+      setError(describeApiError(data.error, t("couldNotStartPayment")));
       setPhase("failed");
       return;
     }
@@ -118,11 +132,11 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     }
   }
 
-  if (!info) return <p className="page text-muted">{tc("loading")}</p>;
+  if (!info) return <main className="page-sm text-muted">{tc("loading")}</main>;
 
   if (phase === "done" || info.listingStatus === "LIVE") {
     return (
-      <main className="page max-w-sm text-center">
+      <main className="page-sm text-center">
         <h1 className="page-title">{t("listingIsLive")}</h1>
         <Link href={`/listings/${id}`} className="btn-primary mt-4 inline-flex">
           {t("viewListing")}
@@ -134,7 +148,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   const breakEvenListings = Math.ceil(info.pricing.annualSubscription / info.pricing.payPerBoost);
 
   return (
-    <main className="page max-w-sm">
+    <main className="page-sm">
       <h1 className="page-title">{t("title")}</h1>
 
       {phase === "waiting" && <p className="mt-4 text-sm text-muted">{t("waiting")}</p>}
@@ -228,7 +242,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
           </label>
 
           {error && (
-            <p className="mt-3 text-sm text-red-600">
+            <p className="mt-3 form-error">
               {error}
               {phase === "failed" && ` ${t("tryAgainBelow")}`}
             </p>
@@ -238,29 +252,29 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
             {t("payWithMobileMoney")}
           </button>
 
-          <div className="mt-6 border-t border-dashed border-border pt-4">
-            <p className="text-xs text-muted">
-              No live PawaPay sandbox account in this environment (T2.1) — simulate the outcome instead:
-            </p>
-            <div className="mt-2 flex gap-2">
-              <button
-                type="button"
-                onClick={() => handleSimulatePayment("COMPLETED")}
-                disabled={submitting}
-                className="btn-outline btn-sm"
-              >
-                Simulate success
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSimulatePayment("FAILED")}
-                disabled={submitting}
-                className="btn-outline btn-sm"
-              >
-                Simulate failure
-              </button>
+          {isDevEnvironment && (
+            <div className="mt-6 border-t border-dashed border-border pt-4">
+              <p className="text-xs text-muted">Sandbox mode — simulate the payment outcome:</p>
+              <div className="mt-2 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleSimulatePayment("COMPLETED")}
+                  disabled={submitting}
+                  className="btn-outline btn-sm"
+                >
+                  Simulate success
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSimulatePayment("FAILED")}
+                  disabled={submitting}
+                  className="btn-outline btn-sm"
+                >
+                  Simulate failure
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
     </main>

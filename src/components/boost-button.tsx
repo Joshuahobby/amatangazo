@@ -1,6 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+
+import { isDevEnvironment } from "@/lib/env";
 
 type BoostInfo = {
   quote: { kind: "FROM_ALLOTMENT" } | { kind: "SUBSCRIBER_DISCOUNT" | "STANDARD"; price: number };
@@ -10,6 +13,7 @@ type BoostInfo = {
 };
 
 export function BoostButton({ listingId }: { listingId: string }) {
+  const t = useTranslations("boost");
   const [info, setInfo] = useState<BoostInfo | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -27,7 +31,7 @@ export function BoostButton({ listingId }: { listingId: string }) {
     setMessage(null);
     const res = await fetch(`/api/listings/${listingId}/boost/redeem`, { method: "POST" });
     setSubmitting(false);
-    setMessage(res.ok ? "Boosted using your monthly allotment." : (await res.json()).error);
+    setMessage(res.ok ? t("boostedFromAllotment") : (await res.json()).error);
     load();
   }
 
@@ -40,7 +44,7 @@ export function BoostButton({ listingId }: { listingId: string }) {
       body: JSON.stringify({ creditId }),
     });
     setSubmitting(false);
-    setMessage(res.ok ? "Boosted using your referral credit." : (await res.json()).error);
+    setMessage(res.ok ? t("boostedFromCredit") : (await res.json()).error);
     load();
   }
 
@@ -51,7 +55,7 @@ export function BoostButton({ listingId }: { listingId: string }) {
     const initiate = await fetch(`/api/dev/simulate-boost/${listingId}`, { method: "POST" }).then((r) => r.json());
     if (!initiate.payment) {
       setSubmitting(false);
-      setMessage(initiate.error ?? "Could not start boost checkout");
+      setMessage(initiate.error ?? t("couldNotStart"));
       return;
     }
     await fetch("/api/dev/pawapay-webhook", {
@@ -60,7 +64,7 @@ export function BoostButton({ listingId }: { listingId: string }) {
       body: JSON.stringify({ paymentId: initiate.payment.id, outcome: "COMPLETED" }),
     });
     setSubmitting(false);
-    setMessage("Boosted (simulated payment).");
+    setMessage(t("boostedSimulated"));
     load();
   }
 
@@ -69,7 +73,9 @@ export function BoostButton({ listingId }: { listingId: string }) {
   return (
     <div className="card border-dashed">
       {info.isCurrentlyBoosted && info.boostExpiresAt && (
-        <p className="text-sm text-muted">Currently featured until {new Date(info.boostExpiresAt).toLocaleString()}.</p>
+        <p className="text-sm text-muted">
+          {t("currentlyFeaturedUntil", { date: new Date(info.boostExpiresAt).toLocaleString() })}
+        </p>
       )}
       {message && <p className="mt-1 text-sm text-foreground">{message}</p>}
       <div className="mt-2 flex flex-wrap gap-2">
@@ -81,17 +87,19 @@ export function BoostButton({ listingId }: { listingId: string }) {
             disabled={submitting}
             className="btn-accent btn-sm"
           >
-            Use RWF {credit.amount.toLocaleString()} referral credit
+            {t("useCredit", { amount: credit.amount.toLocaleString() })}
           </button>
         ))}
         {info.quote.kind === "FROM_ALLOTMENT" ? (
           <button type="button" onClick={handleRedeem} disabled={submitting} className="btn-primary btn-sm">
-            Boost now (free — monthly allotment)
+            {t("boostFree")}
+          </button>
+        ) : isDevEnvironment ? (
+          <button type="button" onClick={handleSimulatePay} disabled={submitting} className="btn-primary btn-sm">
+            {t("boostPaid", { price: info.quote.price.toLocaleString() })}
           </button>
         ) : (
-          <button type="button" onClick={handleSimulatePay} disabled={submitting} className="btn-primary btn-sm">
-            Boost now — RWF {info.quote.price.toLocaleString()} (simulated, no live PawaPay account)
-          </button>
+          <p className="text-sm text-muted">{t("boostUnavailable")}</p>
         )}
       </div>
     </div>

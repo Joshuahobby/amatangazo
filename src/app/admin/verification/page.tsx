@@ -44,16 +44,16 @@ export default function AdminVerificationPage() {
       <h1 className="page-title">Verification queue</h1>
       <p className="page-subtitle">
         Pending: <strong className="text-foreground">{queue.length}</strong>
-        {slaBreachedCount > 0 && <span className="ml-3 text-red-600">⚠ {slaBreachedCount} past the 48h SLA</span>}
+        {slaBreachedCount > 0 && <span className="ml-3 text-danger">⚠ {slaBreachedCount} past the 48h SLA</span>}
       </p>
 
       <ul className="mt-4 flex flex-col gap-3">
         {queue.map((entry) => (
-          <li key={entry.id} className={`card ${entry.slaBreached ? "border-2 border-red-400" : ""}`}>
+          <li key={entry.id} className={`card ${entry.slaBreached ? "border-2 border-danger-border" : ""}`}>
             <span className="font-semibold text-foreground">{entry.name ?? entry.contact}</span>
             <span className="text-muted"> · {entry.accountType}</span>
-            {entry.isSubscriber && <span className="badge bg-cat-tender/15 text-cat-tender ml-2">Subscriber</span>}
-            {entry.slaBreached && <span className="badge bg-red-100 text-red-800 ml-2">SLA breached</span>}
+            {entry.isSubscriber && <span className="badge-cat-tender ml-2">Subscriber</span>}
+            {entry.slaBreached && <span className="badge-danger ml-2">SLA breached</span>}
             <p className="mt-1 text-sm text-muted">
               {entry.contact} · paid RWF {entry.totalPaid.toLocaleString()} · submitted{" "}
               {entry.submittedAt ? new Date(entry.submittedAt).toLocaleString() : "?"}

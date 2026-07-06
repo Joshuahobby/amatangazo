@@ -1,0 +1,111 @@
+# Amatangazo Design System
+
+Single source of truth: [`src/app/globals.css`](../src/app/globals.css). All tokens are CSS
+variables on `:root`, exposed to Tailwind v4 utilities via `@theme inline`. **Never hardcode a
+hex color or an arbitrary `[...]` value in a component** — if a value isn't expressible with the
+tokens and classes below, add a token first.
+
+## Design tokens
+
+### Colors
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `--background` | `#faf9f6` | App background (warm off-white) |
+| `--surface` | `#ffffff` | Cards, inputs, header |
+| `--foreground` | `#1c1917` | Body text |
+| `--muted` | `#6b6560` | Secondary text |
+| `--border` | `#e7e2d9` | Hairlines, input borders |
+| `--primary` / `--primary-hover` / `--primary-contrast` | `#16704f` / `#115c40` / white | Brand green (Rwanda-inspired). Main actions, links, focus ring |
+| `--accent` / `--accent-hover` / `--accent-contrast` | `#f2b705` / `#d9a404` / `#1c1917` | Sun yellow. Featured/boost emphasis only — not a second action color |
+| `--danger` / `--danger-surface` / `--danger-border` | `#b42318` / `#fceae7` / `#e9a79d` | Errors, destructive actions, breached SLAs |
+| `--cat-job` / `--cat-tender` / `--cat-auction` / `--cat-classified` | green / blue / rust / purple | Per-category identity on tiles, badges, filters |
+
+Use them as Tailwind utilities: `text-danger`, `bg-cat-tender/15`, `border-border`, etc.
+There is no dark mode; the palette is light-only by design.
+
+### Typography & spacing
+
+Geist Sans / Geist Mono via `next/font`; Tailwind's default type and spacing scales. No custom
+scale tokens — don't introduce arbitrary sizes.
+
+## Component classes (`@layer components`)
+
+> Tailwind v4 note: `@apply` can only reference real utilities, not other custom classes, so each
+> variant repeats its base styles instead of composing off a shared class. Follow that pattern
+> when adding variants.
+
+### Page scaffolds
+
+| Class | Width | Use |
+|-------|-------|-----|
+| `.page` | `max-w-3xl` | Default content pages (listings, dashboard, legal) |
+| `.page-md` | `max-w-xl` | Medium single-column pages (referrals, saved searches) |
+| `.page-sm` | `max-w-sm` | Narrow flows (login, checkout, verification) |
+
+Pick the variant — **don't stack `max-w-*` on top of `.page`**; that only works because the
+utilities cascade layer happens to beat the components layer. All share `px-4 py-8`.
+
+**Sanctioned exceptions:** the landing page (`src/app/page.tsx`, marketing layout at `max-w-5xl`)
+and the admin layout (own `max-w-5xl` container in `src/app/admin/layout.tsx`).
+
+Headings inside a scaffold: `.page-title` + `.page-subtitle`.
+
+### Buttons
+
+All `<button>`s and button-shaped links use a `btn-*` class. Base: hover, disabled
+(`opacity-50` + `cursor-not-allowed`), and a global focus ring (see Accessibility).
+
+| Class | Use |
+|-------|-----|
+| `.btn-primary` | The one main action on a view |
+| `.btn-accent` | Boost/featured purchase actions |
+| `.btn-outline` | Secondary actions |
+| `.btn-danger` | Destructive confirmation (delete, reject) |
+| `.btn-sm` (modifier) | Compact contexts: filters, table rows, inline actions |
+| `.btn-lg` (modifier) | Marketing-scale pill (rounded-full), e.g. landing hero CTAs |
+
+Combine modifier with a variant: `className="btn-primary btn-lg"`. Loading state is a disabled
+button with swapped label (`{submitting ? t("submitting") : t("submit")}`).
+
+### Forms
+
+- `.field` — `<label>` wrapper providing stacked label + control.
+- `.input` — text inputs, selects, textareas alike.
+- `.form-error` — inline validation text (small, `--danger`). Use it for every error message
+  under a field or form; don't hand-roll red text.
+
+### Badges
+
+| Class | Use |
+|-------|-----|
+| `.badge-neutral` | Category/status chips with no sentiment |
+| `.badge-featured` | Boosted listings (accent). If content is only the `★` glyph, add `role="img"` + `aria-label` |
+| `.badge-status` | Outlined, muted status |
+| `.badge-danger` | Negative states (SLA breached, non-live listing) |
+| `.badge-cat-job/-tender/-auction/-classified` | Category-tinted chips |
+
+`.badge` alone is the escape hatch for one-off compositions — if you use the same composition
+twice, promote it to a variant here instead.
+
+### Other
+
+- `.card` — surface container; add `transition-shadow hover:shadow-md` when clickable.
+- `.stat-card` with `.stat-value` / `.stat-label` — dashboard stat tiles.
+- `.detail-grid` — label/value `<dl>` grid on listing detail pages.
+- `.admin-table` — admin data tables.
+- `.link` — inline text links.
+
+## Accessibility
+
+- A global `@layer base` rule gives every interactive element a 2px `--primary` outline on
+  `:focus-visible`. Never suppress it (`outline-none`) without providing an equally visible
+  replacement.
+- Decorative color swatches: `aria-hidden`. Glyph-only badges (`★`): `role="img"` +
+  translated `aria-label`.
+
+## Language & i18n
+
+All user-facing strings go through `next-intl` (`messages/{en,fr,rw}.json`) — including
+transient states like loading/uploading. Exception: the `/admin` area is intentionally
+English-only and uses hardcoded strings.

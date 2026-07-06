@@ -22,6 +22,7 @@ type SearchResultListing = {
 export default function ListingsSearchPage() {
   const t = useTranslations("browse");
   const tc = useTranslations("common");
+  const tp = useTranslations("post");
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<string>("");
   const [location, setLocation] = useState("");
@@ -56,7 +57,7 @@ export default function ListingsSearchPage() {
   }, [q, category, location, sector, experienceLevel]);
 
   return (
-    <main className="page max-w-3xl">
+    <main className="page">
       <h1 className="page-title">{t("title")}</h1>
 
       <div className="mt-4 flex flex-wrap gap-2">
@@ -95,7 +96,7 @@ export default function ListingsSearchPage() {
             <option value="">{t("anyExperienceLevel")}</option>
             {experienceLevels.map((level) => (
               <option key={level} value={level}>
-                {level}
+                {tp(`experienceLevel${level}`)}
               </option>
             ))}
           </select>

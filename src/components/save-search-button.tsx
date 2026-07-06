@@ -64,7 +64,7 @@ export function SaveSearchButton({ category, filters }: { category: string; filt
       <button type="button" onClick={handleSave} disabled={state === "saving"} className="btn-outline btn-sm">
         {t("save")}
       </button>
-      {state === "error" && <span className="text-red-600">{t("error")}</span>}
+      {state === "error" && <span className="text-danger">{t("error")}</span>}
     </span>
   );
 }

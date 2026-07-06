@@ -33,13 +33,13 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
   const tc = await getTranslations("common");
 
   return (
-    <main className="page max-w-3xl">
+    <main className="page">
       {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />}
       <div className="flex flex-wrap gap-2">
         <span className="badge-neutral">{listing.category}</span>
         {listing.isCurrentlyBoosted && <span className="badge-featured">{tc("featured")}</span>}
         {listing.status !== "LIVE" && (
-          <span className="badge bg-red-100 text-red-800">
+          <span className="badge-danger">
             {listing.status} {t("onlyVisibleToYou")}
           </span>
         )}

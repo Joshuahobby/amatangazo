@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { BaseListingFields, initialBaseListingValue, type BaseListingValue } from "@/components/base-listing-fields";
+import { formatListingFormErrors } from "@/lib/listing-form-error";
 import { PostResult } from "@/components/post-result";
 
 type AuctionDetailsValue = {
@@ -29,7 +30,7 @@ const initialDetails: AuctionDetailsValue = {
 export default function PostAuctionPage() {
   const [base, setBase] = useState<BaseListingValue>(initialBaseListingValue);
   const [details, setDetails] = useState<AuctionDetailsValue>(initialDetails);
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
   const [listingId, setListingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const t = useTranslations("post");
@@ -37,7 +38,7 @@ export default function PostAuctionPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setSubmitting(true);
-    setError(null);
+    setErrors([]);
 
     const res = await fetch("/api/listings", {
       method: "POST",
@@ -60,7 +61,7 @@ export default function PostAuctionPage() {
     setSubmitting(false);
     const data = await res.json();
     if (!res.ok) {
-      setError(JSON.stringify(data.error));
+      setErrors(formatListingFormErrors(data, t));
       return;
     }
     setListingId(data.listing.id);
@@ -75,7 +76,7 @@ export default function PostAuctionPage() {
         <BaseListingFields value={base} onChange={setBase} />
 
         <label className="field">
-          Starting price (optional)
+          {t("fieldStartingPrice")}
           <input
             name="startingPrice"
             type="number"
@@ -87,7 +88,7 @@ export default function PostAuctionPage() {
         </label>
 
         <label className="field">
-          Currency
+          {t("fieldCurrency")}
           <input
             name="currency"
             value={details.currency}
@@ -97,7 +98,7 @@ export default function PostAuctionPage() {
         </label>
 
         <label className="field">
-          Auction date &amp; time (drives the countdown)
+          {t("fieldAuctionDate")}
           <input
             name="auctionDate"
             required
@@ -109,7 +110,7 @@ export default function PostAuctionPage() {
         </label>
 
         <label className="field">
-          Auction location
+          {t("fieldAuctionLocation")}
           <input
             name="auctionLocation"
             required
@@ -120,7 +121,7 @@ export default function PostAuctionPage() {
         </label>
 
         <label className="field">
-          Registration contact phone (optional)
+          {t("fieldRegistrationContactPhone")}
           <input
             name="registrationContactPhone"
             value={details.registrationContactPhone}
@@ -130,7 +131,7 @@ export default function PostAuctionPage() {
         </label>
 
         <label className="field">
-          Registration contact WhatsApp (optional)
+          {t("fieldRegistrationContactWhatsapp")}
           <input
             name="registrationContactWhatsapp"
             value={details.registrationContactWhatsapp}
@@ -140,7 +141,7 @@ export default function PostAuctionPage() {
         </label>
 
         <label className="field">
-          Registration contact email (optional)
+          {t("fieldRegistrationContactEmail")}
           <input
             name="registrationContactEmail"
             type="email"
@@ -150,7 +151,13 @@ export default function PostAuctionPage() {
           />
         </label>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {errors.length > 0 && (
+          <ul className="list-disc pl-4 form-error">
+            {errors.map((message, index) => (
+              <li key={index}>{message}</li>
+            ))}
+          </ul>
+        )}
         <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? t("posting") : t("submitAuction")}
         </button>

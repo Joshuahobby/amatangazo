@@ -15,8 +15,10 @@ type SavedSearch = {
 
 export default function SavedSearchesPage() {
   const t = useTranslations("savedSearches");
+  const tc = useTranslations("common");
   const [searches, setSearches] = useState<SavedSearch[] | null>(null);
   const [unauthenticated, setUnauthenticated] = useState(false);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -33,12 +35,13 @@ export default function SavedSearchesPage() {
 
   async function handleDelete(id: string) {
     await fetch(`/api/saved-searches/${id}`, { method: "DELETE" });
+    setConfirmingId(null);
     setReloadKey((k) => k + 1);
   }
 
   if (unauthenticated) {
     return (
-      <main className="page max-w-xl">
+      <main className="page-md">
         <p>
           <Link href="/login" className="link">
             {t("loginToSave")}
@@ -49,9 +52,9 @@ export default function SavedSearchesPage() {
   }
 
   return (
-    <main className="page max-w-xl">
+    <main className="page-md">
       <h1 className="page-title">{t("title")}</h1>
-      {searches === null && <p className="mt-4 text-muted">...</p>}
+      {searches === null && <p className="mt-4 text-muted">{tc("loading")}</p>}
       {searches?.length === 0 && <p className="mt-4 text-muted">{t("empty")}</p>}
       <ul className="mt-4 flex flex-col gap-3">
         {searches?.map((search) => (
@@ -63,9 +66,27 @@ export default function SavedSearchesPage() {
                 .map(([k, v]) => `${k}: ${v}`)
                 .join(" · ") || t("noFilters")}
             </p>
-            <button type="button" onClick={() => handleDelete(search.id)} className="btn-danger btn-sm mt-2">
-              {t("delete")}
-            </button>
+            {confirmingId === search.id ? (
+              <div className="mt-2 flex flex-col gap-2">
+                <p className="text-xs text-danger">{t("confirmDelete")}</p>
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => handleDelete(search.id)} className="btn-danger btn-sm">
+                    {t("confirmDeleteAction")}
+                  </button>
+                  <button type="button" onClick={() => setConfirmingId(null)} className="btn-outline btn-sm">
+                    {t("keepIt")}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmingId(search.id)}
+                className="btn-danger btn-sm mt-2"
+              >
+                {t("delete")}
+              </button>
+            )}
           </li>
         ))}
       </ul>

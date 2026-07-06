@@ -13,6 +13,7 @@ const CATEGORIES = [
 export default async function Home() {
   const t = await getTranslations("home");
   const tb = await getTranslations("browse");
+  const tc = await getTranslations("common");
 
   const [latest, tenderCount] = await Promise.all([
     prisma.listing.findMany({
@@ -33,16 +34,10 @@ export default async function Home() {
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg text-muted">{t("heroSubtitle")}</p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/listings"
-            className="rounded-full bg-primary px-6 py-3 font-medium text-primary-contrast transition-colors hover:bg-primary-hover"
-          >
+          <Link href="/listings" className="btn-primary btn-lg">
             {t("ctaBrowse")}
           </Link>
-          <Link
-            href="/post/job"
-            className="rounded-full border border-border bg-surface px-6 py-3 font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
-          >
+          <Link href="/post/job" className="btn-outline btn-lg">
             {t("ctaPost")}
           </Link>
         </div>
@@ -90,7 +85,7 @@ export default async function Home() {
                   <div className="flex items-start justify-between gap-2">
                     <span className="font-medium text-foreground">{listing.title}</span>
                     {listing.isCurrentlyBoosted && (
-                      <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-contrast">
+                      <span className="badge-featured shrink-0" role="img" aria-label={tc("featured")}>
                         ★
                       </span>
                     )}

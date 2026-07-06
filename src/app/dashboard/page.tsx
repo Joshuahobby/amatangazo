@@ -19,6 +19,7 @@ type Benchmarks = Record<string, { avgViews: number; avgApplications: number }>;
 
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
+  const tc = useTranslations("common");
   const [listings, setListings] = useState<DashboardListing[] | null>(null);
   const [benchmarks, setBenchmarks] = useState<Benchmarks>({});
   const [unauthenticated, setUnauthenticated] = useState(false);
@@ -37,7 +38,7 @@ export default function DashboardPage() {
 
   if (unauthenticated) {
     return (
-      <main className="page max-w-3xl">
+      <main className="page">
         <p>
           <Link href="/login" className="link">
             {t("loginFirst")}
@@ -48,9 +49,9 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="page max-w-3xl">
+    <main className="page">
       <h1 className="page-title">{t("title")}</h1>
-      {listings === null && <p className="mt-4 text-muted">...</p>}
+      {listings === null && <p className="mt-4 text-muted">{tc("loading")}</p>}
       {listings?.length === 0 && <p className="mt-4 text-muted">{t("empty")}</p>}
 
       <ul className="mt-4 flex flex-col gap-3">
