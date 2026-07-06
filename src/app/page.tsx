@@ -37,7 +37,7 @@ export default async function Home() {
           <Link href="/listings" className="btn-primary btn-lg">
             {t("ctaBrowse")}
           </Link>
-          <Link href="/post/job" className="btn-outline btn-lg">
+          <Link href="/post" className="btn-outline btn-lg">
             {t("ctaPost")}
           </Link>
         </div>

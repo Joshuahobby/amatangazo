@@ -7,6 +7,12 @@
     "browse": "Reba amatangazo",
     "dashboard": "Imbonerahamwe"
   },
+  "nav": {
+    "main": "Urutonde nyamukuru",
+    "browse": "Amatangazo",
+    "post": "Tangaza",
+    "searchPlaceholder": "Shakisha amatangazo…"
+  },
   "auth": {
     "title": "Injira",
     "signInWithGoogle": "Injira ukoresheje Google",
@@ -67,6 +73,12 @@
     "aiSummaryDisclaimer": "Byakuwe mu buryo bwikora — buri gihe genzura itangazo ry'umwimerere."
   },
   "post": {
+    "chooserTitle": "Urashaka gutangaza iki?",
+    "chooserSubtitle": "Hitamo icyiciro. Itangazo ryawe rijya ku rubuga nyuma yo kwishyura.",
+    "chooseJOBDesc": "Shaka abakozi ku myanya itandukanye.",
+    "chooseTENDERDesc": "Tangaza amasoko kandi wakire ipiganwa.",
+    "chooseAUCTIONDesc": "Menyekanisha cyamunara ku baguzi.",
+    "chooseCLASSIFIEDDesc": "Gurisha imodoka, amazu, ibikoresho n'ibindi.",
     "jobTitle": "Tangaza akazi",
     "tenderTitle": "Tangaza isoko",
     "auctionTitle": "Tangaza cyamunara",

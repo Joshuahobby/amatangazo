@@ -7,6 +7,12 @@
     "browse": "Parcourir les annonces",
     "dashboard": "Tableau de bord"
   },
+  "nav": {
+    "main": "Navigation principale",
+    "browse": "Annonces",
+    "post": "Publier",
+    "searchPlaceholder": "Rechercher des annonces…"
+  },
   "auth": {
     "title": "Se connecter",
     "signInWithGoogle": "Se connecter avec Google",
@@ -67,6 +73,12 @@
     "aiSummaryDisclaimer": "Extrait automatiquement — vérifiez toujours l'avis officiel."
   },
   "post": {
+    "chooserTitle": "Que souhaitez-vous publier ?",
+    "chooserSubtitle": "Choisissez une catégorie. Votre annonce est mise en ligne après le paiement.",
+    "chooseJOBDesc": "Recrutez du personnel, du stage aux postes seniors.",
+    "chooseTENDERDesc": "Publiez des avis d'appel d'offres et recevez des soumissions.",
+    "chooseAUCTIONDesc": "Annoncez des ventes aux enchères publiques.",
+    "chooseCLASSIFIEDDesc": "Vendez véhicules, immobilier, électronique et plus.",
     "jobTitle": "Publier une offre d'emploi",
     "tenderTitle": "Publier un appel d'offres",
     "auctionTitle": "Publier un avis d'enchère",

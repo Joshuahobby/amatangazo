@@ -7,6 +7,12 @@
     "browse": "Browse listings",
     "dashboard": "Dashboard"
   },
+  "nav": {
+    "main": "Main navigation",
+    "browse": "Browse",
+    "post": "Post",
+    "searchPlaceholder": "Search listings…"
+  },
   "auth": {
     "title": "Log in",
     "signInWithGoogle": "Sign in with Google",
@@ -67,6 +73,12 @@
     "aiSummaryDisclaimer": "Automatically extracted — always verify against the official notice."
   },
   "post": {
+    "chooserTitle": "What would you like to post?",
+    "chooserSubtitle": "Choose a category. Your listing goes live after checkout.",
+    "chooseJOBDesc": "Hire staff — from internships to senior roles.",
+    "chooseTENDERDesc": "Publish procurement notices and receive bids.",
+    "chooseAUCTIONDesc": "Announce public auctions to buyers.",
+    "chooseCLASSIFIEDDesc": "Sell vehicles, property, electronics and more.",
     "jobTitle": "Post a job",
     "tenderTitle": "Post a tender",
     "auctionTitle": "Post an auction notice",
