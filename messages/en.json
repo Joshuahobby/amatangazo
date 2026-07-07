@@ -5,7 +5,13 @@
     "loading": "Loading...",
     "featured": "Featured",
     "browse": "Browse listings",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "statusDRAFT": "Draft",
+    "statusPENDING_PAYMENT": "Awaiting payment",
+    "statusLIVE": "Live",
+    "statusEXPIRED": "Expired",
+    "statusREJECTED": "Rejected",
+    "statusREMOVED": "Removed"
   },
   "nav": {
     "main": "Main navigation",

@@ -5,7 +5,13 @@
     "loading": "Birimo gutegurwa...",
     "featured": "Ku isonga",
     "browse": "Reba amatangazo",
-    "dashboard": "Imbonerahamwe"
+    "dashboard": "Imbonerahamwe",
+    "statusDRAFT": "Umushinga",
+    "statusPENDING_PAYMENT": "Itegereje kwishyurwa",
+    "statusLIVE": "Riri ku rubuga",
+    "statusEXPIRED": "Ryarangiye",
+    "statusREJECTED": "Ryanzwe",
+    "statusREMOVED": "Ryakuwemo"
   },
   "nav": {
     "main": "Urutonde nyamukuru",

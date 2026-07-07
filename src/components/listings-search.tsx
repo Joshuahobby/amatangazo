@@ -1,23 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { ListingCard, type ListingCardData } from "@/components/listing-card";
 import { SaveSearchButton } from "@/components/save-search-button";
 import { experienceLevels, listingCategories } from "@/lib/validations/listing";
-
-type SearchResultListing = {
-  id: string;
-  title: string;
-  category: string;
-  location: string;
-  isCurrentlyBoosted: boolean;
-  jobDetails: { sector: string; experienceLevel: string } | null;
-  tenderDetails: { sector: string; submissionDeadline: string } | null;
-  auctionDetails: { auctionDate: string } | null;
-  classifiedDetails: { subcategory: string; price: number | null } | null;
-};
 
 export type ListingsSearchInitial = {
   q: string;
@@ -29,14 +17,13 @@ export type ListingsSearchInitial = {
 
 export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) {
   const t = useTranslations("browse");
-  const tc = useTranslations("common");
   const tp = useTranslations("post");
   const [q, setQ] = useState(initial.q);
   const [category, setCategory] = useState(initial.category);
   const [location, setLocation] = useState(initial.location);
   const [sector, setSector] = useState(initial.sector);
   const [experienceLevel, setExperienceLevel] = useState(initial.experienceLevel);
-  const [results, setResults] = useState<SearchResultListing[]>([]);
+  const [results, setResults] = useState<ListingCardData[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -129,19 +116,10 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
         {loading ? t("searching") : t("results", { count: total })}
       </p>
 
-      <ul className="mt-3 flex flex-col gap-3">
+      <ul className="mt-3 grid gap-3 sm:grid-cols-2">
         {results.map((listing) => (
-          <li key={listing.id} className="card">
-            <Link href={`/listings/${listing.id}`} className="font-semibold text-foreground hover:text-primary">
-              {listing.title}
-            </Link>
-            {listing.isCurrentlyBoosted && <span className="badge-featured ml-2">{tc("featured")}</span>}
-            <p className="mt-1 text-sm text-muted">
-              {listing.category} · {listing.location}
-              {listing.jobDetails && ` · ${listing.jobDetails.sector} · ${listing.jobDetails.experienceLevel}`}
-              {listing.tenderDetails && ` · ${listing.tenderDetails.sector}`}
-              {listing.classifiedDetails && ` · ${listing.classifiedDetails.subcategory}`}
-            </p>
+          <li key={listing.id}>
+            <ListingCard listing={listing} />
           </li>
         ))}
       </ul>

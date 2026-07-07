@@ -5,7 +5,13 @@
     "loading": "Chargement...",
     "featured": "En vedette",
     "browse": "Parcourir les annonces",
-    "dashboard": "Tableau de bord"
+    "dashboard": "Tableau de bord",
+    "statusDRAFT": "Brouillon",
+    "statusPENDING_PAYMENT": "En attente de paiement",
+    "statusLIVE": "En ligne",
+    "statusEXPIRED": "Expirée",
+    "statusREJECTED": "Refusée",
+    "statusREMOVED": "Retirée"
   },
   "nav": {
     "main": "Navigation principale",

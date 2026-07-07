@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { CategoryBadge, FeaturedBadge, StatusBadge } from "@/components/listing-badges";
+
 type DashboardListing = {
   id: string;
   title: string;
@@ -62,9 +64,10 @@ export default function DashboardPage() {
               <Link href={`/listings/${listing.id}`} className="font-semibold text-foreground hover:text-primary">
                 {listing.title}
               </Link>
-              <span className="ml-2 text-xs text-muted">
-                {listing.category} · {listing.status}
-                {listing.isCurrentlyBoosted && " · ★"}
+              <span className="ml-2 inline-flex flex-wrap items-center gap-1.5 align-middle">
+                <CategoryBadge category={listing.category} />
+                <StatusBadge status={listing.status} />
+                {listing.isCurrentlyBoosted && <FeaturedBadge />}
               </span>
               <p className="mt-1.5 text-sm text-foreground">
                 {t("views")}: <strong>{listing.viewCount}</strong>

@@ -102,6 +102,11 @@ body {
   .card {
     @apply rounded-xl border border-border bg-surface p-4;
   }
+  /* Card variant with edge-to-edge media (e.g. listing thumbnails): no padding
+     of its own — pad the content block inside instead. */
+  .card-media {
+    @apply overflow-hidden rounded-xl border border-border bg-surface;
+  }
 
   /*
    * Tailwind v4's @apply can only reference real utilities, not custom
@@ -159,6 +164,10 @@ body {
   }
   .badge-danger {
     @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-danger-surface text-danger;
+  }
+  /* Verified-poster trust chip. */
+  .badge-verified {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary;
   }
   /* Category-tinted badges, one per listing type. */
   .badge-cat-job {

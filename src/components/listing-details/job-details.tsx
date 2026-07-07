@@ -7,13 +7,14 @@ export async function JobDetailsSection({ listing }: { listing: ListingWithDetai
   const details = listing.jobDetails;
   if (!details) return null;
   const t = await getTranslations("listing");
+  const tp = await getTranslations("post");
 
   return (
     <dl className="detail-grid">
       <dt>{t("sector")}</dt>
       <dd>{details.sector}</dd>
       <dt>{t("experienceLevel")}</dt>
-      <dd>{details.experienceLevel}</dd>
+      <dd>{tp(`experienceLevel${details.experienceLevel}`)}</dd>
       <dt>{t("applicationDeadline")}</dt>
       <dd>{details.applicationDeadline.toLocaleDateString()}</dd>
       {(details.salaryRangeMin || details.salaryRangeMax) && (

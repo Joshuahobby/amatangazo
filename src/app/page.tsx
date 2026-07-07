@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
+import { ListingCard } from "@/components/listing-card";
+import { listingInclude } from "@/lib/listings";
 import { prisma } from "@/lib/prisma";
 
 const CATEGORIES = [
@@ -13,14 +15,13 @@ const CATEGORIES = [
 export default async function Home() {
   const t = await getTranslations("home");
   const tb = await getTranslations("browse");
-  const tc = await getTranslations("common");
 
   const [latest, tenderCount] = await Promise.all([
     prisma.listing.findMany({
       where: { status: "LIVE" },
       orderBy: [{ isCurrentlyBoosted: "desc" }, { publishedAt: "desc" }],
       take: 6,
-      select: { id: true, title: true, category: true, location: true, isCurrentlyBoosted: true },
+      include: listingInclude,
     }),
     prisma.listing.count({ where: { status: "LIVE", category: "TENDER" } }),
   ]);
@@ -78,22 +79,7 @@ export default async function Home() {
           <ul className="grid gap-3 sm:grid-cols-2">
             {latest.map((listing) => (
               <li key={listing.id}>
-                <Link
-                  href={`/listings/${listing.id}`}
-                  className="block rounded-xl border border-border bg-surface p-4 transition-shadow hover:shadow-md"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="font-medium text-foreground">{listing.title}</span>
-                    {listing.isCurrentlyBoosted && (
-                      <span className="badge-featured shrink-0" role="img" aria-label={tc("featured")}>
-                        ★
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1 text-sm text-muted">
-                    {tb(`category${listing.category}`)} · {listing.location}
-                  </p>
-                </Link>
+                <ListingCard listing={listing} />
               </li>
             ))}
           </ul>

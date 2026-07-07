@@ -17,5 +17,8 @@ export default getRequestConfig(async () => {
   return {
     locale,
     messages: (await import(`../../messages/${locale}.json`)).default,
+    // Dates/relative times render in Rwanda's timezone on both server and
+    // client, so listing cards don't drift across the SSR/hydration boundary.
+    timeZone: "Africa/Kigali",
   };
 });

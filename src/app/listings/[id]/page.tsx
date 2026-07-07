@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { BoostButton } from "@/components/boost-button";
+import { CategoryBadge, FeaturedBadge, VerifiedBadge } from "@/components/listing-badges";
 import { AuctionDetailsSection } from "@/components/listing-details/auction-details";
 import { ClassifiedDetailsSection } from "@/components/listing-details/classified-details";
 import { JobDetailsSection } from "@/components/listing-details/job-details";
@@ -36,11 +37,11 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
     <main className="page">
       {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />}
       <div className="flex flex-wrap gap-2">
-        <span className="badge-neutral">{listing.category}</span>
-        {listing.isCurrentlyBoosted && <span className="badge-featured">{tc("featured")}</span>}
+        <CategoryBadge category={listing.category} />
+        {listing.isCurrentlyBoosted && <FeaturedBadge />}
         {listing.status !== "LIVE" && (
           <span className="badge-danger">
-            {listing.status} {t("onlyVisibleToYou")}
+            {tc(`status${listing.status}`)} {t("onlyVisibleToYou")}
           </span>
         )}
       </div>
@@ -75,11 +76,9 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
 
       <div className="my-6 border-t border-border" />
 
-      <p className="text-sm text-foreground">
+      <p className="flex flex-wrap items-center gap-1.5 text-sm text-foreground">
         {t("postedBy")} <strong>{listing.poster.businessName ?? listing.poster.name}</strong>
-        {listing.poster.verificationStatus === "VERIFIED" && (
-          <span className="ml-1 text-primary">✓ {t("verified")}</span>
-        )}
+        {listing.poster.verificationStatus === "VERIFIED" && <VerifiedBadge />}
       </p>
     </main>
   );

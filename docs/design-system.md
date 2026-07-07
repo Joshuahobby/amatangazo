@@ -83,14 +83,23 @@ button with swapped label (`{submitting ? t("submitting") : t("submit")}`).
 | `.badge-featured` | Boosted listings (accent). If content is only the `★` glyph, add `role="img"` + `aria-label` |
 | `.badge-status` | Outlined, muted status |
 | `.badge-danger` | Negative states (SLA breached, non-live listing) |
+| `.badge-verified` | Verified-poster trust chip (primary tint) |
 | `.badge-cat-job/-tender/-auction/-classified` | Category-tinted chips |
 
 `.badge` alone is the escape hatch for one-off compositions — if you use the same composition
 twice, promote it to a variant here instead.
 
+On listing surfaces, don't compose these by hand: use the shared components in
+[`src/components/listing-badges.tsx`](../src/components/listing-badges.tsx)
+(`CategoryBadge`, `FeaturedBadge`, `VerifiedBadge`, `StatusBadge` — all translated) and
+[`src/components/listing-card.tsx`](../src/components/listing-card.tsx) (`ListingCard`: thumbnail,
+badges, key fact, time-ago, poster row) so every surface renders listings identically.
+
 ### Other
 
 - `.card` — surface container; add `transition-shadow hover:shadow-md` when clickable.
+- `.card-media` — card variant without padding for edge-to-edge media (listing thumbnails);
+  pad the content block inside.
 - `.stat-card` with `.stat-value` / `.stat-label` — dashboard stat tiles.
 - `.detail-grid` — label/value `<dl>` grid on listing detail pages.
 - `.admin-table` — admin data tables.
