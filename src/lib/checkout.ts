@@ -12,6 +12,7 @@ export type CheckoutTier = "PAY_PER_BOOST" | "ANNUAL_SUBSCRIPTION";
 
 const BOOST_DURATION_MS = 24 * 60 * 60 * 1000;
 const SUBSCRIPTION_DURATION_MS = 365 * 24 * 60 * 60 * 1000;
+const LISTING_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 const APP_BASE_URL = process.env.APP_BASE_URL ?? "http://localhost:3000";
 
 /**
@@ -100,7 +101,7 @@ export async function publishWithSubscription(listingId: string, userId: string)
 
   const published = await prisma.listing.update({
     where: { id: listingId },
-    data: { status: "LIVE", publishedAt: new Date() },
+    data: { status: "LIVE", publishedAt: new Date(), expiresAt: new Date(Date.now() + LISTING_DURATION_MS) },
   });
 
   await notifyUser(userId, listingPublishedMessage(published.title, `${APP_BASE_URL}/listings/${published.id}`));
@@ -130,7 +131,7 @@ export async function publishWithReferralCredit(listingId: string, userId: strin
     const amount = await validateCredit(userId, creditId, tx);
     const updated = await tx.listing.update({
       where: { id: listingId },
-      data: { status: "LIVE", publishedAt: new Date() },
+      data: { status: "LIVE", publishedAt: new Date(), expiresAt: new Date(Date.now() + LISTING_DURATION_MS) },
     });
     await activateBoost(tx, { listingId: updated.id, category: updated.category, pricePaid: amount });
     await markCreditRedeemed(tx, creditId);
@@ -390,7 +391,7 @@ export async function handleDepositCompleted(pawapayTransactionId: string) {
     if (payment.type === "LISTING_PUBLISH" && payment.listingId) {
       const listing = await tx.listing.update({
         where: { id: payment.listingId },
-        data: { status: "LIVE", publishedAt: new Date() },
+        data: { status: "LIVE", publishedAt: new Date(), expiresAt: new Date(Date.now() + LISTING_DURATION_MS) },
       });
       await activateBoost(tx, {
         listingId: listing.id,
@@ -427,7 +428,7 @@ export async function handleDepositCompleted(pawapayTransactionId: string) {
       if (payment.listingId) {
         const listing = await tx.listing.update({
           where: { id: payment.listingId },
-          data: { status: "LIVE", publishedAt: now },
+          data: { status: "LIVE", publishedAt: now, expiresAt: new Date(now.getTime() + LISTING_DURATION_MS) },
         });
         return { published: { id: listing.id, title: listing.title }, viaSubscription: true };
       }

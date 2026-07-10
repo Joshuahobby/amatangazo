@@ -20,5 +20,9 @@ export default getRequestConfig(async () => {
     // Dates/relative times render in Rwanda's timezone on both server and
     // client, so listing cards don't drift across the SSR/hydration boundary.
     timeZone: "Africa/Kigali",
+    // Single reference time per request so relativeTime() ("3 days ago") is
+    // stable across SSR + hydration and doesn't emit the ENVIRONMENT_FALLBACK
+    // warning on every listing card.
+    now: new Date(),
   };
 });

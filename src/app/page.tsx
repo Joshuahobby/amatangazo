@@ -1,90 +1,146 @@
-import { getTranslations } from "next-intl/server";
-import Link from "next/link";
-
-import { ListingCard } from "@/components/listing-card";
 import { listingInclude } from "@/lib/listings";
 import { prisma } from "@/lib/prisma";
 
-const CATEGORIES = [
-  { key: "JOB", href: "/listings?category=JOB", color: "var(--cat-job)" },
-  { key: "TENDER", href: "/listings?category=TENDER", color: "var(--cat-tender)" },
-  { key: "AUCTION", href: "/listings?category=AUCTION", color: "var(--cat-auction)" },
-  { key: "CLASSIFIED", href: "/listings?category=CLASSIFIED", color: "var(--cat-classified)" },
-] as const;
+import { MotionProvider } from "@/components/motion-provider";
+import { HeroSection } from "@/components/hero-section";
+import { TrustSection } from "@/components/trust-section";
+import { FeaturedListing } from "@/components/featured-listing";
+import { CategoryShowcase } from "@/components/category-showcase";
+import { FeedFeatured } from "@/components/feed-featured";
+import { FeedFilters } from "@/components/feed-filters";
+import { FeedLatest } from "@/components/feed-latest";
+import { FeedJobsHighPaying } from "@/components/feed-jobs-high-paying";
+import { FeedTendersUrgent } from "@/components/feed-tenders-urgent";
+import { FeedAuctionsEnding } from "@/components/feed-auctions-ending";
+import { AdBanner } from "@/components/ad-banner";
+import { Testimonials } from "@/components/testimonials";
+import { Newsletter } from "@/components/newsletter";
+import { HowItWorks } from "@/components/how-it-works";
+import { StickySearch } from "@/components/sticky-search";
 
 export default async function Home() {
-  const t = await getTranslations("home");
-  const tb = await getTranslations("browse");
-
-  const [latest, tenderCount] = await Promise.all([
-    prisma.listing.findMany({
+  const [
+    liveCount,
+    tenderCount,
+    verifiedCount,
+    userCount,
+    applicationAgg,
+    categoryCounts,
+    boostedListings,
+    latestListings,
+    highPayingJobs,
+    urgentTenders,
+    endingAuctions,
+  ] = await Promise.all([
+    prisma.listing.count({ where: { status: "LIVE" } }),
+    prisma.listing.count({ where: { status: "LIVE", category: "TENDER" } }),
+    prisma.user.count({ where: { verificationStatus: "VERIFIED" } }),
+    prisma.user.count(),
+    prisma.listing.aggregate({ _sum: { applicationCount: true } }),
+    prisma.listing.groupBy({
+      by: ["category"],
       where: { status: "LIVE" },
-      orderBy: [{ isCurrentlyBoosted: "desc" }, { publishedAt: "desc" }],
-      take: 6,
+      _count: { _all: true },
+    }),
+    prisma.listing.findMany({
+      where: { status: "LIVE", isCurrentlyBoosted: true },
+      orderBy: { publishedAt: "desc" },
+      take: 10,
       include: listingInclude,
     }),
-    prisma.listing.count({ where: { status: "LIVE", category: "TENDER" } }),
+    prisma.listing.findMany({
+      where: { status: "LIVE" },
+      orderBy: { publishedAt: "desc" },
+      take: 18,
+      include: listingInclude,
+    }),
+    prisma.listing.findMany({
+      where: { status: "LIVE", category: "JOB" },
+      orderBy: { jobDetails: { salaryRangeMax: "desc" } },
+      take: 8,
+      include: listingInclude,
+    }),
+    prisma.listing.findMany({
+      where: {
+        status: "LIVE",
+        category: "TENDER",
+        tenderDetails: { submissionDeadline: { gt: new Date() } },
+      },
+      orderBy: { tenderDetails: { submissionDeadline: "asc" } },
+      take: 3,
+      include: listingInclude,
+    }),
+    prisma.listing.findMany({
+      where: {
+        status: "LIVE",
+        category: "AUCTION",
+        auctionDetails: { auctionDate: { gt: new Date() } },
+      },
+      orderBy: { auctionDetails: { auctionDate: "asc" } },
+      take: 4,
+      include: listingInclude,
+    }),
   ]);
 
+  const counts = Object.fromEntries(
+    categoryCounts.map((c) => [c.category, c._count._all]),
+  ) as Record<string, number>;
+
+  const stats = [
+    { key: "statListings", value: liveCount },
+    { key: "statTenders", value: tenderCount },
+    { key: "statVerified", value: verifiedCount },
+  ].filter((stat) => stat.value > 0);
+
+  const featuredListing = boostedListings[0] ?? latestListings[0] ?? null;
+
   return (
-    <main className="mx-auto max-w-5xl px-4">
-      {/* Hero */}
-      <section className="py-14 text-center sm:py-20">
-        <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          {t("heroTitle")}
-        </h1>
-        <p className="mx-auto mt-4 max-w-xl text-lg text-muted">{t("heroSubtitle")}</p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/listings" className="btn-primary btn-lg">
-            {t("ctaBrowse")}
-          </Link>
-          <Link href="/post" className="btn-outline btn-lg">
-            {t("ctaPost")}
-          </Link>
-        </div>
-        {tenderCount > 0 && (
-          <p className="mt-4 text-sm text-muted">{t("tenderPitch", { count: tenderCount })}</p>
-        )}
-      </section>
+    <main className="mx-auto max-w-6xl pb-20">
+      <MotionProvider>
+        <StickySearch />
 
-      {/* Category tiles */}
-      <section className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {CATEGORIES.map((cat) => (
-          <Link
-            key={cat.key}
-            href={cat.href}
-            className="group rounded-xl border border-border bg-surface p-5 transition-shadow hover:shadow-md"
-          >
-            <span
-              className="inline-block h-2 w-10 rounded-full"
-              style={{ backgroundColor: cat.color }}
-              aria-hidden
-            />
-            <span className="mt-3 block font-semibold text-foreground group-hover:text-primary">
-              {tb(`category${cat.key}`)}
-            </span>
-          </Link>
-        ))}
-      </section>
+        <HeroSection
+          stats={stats}
+          userCount={userCount}
+          applicationCount={applicationAgg._sum.applicationCount ?? 0}
+          categoryCount={categoryCounts.length}
+        />
 
-      {/* Latest listings */}
-      {latest.length > 0 && (
-        <section className="mt-14">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">{t("latestTitle")}</h2>
-            <Link href="/listings" className="text-sm font-medium text-primary hover:underline">
-              {t("seeAll")}
-            </Link>
+        <TrustSection />
+
+        <FeaturedListing listing={featuredListing} />
+
+        <CategoryShowcase counts={counts} />
+
+        <FeedFeatured listings={boostedListings} />
+
+        <div className="mt-24">
+          <FeedFilters />
+          <div className="mt-4">
+            <FeedLatest listings={latestListings} />
           </div>
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {latest.map((listing) => (
-              <li key={listing.id}>
-                <ListingCard listing={listing} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        </div>
+
+        <div className="mt-16 px-4 sm:px-6 lg:px-8">
+          <AdBanner type="horizontal" />
+        </div>
+
+        <FeedJobsHighPaying listings={highPayingJobs} />
+
+        <div className="mt-24 flex flex-col gap-12 px-4 sm:px-6 lg:flex-row lg:items-start lg:px-8">
+          <FeedAuctionsEnding listings={endingAuctions} />
+          <div className="hidden shrink-0 lg:block">
+            <AdBanner type="vertical" />
+          </div>
+          <FeedTendersUrgent listings={urgentTenders} />
+        </div>
+
+        <HowItWorks />
+
+        <Testimonials />
+
+        <Newsletter />
+      </MotionProvider>
     </main>
   );
 }

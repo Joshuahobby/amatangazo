@@ -3,14 +3,25 @@ import { NextResponse } from "next/server";
 import { getCurrentUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-/** T10.2 — poster's own listings with per-category benchmark comparison. */
-export async function GET() {
+const VALID_STATUSES = ["LIVE", "DRAFT", "EXPIRED", "REMOVED", "PENDING_PAYMENT", "REJECTED"] as const;
+
+export async function GET(request: Request) {
   const userId = await getCurrentUserId();
   if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
+  const { searchParams } = new URL(request.url);
+  const status = searchParams.get("status");
+  const limit = Math.min(Number(searchParams.get("limit")) || 20, 100);
+  const offset = Number(searchParams.get("offset")) || 0;
+
+  const where = { posterId: userId } as Record<string, unknown>;
+  if (status && VALID_STATUSES.includes(status as typeof VALID_STATUSES[number])) {
+    where.status = status;
+  }
+
   const [listings, benchmarks] = await Promise.all([
     prisma.listing.findMany({
-      where: { posterId: userId },
+      where,
       select: {
         id: true,
         title: true,
@@ -20,10 +31,12 @@ export async function GET() {
         applicationCount: true,
         isCurrentlyBoosted: true,
         publishedAt: true,
+        expiresAt: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
-      take: 100,
+      take: limit,
+      skip: offset,
     }),
     prisma.listing.groupBy({
       by: ["category"],

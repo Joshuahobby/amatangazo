@@ -9,7 +9,16 @@ export const listingInclude = {
   auctionDetails: true,
   classifiedDetails: true,
   images: { orderBy: { sortOrder: "asc" } },
-  poster: { select: { id: true, name: true, businessName: true, verificationStatus: true } },
+  poster: {
+    select: {
+      id: true,
+      name: true,
+      businessName: true,
+      verificationStatus: true,
+      image: true,
+      accountType: true,
+    },
+  },
 } satisfies Prisma.ListingInclude;
 
 export type ListingWithDetails = Prisma.ListingGetPayload<{ include: typeof listingInclude }>;

@@ -11,6 +11,7 @@ export const listingSearchQuerySchema = z.object({
   subcategory: z.string().trim().min(1).optional(),
   budgetMin: z.coerce.number().int().nonnegative().optional(),
   budgetMax: z.coerce.number().int().nonnegative().optional(),
+  sort: z.enum(["relevance", "newest", "salary_desc", "deadline_asc", "price_asc", "price_desc"]).optional(),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(20),
 });

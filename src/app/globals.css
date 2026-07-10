@@ -29,6 +29,11 @@
   --danger: #b42318;
   --danger-surface: #fceae7;
   --danger-border: #e9a79d;
+
+  /* Third-party mobile-money brand colours — used only as identity accents on
+     the checkout provider tiles, never as UI action colours. */
+  --pay-mtn: #ffcc00;
+  --pay-airtel: #e40000;
 }
 
 @theme inline {
@@ -52,6 +57,24 @@
   --color-danger-border: var(--danger-border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  --animate-gradient-x: gradient-x 15s ease infinite;
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
 body {
@@ -213,5 +236,68 @@ body {
   }
   .detail-grid dd {
     @apply text-foreground;
+  }
+
+  /* Glassmorphism utilities for premium design */
+  .glass {
+    @apply bg-surface/70 backdrop-blur-md border border-border/50 shadow-sm;
+  }
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+
+  /* Stat card for metric displays */
+  .stat-icon-card {
+    @apply rounded-2xl border border-border/50 bg-surface/60 p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md;
+  }
+
+  /* Premium hover card */
+  .card-hover {
+    @apply rounded-xl border border-border bg-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-lg;
+  }
+
+  /* Trust badge */
+  .trust-card {
+    @apply flex items-center gap-3 rounded-xl border border-border/50 bg-surface p-4 shadow-sm;
+  }
+
+  /* Newsletter input group */
+  .input-group {
+    @apply flex w-full overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-all focus-within:border-primary focus-within:shadow-md;
+  }
+  .input-group .input-group-field {
+    @apply min-w-0 flex-1 border-0 bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-muted;
+  }
+  .input-group .input-group-btn {
+    @apply shrink-0 rounded-none bg-primary px-6 py-3 text-sm font-semibold text-primary-contrast transition-colors hover:bg-primary-hover;
+  }
+}
+
+/*
+ * Hide the scrollbar on horizontal snap carousels (the cards themselves are the
+ * scroll affordance, paired with arrow controls) while keeping scroll working.
+ */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome / Safari */
+}
+
+/*
+ * Honour "reduce motion". Neutralises the CSS-driven decorative animation on
+ * the landing hero (gradient drift, floating orbs, CTA shimmer) and near-zeroes
+ * transitions. framer-motion runs in JS and opts out separately via
+ * <MotionConfig reducedMotion="user"> (see components/motion-provider.tsx).
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

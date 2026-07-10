@@ -4,6 +4,27 @@ import { listingInclude, type ListingWithDetails } from "@/lib/listings";
 import { prisma } from "@/lib/prisma";
 import type { ListingSearchQuery } from "@/lib/validations/search";
 
+function getSortExpr(sort: string | undefined, rankExpr: Prisma.Sql, category: string | undefined): Prisma.Sql {
+  switch (sort) {
+    case "newest":
+      return Prisma.sql`l."createdAt"`;
+    case "salary_desc":
+      if (category === "JOB") return Prisma.sql`jd."salaryRangeMax" DESC NULLS LAST`;
+      return Prisma.sql`l."createdAt"`;
+    case "deadline_asc":
+      if (category === "TENDER") return Prisma.sql`td."submissionDeadline" ASC NULLS LAST`;
+      return Prisma.sql`l."createdAt"`;
+    case "price_asc":
+      if (category === "CLASSIFIED") return Prisma.sql`cd.price ASC NULLS LAST`;
+      return Prisma.sql`l."createdAt"`;
+    case "price_desc":
+      if (category === "CLASSIFIED") return Prisma.sql`cd.price DESC NULLS LAST`;
+      return Prisma.sql`l."createdAt"`;
+    default:
+      return rankExpr;
+  }
+}
+
 /**
  * Real Postgres FTS (to_tsvector/plainto_tsquery) ranked search, with pg_trgm
  * similarity as a fuzzy/typo-tolerant fallback signal — matches the PRD's
@@ -14,7 +35,7 @@ export async function searchListings(query: ListingSearchQuery): Promise<{
   listings: ListingWithDetails[];
   total: number;
 }> {
-  const { q, category, location, sector, experienceLevel, subcategory, budgetMin, budgetMax, page, limit } = query;
+  const { q, category, location, sector, experienceLevel, subcategory, budgetMin, budgetMax, sort, page, limit } = query;
 
   const conditions: Prisma.Sql[] = [Prisma.sql`l.status = 'LIVE'`];
 
@@ -56,7 +77,7 @@ export async function searchListings(query: ListingSearchQuery): Promise<{
     FROM "Listing" l
     ${joinClause}
     WHERE ${whereClause}
-    ORDER BY ${rankExpr} DESC, l."createdAt" DESC
+    ORDER BY ${getSortExpr(sort, rankExpr, category)} DESC, l."createdAt" DESC
     LIMIT ${limit} OFFSET ${(page - 1) * limit}
   `);
 

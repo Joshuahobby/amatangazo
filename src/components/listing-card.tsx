@@ -2,12 +2,9 @@ import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 
 import { CategoryBadge, FeaturedBadge, VerifiedBadge } from "@/components/listing-badges";
+import { ListingThumbnail } from "@/components/listing-thumbnail";
+import { CATEGORY_COLOR_VAR } from "@/components/category-icon";
 
-/*
- * Structural subset of ListingWithDetails that the card needs. Dates are
- * `string | Date` because the search API delivers JSON-serialized records
- * while server pages pass live Prisma objects.
- */
 export type ListingCardData = {
   id: string;
   title: string;
@@ -16,7 +13,13 @@ export type ListingCardData = {
   isCurrentlyBoosted: boolean;
   publishedAt: string | Date | null;
   images: { url: string }[];
-  poster: { name: string; businessName: string | null; verificationStatus: string } | null;
+  poster: {
+    name: string;
+    businessName: string | null;
+    verificationStatus: string;
+    image?: string | null;
+    accountType?: string | null;
+  } | null;
   jobDetails: {
     sector: string;
     experienceLevel: string;
@@ -28,46 +31,67 @@ export type ListingCardData = {
   classifiedDetails: { subcategory: string; price: number | null } | null;
 };
 
+function PosterAvatar({ name, businessName }: { name: string; businessName: string | null }) {
+  const label = businessName ?? name;
+  const parts = label.trim().split(/\s+/).filter(Boolean);
+  const initials = parts.length === 1 ? parts[0].slice(0, 2).toUpperCase() : (parts[0]?.[0] ?? "") + (parts[parts.length - 1]?.[0] ?? "").toUpperCase();
+
+  return (
+    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[9px] font-bold text-primary">
+      {initials || "?"}
+    </div>
+  );
+}
+
+function CategoryAccent({ category }: { category: string }) {
+  const color = CATEGORY_COLOR_VAR[category];
+  if (!color) return null;
+  return (
+    <div
+      className="pointer-events-none absolute top-0 left-0 right-0 z-10 h-1 rounded-t-2xl"
+      style={{ backgroundColor: color }}
+    />
+  );
+}
+
 export function ListingCard({ listing }: { listing: ListingCardData }) {
   const t = useTranslations("listing");
   const tp = useTranslations("post");
   const format = useFormatter();
 
-  const imageUrl = listing.images[0]?.url ?? null;
   const publishedAt = listing.publishedAt ? new Date(listing.publishedAt) : null;
   const shortDate = (value: string | Date) => format.dateTime(new Date(value), { dateStyle: "medium" });
   const rwf = (amount: number) => `${format.number(amount)} RWF`;
 
-  // One highlighted fact (price/salary/deadline) plus one muted meta detail per category.
   let keyFact: string | null = null;
-  let secondaryMeta: string | null = null;
+  const tags: string[] = [];
+  if (listing.location) tags.push(listing.location);
   if (listing.classifiedDetails) {
     if (listing.classifiedDetails.price != null) keyFact = rwf(listing.classifiedDetails.price);
-    secondaryMeta = listing.classifiedDetails.subcategory;
+    if (listing.classifiedDetails.subcategory) tags.push(listing.classifiedDetails.subcategory);
   } else if (listing.jobDetails) {
     const { salaryRangeMin: min, salaryRangeMax: max } = listing.jobDetails;
     if (min != null && max != null) keyFact = `${format.number(min)} – ${rwf(max)}`;
     else if (min != null || max != null) keyFact = rwf(min ?? max ?? 0);
-    secondaryMeta = `${listing.jobDetails.sector} · ${tp(`experienceLevel${listing.jobDetails.experienceLevel}`)}`;
+    if (listing.jobDetails.sector) tags.push(listing.jobDetails.sector);
+    tags.push(tp(`experienceLevel${listing.jobDetails.experienceLevel}`));
   } else if (listing.tenderDetails) {
     keyFact = `${t("submissionDeadline")}: ${shortDate(listing.tenderDetails.submissionDeadline)}`;
-    secondaryMeta = listing.tenderDetails.sector;
+    if (listing.tenderDetails.sector) tags.push(listing.tenderDetails.sector);
   } else if (listing.auctionDetails) {
     keyFact = `${t("auctionDate")}: ${shortDate(listing.auctionDetails.auctionDate)}`;
     if (listing.auctionDetails.startingPrice != null) {
-      secondaryMeta = `${t("startingPrice")}: ${format.number(listing.auctionDetails.startingPrice)} ${listing.auctionDetails.currency}`;
+      tags.push(`${t("startingPrice")}: ${format.number(listing.auctionDetails.startingPrice)} ${listing.auctionDetails.currency}`);
     }
   }
 
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className="card-media group block transition-shadow hover:shadow-md"
+      className="group relative block h-full overflow-hidden rounded-2xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl"
     >
-      {imageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element -- R2 URLs, not part of Next's image optimization domain list yet
-        <img src={imageUrl} alt="" loading="lazy" className="h-36 w-full border-b border-border object-cover" />
-      )}
+      <CategoryAccent category={listing.category} />
+      <ListingThumbnail listing={listing} />
       <div className="p-4">
         <div className="flex flex-wrap items-center gap-2">
           <CategoryBadge category={listing.category} />
@@ -76,13 +100,21 @@ export function ListingCard({ listing }: { listing: ListingCardData }) {
         </div>
         <p className="mt-2 line-clamp-2 font-semibold text-foreground group-hover:text-primary">{listing.title}</p>
         {keyFact && <p className="mt-1 text-sm font-medium text-primary">{keyFact}</p>}
-        <p className="mt-1 text-sm text-muted">
-          {listing.location}
-          {secondaryMeta && ` · ${secondaryMeta}`}
-        </p>
+        {tags.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {tags.slice(0, 3).map((tag) => (
+              <span key={tag} className="badge-neutral max-w-[9rem] truncate align-middle">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
         {listing.poster && (
           <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-2">
-            <span className="truncate text-xs text-muted">{listing.poster.businessName ?? listing.poster.name}</span>
+            <span className="flex min-w-0 items-center gap-1.5">
+              <PosterAvatar name={listing.poster.name} businessName={listing.poster.businessName} />
+              <span className="truncate text-xs text-muted">{listing.poster.businessName ?? listing.poster.name}</span>
+            </span>
             {listing.poster.verificationStatus === "VERIFIED" && <VerifiedBadge />}
           </div>
         )}

@@ -29,7 +29,7 @@ export function LanguageSwitcher() {
           key={code}
           type="button"
           onClick={() => switchTo(code)}
-          className={`rounded px-1.5 py-0.5 transition-colors ${
+          className={`rounded px-2.5 py-1 transition-colors ${
             locale === code ? "bg-primary text-primary-contrast font-semibold" : "text-muted hover:text-foreground"
           }`}
         >

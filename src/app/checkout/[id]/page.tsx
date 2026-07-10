@@ -7,6 +7,12 @@ import { use, useEffect, useState } from "react";
 import { isDevEnvironment } from "@/lib/env";
 import { pawapayProviders, type PawaPayProvider } from "@/lib/pawapay";
 
+/** Display metadata for the mobile-money providers. Brand names aren't translated. */
+const PROVIDER_META: Record<PawaPayProvider, { label: string; color: string }> = {
+  MTN_MOMO_RWA: { label: "MTN Mobile Money", color: "var(--pay-mtn)" },
+  AIRTEL_RWA: { label: "Airtel Money", color: "var(--pay-airtel)" },
+};
+
 type CheckoutInfo = {
   listingStatus: string;
   pricing: { payPerBoost: number; annualSubscription: number; subscriberBoostDiscount: number };
@@ -217,29 +223,57 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
             </label>
           </div>
 
-          <label className="field mt-4">
-            {t("provider")}
-            <select
-              value={provider}
-              onChange={(e) => setProvider(e.target.value as PawaPayProvider)}
-              className="input font-normal"
-            >
+          <fieldset className="mt-4">
+            <legend className="text-sm font-medium text-foreground">{t("provider")}</legend>
+            <div className="mt-1 flex gap-3">
               {pawapayProviders.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
+                <label
+                  key={p}
+                  className={`card flex flex-1 cursor-pointer items-center gap-2 ${
+                    provider === p ? "border-primary" : ""
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="provider"
+                    checked={provider === p}
+                    onChange={() => setProvider(p)}
+                    className="sr-only"
+                  />
+                  <span
+                    className="inline-block h-8 w-8 shrink-0 rounded-full"
+                    style={{ backgroundColor: PROVIDER_META[p].color }}
+                    aria-hidden
+                  />
+                  <span className="text-sm font-medium text-foreground">{PROVIDER_META[p].label}</span>
+                </label>
               ))}
-            </select>
-          </label>
+            </div>
+          </fieldset>
           <label className="field mt-3">
             {t("phoneNumber")}
             <input
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
+              inputMode="numeric"
               placeholder="2507XXXXXXXX"
               className="input font-normal"
             />
           </label>
+
+          <div className="card mt-4 bg-background">
+            <p className="text-sm font-medium text-foreground">{t("howItWorks")}</p>
+            <ol className="mt-2 flex flex-col gap-2">
+              {["step1", "step2", "step3"].map((step, i) => (
+                <li key={step} className="flex gap-2.5 text-sm text-muted">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-contrast">
+                    {i + 1}
+                  </span>
+                  {t(step)}
+                </li>
+              ))}
+            </ol>
+          </div>
 
           {error && (
             <p className="mt-3 form-error">
@@ -251,6 +285,11 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
           <button type="button" onClick={handlePay} disabled={submitting} className="btn-primary mt-4 w-full">
             {t("payWithMobileMoney")}
           </button>
+
+          <p className="mt-3 flex items-start gap-1.5 text-xs text-muted">
+            <span aria-hidden>🔒</span>
+            {t("securePayment")}
+          </p>
 
           {isDevEnvironment && (
             <div className="mt-6 border-t border-dashed border-border pt-4">

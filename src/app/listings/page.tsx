@@ -1,6 +1,8 @@
 import { ListingsSearch, type ListingsSearchInitial } from "@/components/listings-search";
 import { experienceLevels, listingCategories } from "@/lib/validations/listing";
 
+const SORT_OPTIONS = ["relevance", "newest", "salary_desc", "deadline_asc", "price_asc", "price_desc"] as const;
+
 type RawSearchParams = { [key: string]: string | string[] | undefined };
 
 function first(value: string | string[] | undefined): string {
@@ -19,6 +21,7 @@ export default async function ListingsSearchPage({ searchParams }: { searchParam
     location: first(params.location),
     sector: first(params.sector),
     experienceLevel: oneOf(first(params.experienceLevel), experienceLevels),
+    sort: oneOf(first(params.sort), SORT_OPTIONS),
   };
 
   // Keying by the incoming filters remounts the client search with fresh state
