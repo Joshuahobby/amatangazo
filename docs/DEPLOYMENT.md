@@ -69,6 +69,7 @@ CRON_SECRET=<shared-secret>
 **Optional:**
 ```
 SUPPORT_WHATSAPP=                    # support link in the site footer
+DB_POOL_MAX=                         # per-instance pg pool size; defaults to 3 in production
 ```
 
 > **Previously wrong in this file:** `PAWAPAY_API_KEY` / `PAWAPAY_API_SECRET` /
@@ -102,15 +103,40 @@ Push to `master` — Vercel auto-deploys.
 > migrations and silently applies nothing) or `prisma migrate dev` (it detects
 > drift and offers to **reset** the database — data loss).
 
+### Supabase: use two different connection strings
+
+Supabase exposes several connection strings and **the right one differs between
+runtime and schema work**. Using one for both is the most common way to get
+stuck here.
+
+| Use | Which string | Port |
+|-----|--------------|------|
+| App running on Vercel | **Transaction pooler** (`…pooler.supabase.com`) | `6543` |
+| `prisma db push`, `psql`, extensions | **Direct connection** or **Session pooler** | `5432` |
+
+- **Runtime → transaction pooler.** Serverless functions open connections per
+  instance; the pooler multiplexes them so a traffic spike doesn't exhaust the
+  database's connection limit. Pair it with the small per-instance pool set in
+  `src/lib/prisma.ts` (`DB_POOL_MAX`, default 3 in production).
+- **DDL → direct/session connection.** Schema changes don't work reliably
+  through a transaction-mode pooler — it doesn't hold a session across
+  statements. Run `db push` against port `5432`, not `6543`.
+- Supabase issues **IPv6-only direct connections** on newer projects. If
+  `db push` fails to connect from a network without IPv6, use the *session*
+  pooler (IPv4, port `5432`) instead of the direct string — it also supports DDL.
+
+Set `DATABASE_URL` in Vercel to the **pooler** string. Keep the direct string
+out of the deployment; use it ad hoc from your machine for schema work.
+
 ### First deployment
 
 ```bash
-# Connect to production DB and push schema
-DATABASE_URL="postgres://..." npx prisma db push
-
-# Enable pg_trgm
-psql "$DATABASE_URL" -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+# Schema + extension go over the DIRECT connection (port 5432)
+DATABASE_URL="postgres://…:5432/postgres" npx prisma db push
+psql "postgres://…:5432/postgres" -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 ```
+
+Then set `DATABASE_URL` in Vercel to the **pooler** string (port 6543) and deploy.
 
 ### Schema changes
 
