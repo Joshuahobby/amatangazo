@@ -12,11 +12,17 @@ Amatangazo is deployed on **Vercel** with a **Neon** (or any PostgreSQL) databas
 2. Connect repo to Vercel
 3. Set the following environment variables in the Vercel dashboard:
 
-**Required:**
+The list below is derived from every `process.env` reference in `src/`. Names
+must match exactly — a misspelled key is read as `undefined`, and most of these
+degrade silently rather than failing the build.
+
+**Core — the app does not work without these:**
 ```
-DATABASE_URL=postgres://…
-BETTER_AUTH_SECRET=<generated-secret>
+DATABASE_URL=postgres://…            # src/lib/prisma.ts
+BETTER_AUTH_SECRET=<generated>       # session signing
 BETTER_AUTH_URL=https://your-domain.com
+APP_BASE_URL=https://your-domain.com # referral + checkout links, sitemap.ts, robots.ts
+NEXT_PUBLIC_BASE_URL=https://your-domain.com  # share URLs, notification links
 ```
 
 **Authentication providers:**
@@ -25,11 +31,10 @@ GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 ```
 
-**Payment (Pawapay):**
+**Payment (PawaPay):**
 ```
-PAWAPAY_API_KEY=
-PAWAPAY_API_SECRET=
-PAWAPAY_BILLER_ID=
+PAWAPAY_API_TOKEN=                   # NOT PAWAPAY_API_KEY
+PAWAPAY_ENV=sandbox|production
 ```
 
 **Storage (Cloudflare R2):**
@@ -38,7 +43,7 @@ R2_ACCOUNT_ID=
 R2_ACCESS_KEY_ID=
 R2_SECRET_ACCESS_KEY=
 R2_BUCKET_NAME=amatangazo
-R2_PUBLIC_URL=https://pub-xxxxx.r2.dev
+R2_PUBLIC_URL_BASE=https://pub-xxxxx.r2.dev   # NOT R2_PUBLIC_URL
 ```
 
 **Notifications:**
@@ -49,15 +54,30 @@ TWILIO_AUTH_TOKEN=
 TWILIO_FROM_NUMBER=
 ```
 
-**AI moderation:**
+**AI (tender summaries + moderation flags):**
 ```
 ANTHROPIC_API_KEY=
+ANTHROPIC_MODEL=                     # read by ai-flagging.ts and tender-summary.ts
 ```
 
-**Cron:**
+**Cron:** required — `vercel.json` schedules four daily jobs, and
+`src/lib/cron.ts` rejects requests whose secret doesn't match.
 ```
 CRON_SECRET=<shared-secret>
 ```
+
+**Optional:**
+```
+SUPPORT_WHATSAPP=                    # support link in the site footer
+```
+
+> **Previously wrong in this file:** `PAWAPAY_API_KEY` / `PAWAPAY_API_SECRET` /
+> `PAWAPAY_BILLER_ID` and `R2_PUBLIC_URL` are not read anywhere in the codebase;
+> the real names are `PAWAPAY_API_TOKEN`, `PAWAPAY_ENV`, and `R2_PUBLIC_URL_BASE`.
+> `APP_BASE_URL`, `NEXT_PUBLIC_BASE_URL`, `ANTHROPIC_MODEL`, and
+> `SUPPORT_WHATSAPP` were missing entirely. Setting the old names produces a
+> deployment that builds and serves pages, but with broken payments, broken
+> image URLs, and absolute links pointing at `undefined`.
 
 ### Build settings
 
