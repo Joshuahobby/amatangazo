@@ -118,7 +118,12 @@ Key variables in `.env`:
 | `npm run lint`        | Run ESLint                         |
 | `npm test`            | Run Vitest test suite              |
 | `npm run db:studio`   | Open Prisma Studio                 |
-| `npm run db:migrate`  | Create a new migration             |
+| `npm run db:push`     | Sync `schema.prisma` to the database |
+
+> **Schema changes use `db:push`, not Prisma Migrate.** This repo has no
+> `prisma/migrations` directory, so `npm run db:migrate` (`prisma migrate dev`)
+> sees drift and offers to reset your database. See
+> [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#database-schema).
 
 ---
 

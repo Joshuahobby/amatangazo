@@ -74,7 +74,13 @@ Push to `master` — Vercel auto-deploys.
 
 ---
 
-## Database migrations
+## Database schema
+
+> **This project does not use Prisma Migrate.** There is no `prisma/migrations`
+> directory and no `_prisma_migrations` table; every environment's schema was
+> created with `prisma db push`. Do not run `prisma migrate deploy` (it finds no
+> migrations and silently applies nothing) or `prisma migrate dev` (it detects
+> drift and offers to **reset** the database — data loss).
 
 ### First deployment
 
@@ -88,15 +94,30 @@ psql "$DATABASE_URL" -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 
 ### Schema changes
 
-```bash
-# Generate migration files
-npx prisma migrate dev --name describe-change
+Edit `prisma/schema.prisma`, then apply it to **every** environment:
 
-# Apply to production
-npx prisma migrate deploy
+```bash
+npx prisma format
+DATABASE_URL="postgres://..." npx prisma db push
+npx prisma generate
 ```
 
-> **Note:** Prisma Migrate is used for schema versioning. In CI, run `npx prisma migrate deploy` as part of the deploy pipeline.
+**Push the schema before deploying code that reads the new columns.** The
+generated client selects every field in the model, so a deploy that runs ahead
+of its schema push fails at query time on the affected pages — not at build
+time, and not on pages that don't touch the model.
+
+`db push` prints the changes it intends to make; read that plan before
+confirming. It refuses destructive changes unless you pass
+`--accept-data-loss`, so treat that flag as a stop-and-think signal.
+
+> **Trade-off:** `db push` keeps no version history, so there is no scripted
+> rollback and no record of when a column appeared. That is tolerable pre-launch
+> while the database is disposable. Once production holds real user data, adopt
+> Prisma Migrate deliberately — baseline the existing schema as an initial
+> migration (`prisma migrate diff --from-empty --to-schema-datamodel` into
+> `migrations/0_init`, then `prisma migrate resolve --applied 0_init`) rather
+> than letting `migrate dev` reset it.
 
 ---
 
@@ -124,7 +145,7 @@ Configure in `vercel.json`:
 
 ## Production checklist
 
-- [ ] Database migrated and pg_trgm enabled
+- [ ] `prisma db push` run against this environment (before deploying the code) and pg_trgm enabled
 - [ ] All env vars set in Vercel dashboard
 - [ ] Custom domain configured
 - [ ] SSL enabled (automatic with Vercel)

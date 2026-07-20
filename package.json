@@ -11,6 +11,7 @@
     "test": "vitest run",
     "db:start": "prisma dev --name amatangazo",
     "db:stop": "prisma dev stop amatangazo",
+    "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio"
   },

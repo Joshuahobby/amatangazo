@@ -43,9 +43,10 @@
 ### Database
 
 - All schema changes go through `prisma/schema.prisma`
-- After editing the schema, run `npx prisma db push` to sync local DB
+- After editing the schema, run `npm run db:push` (`prisma db push`) to sync local DB, then `npx prisma generate`
 - Manual SQL (e.g., extensions) goes in `prisma/manual-migrations/`
-- New models need a migration before merging
+- **This project does not use Prisma Migrate** — there is no `prisma/migrations` directory. Don't run `npm run db:migrate` / `prisma migrate dev`: with no migration history it detects drift and offers to reset (drop) your database. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#database-schema)
+- A schema change is only half done until it's pushed to every environment — deploying code ahead of its schema push fails at query time
 
 ### Testing
 
