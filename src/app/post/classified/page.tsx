@@ -10,11 +10,15 @@ import { PostResult } from "@/components/post-result";
 type ClassifiedDetailsValue = {
   subcategory: string;
   price: string;
+  contactPhone: string;
+  contactWhatsapp: string;
 };
 
 const initialDetails: ClassifiedDetailsValue = {
   subcategory: "",
   price: "",
+  contactPhone: "",
+  contactWhatsapp: "",
 };
 
 export default function PostClassifiedPage() {
@@ -39,6 +43,8 @@ export default function PostClassifiedPage() {
         details: {
           subcategory: details.subcategory,
           price: details.price || undefined,
+          contactPhone: details.contactPhone || undefined,
+          contactWhatsapp: details.contactWhatsapp || undefined,
         },
       }),
     });
@@ -79,6 +85,30 @@ export default function PostClassifiedPage() {
             min={0}
             value={details.price}
             onChange={(e) => setDetails({ ...details, price: e.target.value })}
+            className="input font-normal"
+          />
+        </label>
+
+        <label className="field">
+          {t("fieldContactPhone")}
+          <input
+            name="contactPhone"
+            type="tel"
+            inputMode="tel"
+            value={details.contactPhone}
+            onChange={(e) => setDetails({ ...details, contactPhone: e.target.value })}
+            className="input font-normal"
+          />
+        </label>
+
+        <label className="field">
+          {t("fieldContactWhatsapp")}
+          <input
+            name="contactWhatsapp"
+            type="tel"
+            inputMode="tel"
+            value={details.contactWhatsapp}
+            onChange={(e) => setDetails({ ...details, contactWhatsapp: e.target.value })}
             className="input font-normal"
           />
         </label>

@@ -52,13 +52,8 @@ export function CategoryShowcase({ counts = {} }: { counts?: Record<string, numb
           <motion.div key={cat.key} variants={item}>
             <Link
               href={href}
-              className="group relative flex h-full min-h-[180px] flex-col justify-between overflow-hidden rounded-2xl border border-border/60 bg-surface/80 p-5 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl glass"
+              className="group relative flex h-full min-h-[180px] flex-col justify-between overflow-hidden rounded-xl border border-border bg-surface p-5 transition-shadow hover:shadow-md"
             >
-              <div
-                className="pointer-events-none absolute -inset-10 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-20"
-                style={{ backgroundColor: color }}
-              />
-
               <div className="relative z-10">
                 <div
                   className="flex h-12 w-12 items-center justify-center rounded-xl text-white shadow-inner transition-transform duration-500 group-hover:scale-110"

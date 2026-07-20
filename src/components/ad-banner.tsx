@@ -18,7 +18,7 @@ export async function AdBanner({ type }: { type: "horizontal" | "vertical" }) {
         className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
         sizes={isHorizontal ? "100vw" : "300px"}
       />
-      <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
+      <div className="absolute left-3 top-3 rounded-full bg-surface px-3 py-1 text-[10px] font-semibold text-foreground shadow-sm">
         {t("sponsoredLabel")}
       </div>
     </div>

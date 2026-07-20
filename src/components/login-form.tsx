@@ -144,6 +144,9 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
             {devCode && <p className="text-xs text-muted">Dev mode — your code is {devCode}</p>}
             <input
               type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              pattern="[0-9]*"
               placeholder={t("codePlaceholder")}
               value={code}
               onChange={(e) => setCode(e.target.value)}

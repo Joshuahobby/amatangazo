@@ -308,8 +308,10 @@ model ClassifiedDetails {
   listingId String  @id
   listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
-  subcategory String
-  price       Int?
+  subcategory     String
+  price           Int?
+  contactPhone    String?
+  contactWhatsapp String?
 
   @@index([subcategory])
 }
@@ -509,15 +511,15 @@ model Application {
 // ─────────────────────────────────────────────
 
 model ListingReport {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   listingId   String
-  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listing     Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
   reporterId  String
-  reporter    User     @relation(fields: [reporterId], references: [id])
-  reason      String   // spam | inappropriate | scam | duplicate | other
+  reporter    User      @relation(fields: [reporterId], references: [id])
+  reason      String // spam | inappropriate | scam | duplicate | other
   description String?
-  status      String   @default("PENDING") // PENDING | DISMISSED | ACTIONED
-  createdAt   DateTime @default(now())
+  status      String    @default("PENDING") // PENDING | DISMISSED | ACTIONED
+  createdAt   DateTime  @default(now())
   reviewedAt  DateTime?
   reviewedBy  String?
 

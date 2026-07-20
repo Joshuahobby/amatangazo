@@ -9,9 +9,9 @@ import { ApplyButton } from "@/components/apply-button";
 import { ImageGallery } from "@/components/image-gallery";
 import { ReportButton } from "@/components/report-button";
 import { SaveButton } from "@/components/save-button";
-import { ShareButton } from "@/components/share-button";
 import { AuctionDetailsSection } from "@/components/listing-details/auction-details";
 import { ClassifiedDetailsSection } from "@/components/listing-details/classified-details";
+import { ContactSeller } from "@/components/listing-details/contact-seller";
 import { JobDetailsSection } from "@/components/listing-details/job-details";
 import { TenderDetailsSection } from "@/components/listing-details/tender-details";
 import { getCurrentUserId } from "@/lib/auth";
@@ -87,36 +87,39 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
         )}
         <div className="ml-auto flex items-center gap-2">
           <SaveButton listingId={listing.id} />
-          <ShareButton />
-          {!isOwner && listing.poster && (
-            <a
-              href={`https://wa.me/?text=${encodeURIComponent(`Check this listing: ${listing.title} - ${process.env.NEXT_PUBLIC_BASE_URL ?? "https://amatangazo.com"}/listings/${listing.id}`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-outline btn-sm"
-            >
-              Share on WhatsApp
-            </a>
-          )}
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(`${listing.title} - ${process.env.NEXT_PUBLIC_BASE_URL ?? "https://amatangazo.com"}/listings/${listing.id}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline btn-sm"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            {t("shareWhatsApp")}
+          </a>
         </div>
       </div>
 
       <ImageGallery images={listing.images} alt={listing.title} />
 
-      {/* Map placeholder */}
-      {listing.location && (
-        <div className="my-4 flex items-center gap-3 rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-4 text-sm">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-          <div>
-            <p className="font-medium text-foreground">{listing.location}</p>
-            <p className="text-xs text-muted">Map view coming soon</p>
-          </div>
-        </div>
+      {!isOwner && listing.status === "LIVE" && listing.category === "CLASSIFIED" && (
+        <ContactSeller
+          title={t("contactSellerTitle")}
+          phone={listing.classifiedDetails?.contactPhone}
+          whatsapp={listing.classifiedDetails?.contactWhatsapp}
+          listingTitle={listing.title}
+        />
+      )}
+
+      {!isOwner && listing.status === "LIVE" && listing.category === "AUCTION" && (
+        <ContactSeller
+          title={t("auctionRegisterTitle")}
+          phone={listing.auctionDetails?.registrationContactPhone}
+          whatsapp={listing.auctionDetails?.registrationContactWhatsapp}
+          email={listing.auctionDetails?.registrationContactEmail}
+          listingTitle={listing.title}
+        />
       )}
 
       <p className="mt-4 whitespace-pre-wrap text-foreground">{listing.description}</p>
@@ -151,9 +154,9 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
       {related.length > 0 && (
         <section className="mt-12">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-bold tracking-tight text-foreground">Similar Listings</h2>
+            <h2 className="text-lg font-bold tracking-tight text-foreground">{t("similarListings")}</h2>
             <Link href={`/listings?category=${listing.category}`} className="text-sm font-semibold text-primary hover:underline">
-              See all →
+              {t("seeAll")} →
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">

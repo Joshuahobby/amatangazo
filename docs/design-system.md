@@ -5,6 +5,22 @@ variables on `:root`, exposed to Tailwind v4 utilities via `@theme inline`. **Ne
 hex color or an arbitrary `[...]` value in a component** — if a value isn't expressible with the
 tokens and classes below, add a token first.
 
+## Design language
+
+Amatangazo is **flat, fast, and trustworthy**. The palette (Rwanda-inspired green + sun yellow on
+warm off-white) is chosen so the product doesn't read as generic dark-mode SaaS — so the UI must
+stay flat to match.
+
+**Do not use** in production surfaces: glassmorphism (`backdrop-blur`, translucent `white/10`
+fills), `mix-blend-*`, large decorative blurs (`blur-[120px]` orbs), full-bleed animated gradients,
+CTA shimmer, or count-up number animations. These are GPU-expensive on the low-end Android devices
+that dominate our market and they fight the brand. The `.glass` / `.glass-dark` utilities have been
+**removed** from `globals.css` — don't reintroduce them. No production surface uses `backdrop-filter`
+or `mix-blend-mode`; keep it that way (verify with a grep of the built CSS in `.next/static`).
+
+Motion is minimal: short, optional fades only, and everything must respect
+`prefers-reduced-motion` (already wired globally in `globals.css` and via `MotionProvider`).
+
 ## Design tokens
 
 ### Colors
@@ -28,6 +44,27 @@ There is no dark mode; the palette is light-only by design.
 
 Geist Sans / Geist Mono via `next/font`; Tailwind's default type and spacing scales. No custom
 scale tokens — don't introduce arbitrary sizes.
+
+### Corner radius
+
+Use Tailwind's default radius utilities on a fixed three-step convention — don't hand-pick a
+different radius per component:
+
+| Utility | Use |
+|---------|-----|
+| `rounded-lg` | Controls: buttons, inputs, small chips |
+| `rounded-xl` | Cards and card-like containers (`.card`, listing cards) |
+| `rounded-2xl` | Large section shells only (e.g. the hero panel) |
+
+`rounded-full` stays reserved for pills and avatars. Anything larger than `rounded-2xl`
+(e.g. `rounded-3xl`) is out.
+
+### Casing
+
+All English UI copy is **sentence case** — capitalise the first word and proper nouns only. No
+Title Case ("Post Listing" → "Post a listing") and no hardcoded ALL-CAPS (use CSS `uppercase` if a
+label ever needs it). French and Kinyarwanda follow their own orthographic norms in the message
+files.
 
 ## Component classes (`@layer components`)
 
@@ -116,5 +153,7 @@ badges, key fact, time-ago, poster row) so every surface renders listings identi
 ## Language & i18n
 
 All user-facing strings go through `next-intl` (`messages/{en,fr,rw}.json`) — including
-transient states like loading/uploading. Exception: the `/admin` area is intentionally
-English-only and uses hardcoded strings.
+transient states like loading/uploading, and including the marketing landing page and listing
+detail pages. Never ship a hardcoded English literal on a customer-facing surface; add a key to
+all three locale files instead. Exception: the `/admin` area is intentionally English-only and
+uses hardcoded strings.

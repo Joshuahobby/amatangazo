@@ -24,32 +24,8 @@ export async function AuctionDetailsSection({ listing }: { listing: ListingWithD
             </dd>
           </>
         )}
-        {details.registrationContactPhone && (
-          <>
-            <dt>{t("registrationPhone")}</dt>
-            <dd>
-              <a href={`tel:${details.registrationContactPhone}`} className="link">
-                {details.registrationContactPhone}
-              </a>
-            </dd>
-          </>
-        )}
-        {details.registrationContactWhatsapp && (
-          <>
-            <dt>{t("whatsapp")}</dt>
-            <dd>{details.registrationContactWhatsapp}</dd>
-          </>
-        )}
-        {details.registrationContactEmail && (
-          <>
-            <dt>{t("email")}</dt>
-            <dd>
-              <a href={`mailto:${details.registrationContactEmail}`} className="link">
-                {details.registrationContactEmail}
-              </a>
-            </dd>
-          </>
-        )}
+        {/* Registration contact rows intentionally omitted — the ContactSeller
+            CTA on the detail page surfaces them prominently instead (P1.1). */}
       </dl>
     </>
   );

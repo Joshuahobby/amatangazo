@@ -49,10 +49,10 @@ export function ListingThumbnail({ listing }: { listing: ThumbnailData }) {
     >
       {initials ? (
         <div className="relative z-10 flex flex-col items-center gap-2">
-          <div className="flex h-14 w-14 items-center justify-center rounded-xl border-2 border-white/30 bg-white/15 text-2xl font-extrabold tracking-wide text-white shadow-lg backdrop-blur-sm">
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl border-2 border-white/30 bg-white/25 text-2xl font-extrabold tracking-wide text-white shadow-lg">
             {initials}
           </div>
-          <span className="max-w-[90%] truncate rounded-full bg-black/20 px-2.5 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
+          <span className="max-w-[90%] truncate rounded-full bg-black/35 px-2.5 py-0.5 text-[10px] font-medium text-white/90">
             {businessLabel}
           </span>
         </div>

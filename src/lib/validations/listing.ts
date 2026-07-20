@@ -58,6 +58,10 @@ export const auctionDetailsSchema = z.object({
 export const classifiedDetailsSchema = z.object({
   subcategory: z.string().trim().min(1),
   price: z.coerce.number().int().nonnegative().optional(),
+  // Poster-provided public contact — never the private auth User.phoneNumber.
+  // Kept lenient: Rwandan numbers get written in many formats.
+  contactPhone: z.string().trim().max(30).optional(),
+  contactWhatsapp: z.string().trim().max(30).optional(),
 });
 
 export const createListingSchema = z.discriminatedUnion("category", [

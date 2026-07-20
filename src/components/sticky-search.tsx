@@ -41,7 +41,7 @@ export function StickySearch() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className="fixed top-16 left-0 right-0 z-40 border-b border-border bg-surface/95 shadow-sm backdrop-blur-md"
+          className="fixed top-16 left-0 right-0 z-40 border-b border-border bg-surface shadow-sm"
         >
           <Form
             action="/listings"

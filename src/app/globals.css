@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Tailwind's automatic source detection scans the repo root, so class names
+   quoted in prose (e.g. the flat-design ban list in docs/design-system.md)
+   were generating real utilities — `.backdrop-blur` and `.backdrop-filter`
+   shipped in the production bundle purely because the docs name them. Docs
+   contain no markup to style, so exclude them from detection. */
+@source not "../../docs";
+
 /*
  * Amatangazo design tokens. Palette is drawn from Rwanda's national colours
  * — a confident green primary and a sun-yellow accent — used deliberately
@@ -90,7 +97,13 @@ body {
  */
 @layer base {
   :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-    outline: 2px solid var(--primary);
+    /* Longhands, not the `outline` shorthand: a shorthand carrying a var()
+       becomes a pending-substitution value, and the colour was resolving to
+       currentColor instead of --primary — leaving the ring's colour up to
+       whatever text colour the element happened to have. */
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: var(--primary);
     outline-offset: 2px;
   }
 }
@@ -236,14 +249,6 @@ body {
   }
   .detail-grid dd {
     @apply text-foreground;
-  }
-
-  /* Glassmorphism utilities for premium design */
-  .glass {
-    @apply bg-surface/70 backdrop-blur-md border border-border/50 shadow-sm;
-  }
-  .glass-dark {
-    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl;
   }
 
   /* Stat card for metric displays */

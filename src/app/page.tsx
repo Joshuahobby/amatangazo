@@ -4,21 +4,22 @@ import { prisma } from "@/lib/prisma";
 import { MotionProvider } from "@/components/motion-provider";
 import { HeroSection } from "@/components/hero-section";
 import { TrustSection } from "@/components/trust-section";
-import { FeaturedListing } from "@/components/featured-listing";
 import { CategoryShowcase } from "@/components/category-showcase";
 import { FeedFeatured } from "@/components/feed-featured";
 import { FeedFilters } from "@/components/feed-filters";
 import { FeedLatest } from "@/components/feed-latest";
-import { FeedJobsHighPaying } from "@/components/feed-jobs-high-paying";
-import { FeedTendersUrgent } from "@/components/feed-tenders-urgent";
-import { FeedAuctionsEnding } from "@/components/feed-auctions-ending";
 import { AdBanner } from "@/components/ad-banner";
-import { Testimonials } from "@/components/testimonials";
-import { Newsletter } from "@/components/newsletter";
 import { HowItWorks } from "@/components/how-it-works";
 import { StickySearch } from "@/components/sticky-search";
 
 export default async function Home() {
+  // Trimmed landing (see docs/design-system.md § Design language + the UX
+  // remediation plan P1.4): hero+search → trust → categories → featured →
+  // latest → how-it-works. The category-specific discovery feeds
+  // (high-paying jobs, ending auctions, urgent tenders) and the testimonials/
+  // newsletter blocks were removed from the homepage to cut initial payload
+  // on low-end mobile.
+  // TODO(claude-code): re-surface the discovery feeds on their category pages.
   const [
     liveCount,
     tenderCount,
@@ -28,9 +29,6 @@ export default async function Home() {
     categoryCounts,
     boostedListings,
     latestListings,
-    highPayingJobs,
-    urgentTenders,
-    endingAuctions,
   ] = await Promise.all([
     prisma.listing.count({ where: { status: "LIVE" } }),
     prisma.listing.count({ where: { status: "LIVE", category: "TENDER" } }),
@@ -54,32 +52,6 @@ export default async function Home() {
       take: 18,
       include: listingInclude,
     }),
-    prisma.listing.findMany({
-      where: { status: "LIVE", category: "JOB" },
-      orderBy: { jobDetails: { salaryRangeMax: "desc" } },
-      take: 8,
-      include: listingInclude,
-    }),
-    prisma.listing.findMany({
-      where: {
-        status: "LIVE",
-        category: "TENDER",
-        tenderDetails: { submissionDeadline: { gt: new Date() } },
-      },
-      orderBy: { tenderDetails: { submissionDeadline: "asc" } },
-      take: 3,
-      include: listingInclude,
-    }),
-    prisma.listing.findMany({
-      where: {
-        status: "LIVE",
-        category: "AUCTION",
-        auctionDetails: { auctionDate: { gt: new Date() } },
-      },
-      orderBy: { auctionDetails: { auctionDate: "asc" } },
-      take: 4,
-      include: listingInclude,
-    }),
   ]);
 
   const counts = Object.fromEntries(
@@ -91,8 +63,6 @@ export default async function Home() {
     { key: "statTenders", value: tenderCount },
     { key: "statVerified", value: verifiedCount },
   ].filter((stat) => stat.value > 0);
-
-  const featuredListing = boostedListings[0] ?? latestListings[0] ?? null;
 
   return (
     <main className="mx-auto max-w-6xl pb-20">
@@ -108,38 +78,22 @@ export default async function Home() {
 
         <TrustSection />
 
-        <FeaturedListing listing={featuredListing} />
-
         <CategoryShowcase counts={counts} />
 
         <FeedFeatured listings={boostedListings} />
 
-        <div className="mt-24">
+        <div className="mt-16 px-4 sm:px-6 lg:px-8">
+          <AdBanner type="horizontal" />
+        </div>
+
+        <div className="mt-16">
           <FeedFilters />
           <div className="mt-4">
             <FeedLatest listings={latestListings} />
           </div>
         </div>
 
-        <div className="mt-16 px-4 sm:px-6 lg:px-8">
-          <AdBanner type="horizontal" />
-        </div>
-
-        <FeedJobsHighPaying listings={highPayingJobs} />
-
-        <div className="mt-24 flex flex-col gap-12 px-4 sm:px-6 lg:flex-row lg:items-start lg:px-8">
-          <FeedAuctionsEnding listings={endingAuctions} />
-          <div className="hidden shrink-0 lg:block">
-            <AdBanner type="vertical" />
-          </div>
-          <FeedTendersUrgent listings={urgentTenders} />
-        </div>
-
         <HowItWorks />
-
-        <Testimonials />
-
-        <Newsletter />
       </MotionProvider>
     </main>
   );

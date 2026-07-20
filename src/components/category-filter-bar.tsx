@@ -15,7 +15,7 @@ export async function CategoryFilterBar() {
 
   return (
     <nav aria-label={tb("title")} className="sticky top-3 z-30">
-      <div className="flex items-center gap-2 overflow-x-auto rounded-full border border-border bg-background/85 p-1.5 shadow-sm backdrop-blur-md hide-scrollbar sm:justify-center">
+      <div className="flex items-center gap-2 overflow-x-auto rounded-full border border-border bg-surface p-1.5 shadow-sm hide-scrollbar sm:justify-center">
         <Link
           href="/listings"
           className="whitespace-nowrap rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-contrast transition-colors hover:bg-primary-hover"

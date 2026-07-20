@@ -48,7 +48,7 @@ function CategoryAccent({ category }: { category: string }) {
   if (!color) return null;
   return (
     <div
-      className="pointer-events-none absolute top-0 left-0 right-0 z-10 h-1 rounded-t-2xl"
+      className="pointer-events-none absolute top-0 left-0 right-0 z-10 h-1 rounded-t-xl"
       style={{ backgroundColor: color }}
     />
   );
@@ -88,7 +88,7 @@ export function ListingCard({ listing }: { listing: ListingCardData }) {
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className="group relative block h-full overflow-hidden rounded-2xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl"
+      className="group relative block h-full overflow-hidden rounded-xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl"
     >
       <CategoryAccent category={listing.category} />
       <ListingThumbnail listing={listing} />
