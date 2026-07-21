@@ -49,46 +49,58 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        {/* Right cluster. The language switcher and the single primary CTA are
+            visible on every breakpoint; notifications + auth stay desktop-only
+            (mobile reaches them via the menu and the bottom nav). */}
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <LanguageSwitcher />
-          {session && (
-            <Link
-              href="/notifications"
-              aria-label={t("notifications")}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted transition-colors hover:bg-primary/5 hover:text-primary"
-            >
+
+          <div className="hidden items-center gap-3 lg:flex">
+            {session && (
+              <Link
+                href="/notifications"
+                aria-label={t("notifications")}
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted transition-colors hover:bg-primary/5 hover:text-primary"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={BELL_ICON} />
+                </svg>
+              </Link>
+            )}
+            <AuthStatus />
+          </div>
+
+          {/* Single CTA: icon-only on phones, full label from sm up (so long
+              locale labels never overflow the bar). */}
+          <Link
+            href="/post"
+            aria-label={t("postListing")}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition-all hover:bg-primary-hover hover:shadow-md active:scale-[0.98] sm:px-5"
+          >
+            <svg className="h-4 w-4 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+            </svg>
+            <span className="hidden sm:inline">{t("postListing")}</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={t("menuToggle")}
+            aria-expanded={mobileOpen}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-border/50 active:scale-95 lg:hidden"
+          >
+            {mobileOpen ? (
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={BELL_ICON} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </Link>
-          )}
-          <AuthStatus />
+            ) : (
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
         </div>
-
-        <Link
-          href="/post"
-          className="ml-auto shrink-0 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition-all hover:bg-primary-hover hover:shadow-md active:scale-[0.98] lg:ml-0"
-        >
-          {t("postListing")}
-        </Link>
-
-        <button
-          type="button"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={t("menuToggle")}
-          aria-expanded={mobileOpen}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-border/50 active:scale-95 lg:hidden"
-        >
-          {mobileOpen ? (
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
       </div>
 
       {mobileOpen && (
@@ -114,8 +126,7 @@ export function SiteHeader() {
                 className="input"
               />
             </Form>
-            <div className="mt-3 flex items-center justify-between gap-3">
-              <LanguageSwitcher />
+            <div className="mt-3">
               <AuthStatus />
             </div>
           </nav>

@@ -1,6 +1,7 @@
 {
   "common": {
     "login": "Se connecter",
+    "language": "Langue",
     "signOut": "Se déconnecter",
     "loading": "Chargement...",
     "featured": "En vedette",

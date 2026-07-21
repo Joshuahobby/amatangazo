@@ -68,7 +68,7 @@ export async function SiteFooter() {
 
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-sm text-muted sm:flex-row">
           <p>© {year} GetRwanda Ltd · Amatangazo · {t("rightsReserved")}</p>
-          <LanguageSwitcher />
+          <LanguageSwitcher up />
         </div>
       </div>
     </footer>

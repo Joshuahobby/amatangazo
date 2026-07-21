@@ -1,6 +1,7 @@
 {
   "common": {
     "login": "Log in",
+    "language": "Language",
     "signOut": "Sign out",
     "loading": "Loading...",
     "featured": "Featured",
