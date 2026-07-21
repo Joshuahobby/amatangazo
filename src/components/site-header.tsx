@@ -9,19 +9,32 @@ import { AuthStatus } from "@/components/auth-status";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { UserMenu } from "@/components/user-menu";
 
-// Primary nav is Home + the four listing categories. "Businesses" was dropped:
-// it pointed at /verification (a conversion flow, not a browse category), which
-// now lives in the footer — keeping the top nav to real, browseable categories.
+// The four real browse categories. "Home" is intentionally omitted — the logo
+// is the home link, so a nav "Home" is a dead item that de-centers the
+// categories users actually came for. Businesses (a verification flow) and
+// Real estate (a Classifieds filter, non-goal vertical) live elsewhere.
 const NAV_LINKS = [
-  { href: "/", key: "home" },
   { href: "/listings?category=JOB", key: "jobs" },
   { href: "/listings?category=TENDER", key: "tenders" },
   { href: "/listings?category=AUCTION", key: "auctions" },
   { href: "/listings?category=CLASSIFIED", key: "classifieds" },
 ] as const;
 
-const BELL_ICON =
-  "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9";
+const ICONS = {
+  home: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+  browse: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
+  plus: "M12 4v16m8-8H4",
+  bell: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
+  account: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
+} as const;
+
+function TabIcon({ d }: { d: string }) {
+  return (
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={d} />
+    </svg>
+  );
+}
 
 export function SiteHeader() {
   const t = useTranslations("nav");
@@ -46,35 +59,28 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        {/* Right cluster. The language switcher and the single primary CTA are
-            visible on every breakpoint; notifications + auth stay desktop-only
-            (mobile reaches them via the menu and the bottom nav). */}
+        {/* Right cluster: language switcher on every breakpoint; account + the
+            single primary CTA on desktop; a menu toggle on mobile (where Post
+            lives in the bottom bar's emphasized FAB and account in the menu). */}
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <LanguageSwitcher />
 
-          <div className="hidden lg:block">
+          <div className="hidden items-center gap-3 lg:flex">
             <UserMenu />
+            <Link
+              href="/post"
+              className="inline-flex shrink-0 items-center rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition-all hover:bg-primary-hover hover:shadow-md active:scale-[0.98]"
+            >
+              {t("postListing")}
+            </Link>
           </div>
-
-          {/* Single CTA: icon-only on phones, full label from sm up (so long
-              locale labels never overflow the bar). */}
-          <Link
-            href="/post"
-            aria-label={t("postListing")}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition-all hover:bg-primary-hover hover:shadow-md active:scale-[0.98] sm:px-5"
-          >
-            <svg className="h-4 w-4 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-            </svg>
-            <span className="hidden sm:inline">{t("postListing")}</span>
-          </Link>
 
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={t("menuToggle")}
             aria-expanded={mobileOpen}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-border/50 active:scale-95 lg:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-border/50 active:scale-95 lg:hidden"
           >
             {mobileOpen ? (
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -97,7 +103,7 @@ export function SiteHeader() {
                 key={link.key}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-primary/5 hover:text-primary"
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-primary/5 hover:text-primary"
               >
                 {t(link.key)}
               </Link>
@@ -119,38 +125,38 @@ export function SiteHeader() {
         </div>
       )}
 
-      {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-border bg-surface px-2 pb-safe lg:hidden" aria-label={t("main")}>
-        <Link href="/" className="flex flex-col items-center gap-0.5 px-3 py-2 text-xs text-muted hover:text-primary">
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
-          {t("home")}
-        </Link>
-        <Link href="/listings" className="flex flex-col items-center gap-0.5 px-3 py-2 text-xs text-muted hover:text-primary">
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          {t("browse")}
-        </Link>
-        <Link href="/post" className="flex flex-col items-center gap-0.5 px-3 py-2 text-xs text-muted hover:text-primary">
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          {t("post")}
-        </Link>
-        <Link href="/notifications" className="flex flex-col items-center gap-0.5 px-3 py-2 text-xs text-muted hover:text-primary">
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={BELL_ICON} />
-          </svg>
-          {t("notifications")}
-        </Link>
-        <Link href="/dashboard" className="flex flex-col items-center gap-0.5 px-3 py-2 text-xs text-muted hover:text-primary">
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          {t("dashboard")}
-        </Link>
+      {/* Mobile bottom tab bar — thumb-zone navigation with an emphasized Post
+          FAB in the centre as the primary action. */}
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-surface pb-safe lg:hidden"
+        aria-label={t("main")}
+      >
+        <div className="mx-auto flex max-w-md items-center justify-around px-2">
+          <Link href="/" className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] text-muted transition-colors hover:text-primary">
+            <TabIcon d={ICONS.home} />
+            {t("home")}
+          </Link>
+          <Link href="/listings" className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] text-muted transition-colors hover:text-primary">
+            <TabIcon d={ICONS.browse} />
+            {t("browse")}
+          </Link>
+          <Link href="/post" className="flex flex-1 flex-col items-center gap-1 pt-1 text-[11px] font-semibold text-primary">
+            <span className="-mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-contrast shadow-md ring-4 ring-surface transition-transform active:scale-95">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={ICONS.plus} />
+              </svg>
+            </span>
+            {t("post")}
+          </Link>
+          <Link href="/notifications" className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] text-muted transition-colors hover:text-primary">
+            <TabIcon d={ICONS.bell} />
+            {t("notifications")}
+          </Link>
+          <Link href="/dashboard" className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] text-muted transition-colors hover:text-primary">
+            <TabIcon d={ICONS.account} />
+            {t("account")}
+          </Link>
+        </div>
       </nav>
     </header>
   );
