@@ -6,19 +6,10 @@ import Form from "next/form";
 import Link from "next/link";
 
 import { AuthStatus } from "@/components/auth-status";
+import { DesktopNav, MobileNavItems } from "@/components/header-nav";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { PrimaryCta } from "@/components/primary-cta";
 import { UserMenu } from "@/components/user-menu";
-
-// The four real browse categories. "Home" is intentionally omitted — the logo
-// is the home link, so a nav "Home" is a dead item that de-centers the
-// categories users actually came for. Businesses (a verification flow) and
-// Real estate (a Classifieds filter, non-goal vertical) live elsewhere.
-const NAV_LINKS = [
-  { href: "/listings?category=JOB", key: "jobs" },
-  { href: "/listings?category=TENDER", key: "tenders" },
-  { href: "/listings?category=AUCTION", key: "auctions" },
-  { href: "/listings?category=CLASSIFIED", key: "classifieds" },
-] as const;
 
 const ICONS = {
   home: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
@@ -47,17 +38,7 @@ export function SiteHeader() {
           Amatangazo
         </Link>
 
-        <nav aria-label={t("main")} className="hidden items-center gap-1 lg:flex lg:flex-1 lg:justify-center">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.key}
-              href={link.href}
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-primary/5 hover:text-primary"
-            >
-              {t(link.key)}
-            </Link>
-          ))}
-        </nav>
+        <DesktopNav />
 
         {/* Right cluster: language switcher on every breakpoint; account + the
             single primary CTA on desktop; a menu toggle on mobile (where Post
@@ -67,12 +48,7 @@ export function SiteHeader() {
 
           <div className="hidden items-center gap-3 lg:flex">
             <UserMenu />
-            <Link
-              href="/post"
-              className="inline-flex shrink-0 items-center rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition-all hover:bg-primary-hover hover:shadow-md active:scale-[0.98]"
-            >
-              {t("postListing")}
-            </Link>
+            <PrimaryCta />
           </div>
 
           <button
@@ -98,16 +74,7 @@ export function SiteHeader() {
       {mobileOpen && (
         <div className="border-t border-border bg-surface px-4 pb-6 pt-2 lg:hidden">
           <nav aria-label={t("main")} className="flex flex-col gap-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.key}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-primary/5 hover:text-primary"
-              >
-                {t(link.key)}
-              </Link>
-            ))}
+            <MobileNavItems onNavigate={() => setMobileOpen(false)} />
             <hr className="my-2 border-border" />
             <Form action="/listings" role="search">
               <input
