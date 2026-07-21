@@ -5,9 +5,9 @@ import { useTranslations } from "next-intl";
 import Form from "next/form";
 import Link from "next/link";
 
-import { authClient } from "@/lib/auth-client";
 import { AuthStatus } from "@/components/auth-status";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { UserMenu } from "@/components/user-menu";
 
 // Primary nav is Home + the four listing categories. "Businesses" was dropped:
 // it pointed at /verification (a conversion flow, not a browse category), which
@@ -26,9 +26,6 @@ const BELL_ICON =
 export function SiteHeader() {
   const t = useTranslations("nav");
   const [mobileOpen, setMobileOpen] = useState(false);
-  // Notifications are a signed-in affordance; the bell is hidden for anonymous
-  // visitors (who have nothing to see there) rather than bouncing them to login.
-  const { data: session } = authClient.useSession();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface">
@@ -55,19 +52,8 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <LanguageSwitcher />
 
-          <div className="hidden items-center gap-3 lg:flex">
-            {session && (
-              <Link
-                href="/notifications"
-                aria-label={t("notifications")}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted transition-colors hover:bg-primary/5 hover:text-primary"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={BELL_ICON} />
-                </svg>
-              </Link>
-            )}
-            <AuthStatus />
+          <div className="hidden lg:block">
+            <UserMenu />
           </div>
 
           {/* Single CTA: icon-only on phones, full label from sm up (so long
