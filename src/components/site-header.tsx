@@ -8,13 +8,13 @@ import Link from "next/link";
 import { AuthStatus } from "@/components/auth-status";
 import { DesktopNav, MobileNavItems } from "@/components/header-nav";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { PostFab } from "@/components/post-fab";
 import { PrimaryCta } from "@/components/primary-cta";
 import { UserMenu } from "@/components/user-menu";
 
 const ICONS = {
   home: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
   browse: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
-  plus: "M12 4v16m8-8H4",
   bell: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
   account: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
 } as const;
@@ -107,14 +107,7 @@ export function SiteHeader() {
             <TabIcon d={ICONS.browse} />
             {t("browse")}
           </Link>
-          <Link href="/post" className="flex flex-1 flex-col items-center gap-1 pt-1 text-[11px] font-semibold text-primary">
-            <span className="-mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-contrast shadow-md ring-4 ring-surface transition-transform active:scale-95">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={ICONS.plus} />
-              </svg>
-            </span>
-            {t("post")}
-          </Link>
+          <PostFab />
           <Link href="/notifications" className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] text-muted transition-colors hover:text-primary">
             <TabIcon d={ICONS.bell} />
             {t("notifications")}
