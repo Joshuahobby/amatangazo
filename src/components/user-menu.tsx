@@ -39,19 +39,11 @@ export function UserMenu() {
     };
   }, [open]);
 
-  // Avoid flashing the signed-out label before the session resolves.
-  if (isPending) return null;
-
-  if (!session) {
-    return (
-      <Link
-        href="/login"
-        className="rounded-lg px-2 py-1.5 text-sm font-medium text-foreground transition-colors hover:text-primary"
-      >
-        {t("login")}
-      </Link>
-    );
-  }
+  // Signed out, this control renders nothing: the "Get started" CTA is the
+  // single auth entry (login is one unified OTP/Google flow, so a separate
+  // "Log in" link would point at the same page — pure redundancy). The account
+  // menu only exists to hold a signed-in user's actions.
+  if (isPending || !session) return null;
 
   const name = session.user?.name?.trim();
   const initials = name
