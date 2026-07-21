@@ -1,26 +1,29 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 const FILTERS = [
-  { label: "Newest", href: "/listings?sort=newest" },
-  { label: "Remote", href: "/listings?location=Remote" },
-  { label: "Verified", href: "/listings?verified=true" },
-  { label: "High Salary", href: "/listings?category=JOB&sort=salary" },
-  { label: "Today", href: "/listings?since=today" },
-  { label: "This Week", href: "/listings?since=week" },
+  { key: "filterNewest", href: "/listings?sort=newest" },
+  { key: "filterRemote", href: "/listings?location=Remote" },
+  { key: "filterVerified", href: "/listings?verified=true" },
+  { key: "filterHighSalary", href: "/listings?category=JOB&sort=salary" },
+  { key: "filterToday", href: "/listings?since=today" },
+  { key: "filterThisWeek", href: "/listings?since=week" },
 ] as const;
 
 export function FeedFilters() {
+  const t = useTranslations("home");
+
   return (
     <div className="flex flex-wrap items-center gap-2 px-4 sm:px-6 lg:px-8">
       {FILTERS.map((filter) => (
         <Link
-          key={filter.label}
+          key={filter.key}
           href={filter.href}
-          className="rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-muted transition-colors hover:border-primary/30 hover:text-primary"
+          className="rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-muted transition hover:border-primary/30 hover:text-primary active:scale-95"
         >
-          {filter.label}
+          {t(filter.key)}
         </Link>
       ))}
     </div>

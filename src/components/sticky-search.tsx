@@ -63,14 +63,14 @@ export function StickySearch() {
                 name="q"
                 placeholder={t("searchPlaceholder")}
                 aria-label={t("searchPlaceholder")}
-                className="w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted transition-colors focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted transition-colors focus:border-primary"
               />
             </div>
             <select
               name="category"
               aria-label={t("searchCategory")}
               defaultValue=""
-              className="hidden w-36 rounded-lg border border-border bg-background px-2.5 py-2 text-sm text-foreground focus:border-primary focus:outline-none sm:block"
+              className="hidden w-36 rounded-lg border border-border bg-background px-2.5 py-2 text-sm text-foreground focus:border-primary sm:block"
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat.value} value={cat.value}>
@@ -83,7 +83,7 @@ export function StickySearch() {
               name="location"
               placeholder={t("searchLocation")}
               aria-label={t("searchLocation")}
-              className="hidden w-32 rounded-lg border border-border bg-background px-2.5 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none sm:block"
+              className="hidden w-32 rounded-lg border border-border bg-background px-2.5 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary sm:block"
             />
             <button
               type="submit"

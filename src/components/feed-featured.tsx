@@ -6,6 +6,8 @@ import { ListingCard, type ListingCardData } from "@/components/listing-card";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
+import { fadeUp, viewportOnce } from "@/lib/motion";
+
 export function FeedFeatured({ listings }: { listings: ListingCardData[] }) {
   const t = useTranslations("home");
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -17,7 +19,7 @@ export function FeedFeatured({ listings }: { listings: ListingCardData[] }) {
   };
 
   return (
-    <section className="mt-24">
+    <section className="mt-16">
       <div className="mb-8 flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
           <span className="text-accent" aria-hidden>
@@ -61,19 +63,17 @@ export function FeedFeatured({ listings }: { listings: ListingCardData[] }) {
           ref={scrollerRef}
           className="flex w-full snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-8 pt-4 hide-scrollbar sm:px-6 lg:px-8"
         >
-          {listings.map((listing, i) => (
+          {listings.map((listing) => (
             <motion.div
               key={listing.id}
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: Math.min(i, 6) * 0.08 }}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportOnce}
               className="min-w-[280px] max-w-[320px] flex-none snap-start"
             >
-              <div className="h-full rounded-2xl ring-2 ring-accent/30 ring-offset-2 ring-offset-background transition-shadow duration-300 hover:shadow-xl">
-                <div className="overflow-hidden rounded-2xl">
-                  <ListingCard listing={listing} />
-                </div>
+              <div className="h-full rounded-xl ring-2 ring-accent/40 ring-offset-2 ring-offset-background transition-shadow duration-300 hover:shadow-lg">
+                <ListingCard listing={listing} />
               </div>
             </motion.div>
           ))}

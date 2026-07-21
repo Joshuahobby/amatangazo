@@ -58,7 +58,7 @@ export function SiteHeader() {
 
         <Link
           href="/post"
-          className="ml-auto shrink-0 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition-all hover:bg-primary-hover hover:shadow-md lg:ml-0"
+          className="ml-auto shrink-0 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition-all hover:bg-primary-hover hover:shadow-md active:scale-[0.98] lg:ml-0"
         >
           {t("postListing")}
         </Link>
