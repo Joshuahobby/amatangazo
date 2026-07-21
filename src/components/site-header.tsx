@@ -5,21 +5,30 @@ import { useTranslations } from "next-intl";
 import Form from "next/form";
 import Link from "next/link";
 
+import { authClient } from "@/lib/auth-client";
 import { AuthStatus } from "@/components/auth-status";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
+// Primary nav is Home + the four listing categories. "Businesses" was dropped:
+// it pointed at /verification (a conversion flow, not a browse category), which
+// now lives in the footer — keeping the top nav to real, browseable categories.
 const NAV_LINKS = [
   { href: "/", key: "home" },
   { href: "/listings?category=JOB", key: "jobs" },
   { href: "/listings?category=TENDER", key: "tenders" },
   { href: "/listings?category=AUCTION", key: "auctions" },
   { href: "/listings?category=CLASSIFIED", key: "classifieds" },
-  { href: "/verification", key: "businesses" },
 ] as const;
+
+const BELL_ICON =
+  "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9";
 
 export function SiteHeader() {
   const t = useTranslations("nav");
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Notifications are a signed-in affordance; the bell is hidden for anonymous
+  // visitors (who have nothing to see there) rather than bouncing them to login.
+  const { data: session } = authClient.useSession();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface">
@@ -41,18 +50,18 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link href="/listings" className="text-sm font-medium text-muted hover:text-foreground">
-            {t("search")}
-          </Link>
-          <Link href="/notifications" className="relative text-muted hover:text-foreground" aria-label="Notifications">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-          </Link>
-          <Link href="/login" className="text-sm font-medium text-foreground hover:text-primary">
-            {t("signIn")}
-          </Link>
           <LanguageSwitcher />
+          {session && (
+            <Link
+              href="/notifications"
+              aria-label={t("notifications")}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted transition-colors hover:bg-primary/5 hover:text-primary"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={BELL_ICON} />
+              </svg>
+            </Link>
+          )}
           <AuthStatus />
         </div>
 
@@ -68,7 +77,7 @@ export function SiteHeader() {
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={t("menuToggle")}
           aria-expanded={mobileOpen}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-border/50 lg:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-border/50 active:scale-95 lg:hidden"
         >
           {mobileOpen ? (
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -96,7 +105,7 @@ export function SiteHeader() {
               </Link>
             ))}
             <hr className="my-2 border-border" />
-            <Form action="/listings" role="search" className="mt-2">
+            <Form action="/listings" role="search">
               <input
                 type="search"
                 name="q"
@@ -105,28 +114,7 @@ export function SiteHeader() {
                 className="input"
               />
             </Form>
-            <Link
-              href="/listings"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
-            >
-              {t("search")}
-            </Link>
-            <Link
-              href="/notifications"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
-            >
-              {t("notifications")}
-            </Link>
-            <Link
-              href="/login"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
-            >
-              {t("signIn")}
-            </Link>
-            <div className="mt-2 flex items-center gap-3">
+            <div className="mt-3 flex items-center justify-between gap-3">
               <LanguageSwitcher />
               <AuthStatus />
             </div>
@@ -135,7 +123,7 @@ export function SiteHeader() {
       )}
 
       {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-border bg-surface px-2 pb-safe lg:hidden" aria-label="Mobile navigation">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-border bg-surface px-2 pb-safe lg:hidden" aria-label={t("main")}>
         <Link href="/" className="flex flex-col items-center gap-0.5 px-3 py-2 text-xs text-muted hover:text-primary">
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -156,7 +144,7 @@ export function SiteHeader() {
         </Link>
         <Link href="/notifications" className="flex flex-col items-center gap-0.5 px-3 py-2 text-xs text-muted hover:text-primary">
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={BELL_ICON} />
           </svg>
           {t("notifications")}
         </Link>

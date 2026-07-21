@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
+import { LanguageSwitcher } from "@/components/language-switcher";
+
 const SUPPORT_WHATSAPP = process.env.SUPPORT_WHATSAPP?.replace(/[^\d]/g, "");
 
 export async function SiteFooter() {
@@ -10,8 +12,10 @@ export async function SiteFooter() {
   return (
     <footer className="mt-24 border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Brand spans two columns so the four link columns fill the rest of the
+            six-column grid evenly (no dead column on the right). */}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-6">
-          <div className="lg:col-span-1">
+          <div className="sm:col-span-2 lg:col-span-2">
             <p className="text-lg font-bold tracking-tight text-primary">Amatangazo</p>
             <p className="mt-2 max-w-xs text-sm text-muted">{t("tagline")}</p>
 
@@ -33,10 +37,18 @@ export async function SiteFooter() {
             </ul>
           </nav>
 
+          <nav aria-label={t("sectionCompanyFull")} className="text-sm">
+            <p className="font-semibold text-foreground">{t("sectionCompanyFull")}</p>
+            <ul className="mt-3 flex flex-col gap-2 text-muted">
+              <li><Link href="/post" className="hover:text-foreground">{t("companyAdvertise")}</Link></li>
+              <li><Link href="/verification" className="hover:text-foreground">{t("verification")}</Link></li>
+              <li><Link href="/referrals" className="hover:text-foreground">{t("referrals")}</Link></li>
+            </ul>
+          </nav>
+
           <nav aria-label={t("sectionSupport")} className="text-sm">
             <p className="font-semibold text-foreground">{t("sectionSupport")}</p>
             <ul className="mt-3 flex flex-col gap-2 text-muted">
-              <li><Link href="/verification" className="hover:text-foreground">{t("verification")}</Link></li>
               <li><Link href="/listings" className="hover:text-foreground">{t("browse")}</Link></li>
               <li>{SUPPORT_WHATSAPP ? (
                 <a href={`https://wa.me/${SUPPORT_WHATSAPP}`} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t("contactPrompt")}</a>
@@ -52,18 +64,11 @@ export async function SiteFooter() {
               <li><Link href="/privacy" className="hover:text-foreground">{t("legalCookies")}</Link></li>
             </ul>
           </nav>
-
-          <nav aria-label={t("sectionCompanyFull")} className="text-sm">
-            <p className="font-semibold text-foreground">{t("sectionCompanyFull")}</p>
-            <ul className="mt-3 flex flex-col gap-2 text-muted">
-              <li><Link href="/post" className="hover:text-foreground">{t("companyAdvertise")}</Link></li>
-              <li><Link href="/referrals" className="hover:text-foreground">{t("referrals")}</Link></li>
-            </ul>
-          </nav>
         </div>
 
-        <div className="mt-10 border-t border-border pt-6 text-sm text-muted">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-sm text-muted sm:flex-row">
           <p>© {year} GetRwanda Ltd · Amatangazo · {t("rightsReserved")}</p>
+          <LanguageSwitcher />
         </div>
       </div>
     </footer>
