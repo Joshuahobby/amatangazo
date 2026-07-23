@@ -64,24 +64,6 @@
   --color-danger-border: var(--danger-border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  
-  --animate-gradient-x: gradient-x 15s ease infinite;
-  --animate-float: float 6s ease-in-out infinite;
-}
-
-@keyframes gradient-x {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
 }
 
 body {
@@ -150,17 +132,23 @@ body {
    * styles rather than composing off a `.btn` class (that pattern 400s the
    * CSS build under v4, unlike v3's @layer components).
    */
+  /*
+   * `transition` (not `transition-colors`) so the tactile `active:scale`
+   * press animates smoothly alongside the colour change. Scale is a
+   * compositor-only transform — cheap even on low-end Android. The press is
+   * suppressed while disabled so a dead button doesn't feel tappable.
+   */
   .btn-primary {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 bg-primary text-primary-contrast hover:bg-primary-hover;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 bg-primary text-primary-contrast hover:bg-primary-hover;
   }
   .btn-accent {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 bg-accent text-accent-contrast hover:bg-accent-hover;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 bg-accent text-accent-contrast hover:bg-accent-hover;
   }
   .btn-outline {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 border border-border bg-surface text-foreground hover:border-primary hover:text-primary;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 border border-border bg-surface text-foreground hover:border-primary hover:text-primary;
   }
   .btn-danger {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 border border-danger-border bg-surface text-danger hover:bg-danger-surface;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 border border-danger-border bg-surface text-danger hover:bg-danger-surface;
   }
   .btn-sm {
     @apply px-3 py-1 text-xs;
@@ -251,30 +239,9 @@ body {
     @apply text-foreground;
   }
 
-  /* Stat card for metric displays */
-  .stat-icon-card {
-    @apply rounded-2xl border border-border/50 bg-surface/60 p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md;
-  }
-
-  /* Premium hover card */
-  .card-hover {
-    @apply rounded-xl border border-border bg-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-lg;
-  }
-
-  /* Trust badge */
+  /* Trust chip on the landing page (four-up strip under the hero). */
   .trust-card {
     @apply flex items-center gap-3 rounded-xl border border-border/50 bg-surface p-4 shadow-sm;
-  }
-
-  /* Newsletter input group */
-  .input-group {
-    @apply flex w-full overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-all focus-within:border-primary focus-within:shadow-md;
-  }
-  .input-group .input-group-field {
-    @apply min-w-0 flex-1 border-0 bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-muted;
-  }
-  .input-group .input-group-btn {
-    @apply shrink-0 rounded-none bg-primary px-6 py-3 text-sm font-semibold text-primary-contrast transition-colors hover:bg-primary-hover;
   }
 }
 
@@ -291,9 +258,9 @@ body {
 }
 
 /*
- * Honour "reduce motion". Neutralises the CSS-driven decorative animation on
- * the landing hero (gradient drift, floating orbs, CTA shimmer) and near-zeroes
- * transitions. framer-motion runs in JS and opts out separately via
+ * Honour "reduce motion". Near-zeroes every CSS animation and transition
+ * (hover lifts, the button press scale, chip transitions). framer-motion runs
+ * its section entrances in JS and opts out separately via
  * <MotionConfig reducedMotion="user"> (see components/motion-provider.tsx).
  */
 @media (prefers-reduced-motion: reduce) {

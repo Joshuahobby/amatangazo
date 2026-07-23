@@ -62,6 +62,13 @@ export function HeroSection({
           </Link>
         </div>
 
+        <p className="mt-6 flex items-center justify-center gap-1.5 text-xs text-muted">
+          <svg className="h-4 w-4 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          {t("paymentMethods")}
+        </p>
+
         {stats.length > 0 && (
           <dl className="mx-auto mt-12 grid max-w-3xl grid-cols-3 gap-3 sm:gap-4">
             {stats.map((stat) => (
@@ -76,15 +83,9 @@ export function HeroSection({
                   {stat.value.toLocaleString()}+
                 </dd>
                 <dd className="mt-0.5 text-[11px] text-muted">
-                  {stat.key === "statListings" && applicationCount > 0 && (
-                    <>{applicationCount.toLocaleString()}+ applications submitted</>
-                  )}
-                  {stat.key === "statVerified" && userCount > 0 && (
-                    <>{userCount.toLocaleString()}+ registered users</>
-                  )}
-                  {stat.key === "statTenders" && categoryCount > 0 && (
-                    <>{categoryCount} active categories</>
-                  )}
+                  {stat.key === "statListings" && applicationCount > 0 && t("statApplications", { count: applicationCount })}
+                  {stat.key === "statVerified" && userCount > 0 && t("statUsers", { count: userCount })}
+                  {stat.key === "statTenders" && categoryCount > 0 && t("statCategories", { count: categoryCount })}
                 </dd>
               </div>
             ))}
