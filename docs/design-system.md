@@ -76,15 +76,20 @@ files.
 
 | Class | Width | Use |
 |-------|-------|-----|
-| `.page` | `max-w-3xl` | Default content pages (listings, dashboard, legal) |
+| `.page-wide` | `max-w-7xl` | Two-column shells with a sidebar (landing, browse) |
+| `.page` | `max-w-3xl` | Default content pages (dashboard, legal) |
 | `.page-md` | `max-w-xl` | Medium single-column pages (referrals, saved searches) |
 | `.page-sm` | `max-w-sm` | Narrow flows (login, checkout, verification) |
 
 Pick the variant — **don't stack `max-w-*` on top of `.page`**; that only works because the
 utilities cascade layer happens to beat the components layer. All share `px-4 py-8`.
 
-**Sanctioned exceptions:** the landing page (`src/app/page.tsx`, marketing layout at `max-w-5xl`)
-and the admin layout (own `max-w-5xl` container in `src/app/admin/layout.tsx`).
+`.page-wide`'s `max-w-7xl` deliberately matches `site-header`'s own container so the content
+column lines up with the nav above it. Its sidebar grid is
+`lg:grid-cols-[minmax(0,1fr)_300px]`; below `lg` the sidebar stacks under the main column.
+
+**Sanctioned exception:** the admin layout (own `max-w-5xl` container in
+`src/app/admin/layout.tsx`).
 
 Headings inside a scaffold: `.page-title` + `.page-subtitle`.
 
@@ -128,9 +133,60 @@ twice, promote it to a variant here instead.
 
 On listing surfaces, don't compose these by hand: use the shared components in
 [`src/components/listing-badges.tsx`](../src/components/listing-badges.tsx)
-(`CategoryBadge`, `FeaturedBadge`, `VerifiedBadge`, `StatusBadge` — all translated) and
-[`src/components/listing-card.tsx`](../src/components/listing-card.tsx) (`ListingCard`: thumbnail,
-badges, key fact, time-ago, poster row) so every surface renders listings identically.
+(`CategoryBadge`, `FeaturedBadge`, `VerifiedBadge`, `StatusBadge` — all translated) so every
+surface renders listings identically.
+
+## Listing surfaces
+
+**Rows are the default.** [`ListingRow`](../src/components/listing-row.tsx) — a 48px company logo,
+title, and one line of facts inside a `.row-list` — is what the landing page and browse results
+use. A directory reads denser than a card grid and puts several times as many opportunities on a
+screen, which is the whole point of the product.
+
+[`ListingCard`](../src/components/listing-card.tsx) (16:10 hero thumbnail, badges, poster row)
+survives only where a genuine grid is wanted — the listing detail page's "similar listings" and
+public user profiles. Don't reach for it on new list surfaces.
+
+Both derive their headline fact from the same
+[`useListingFacts`](../src/components/use-listing-facts.ts) hook — add category-specific display
+logic there, not in either component, so the two can't drift.
+
+| Class | Use |
+|-------|-----|
+| `.row-list` | Container that turns rows into one hairline-divided list |
+| `.listing-row` | A single row |
+| `.listing-row-featured` | Boosted row — accent left edge + tint. The paid-placement signal; keep it identical everywhere a boosted listing appears |
+| `.section-label` | Heading above a row list |
+
+## Sidebar and advertising
+
+`.sidebar-widget` is the shell for every sidebar module (featured rail, category links).
+
+**The rail carries no search box and no stat counters.** The hero's `MarketplaceSearch` is the
+single search affordance on the landing and browse pages — a second one in the rail (plus a
+sticky bar on scroll) was three overlapping ways to do the same thing. Category counts in the
+rail already convey scale, so standalone "N opportunities" counters are redundant.
+
+`.ad-slot` / `.ad-slot-label` style a sold ad. **An unsold slot must render nothing at all** —
+[`AdSlot`](../src/components/ad-slot.tsx) returns `null` when no `Ad` row is `ACTIVE` and inside
+its date window. Never substitute a placeholder image or a "your ad here" panel: a previous static
+placeholder was removed from the landing page precisely because it read as fabricated inventory.
+Slots reserve their creative's aspect ratio so a sold slot doesn't shift layout as the image
+decodes.
+
+**Creatives render `object-contain`, never `object-cover`.** An advertiser supplies an exact-size
+creative and paid for all of it; a ratio mismatch letterboxes against the card surface rather than
+cropping their artwork. (`object-cover` is still right for listing photos.)
+
+**Only placed slots may be sold.** [`PLACED_AD_SLOTS`](../src/lib/ads.ts) is the source of truth
+for which slots actually render — currently `SIDEBAR_TOP`, `SIDEBAR_MID`, and `FEED_INLINE`. The
+`AdSlot` enum retains `SIDEBAR_BOTTOM` and `HEADER_LEADERBOARD` so re-placing one stays a
+one-liner, but `/admin/ads` won't offer them for new sales and flags any existing ad sitting in
+one. If you place a new slot, add it to `PLACED_AD_SLOTS` in the same change.
+
+Ad density is a deliberate ceiling, not an accident: the landing page carries three units. The
+leaderboard above the content and a third rail unit were both pulled because they pushed listings
+below the fold and made the page read ad-first.
 
 ### Other
 

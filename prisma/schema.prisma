@@ -138,6 +138,27 @@ enum ScrapeStatus {
   FAILURE
 }
 
+/// Display-ad placements. Sizes are the conventional ones advertisers supply
+/// creatives for; the slot name is what components ask for, so a resize never
+/// requires a schema change.
+///
+/// Not every value is placed on a page — PLACED_AD_SLOTS in src/lib/ads.ts is
+/// the source of truth for what actually renders, and the admin UI only sells
+/// those. Unplaced values are kept here so re-placing one stays a one-liner.
+enum AdSlot {
+  SIDEBAR_TOP // 300x250
+  SIDEBAR_MID // 300x600 — desktop only, hidden below lg
+  SIDEBAR_BOTTOM // 300x250 — currently unplaced
+  FEED_INLINE // responsive banner between listing rows
+  HEADER_LEADERBOARD // 728x90 — currently unplaced
+}
+
+enum AdStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+}
+
 // ─────────────────────────────────────────────
 // USERS & IDENTITY
 // ─────────────────────────────────────────────
@@ -579,6 +600,33 @@ model PricingConfig {
   createdAt        DateTime         @default(now())
 
   @@unique([tier, category])
+}
+
+// ─────────────────────────────────────────────
+// DISPLAY ADVERTISING
+// ─────────────────────────────────────────────
+
+/// A sold display ad. Slots render nothing when no Ad is ACTIVE and in-window,
+/// so unsold inventory collapses rather than showing filler — the failure mode
+/// that got the earlier placeholder banner removed from the landing page.
+model Ad {
+  id             String    @id @default(uuid())
+  name           String
+  advertiserName String
+  slot           AdSlot
+  imageUrl       String
+  targetUrl      String
+  altText        String
+  status         AdStatus  @default(DRAFT)
+  startsAt       DateTime? // null = live immediately
+  endsAt         DateTime? // null = runs until paused
+  weight         Int       @default(1) // rotation weight when a slot is oversold
+  impressions    Int       @default(0)
+  clicks         Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([slot, status])
 }
 
 // ─────────────────────────────────────────────

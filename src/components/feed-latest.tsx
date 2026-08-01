@@ -1,38 +1,61 @@
-"use client";
-
-import { useTranslations } from "next-intl";
-import { ListingCard, type ListingCardData } from "@/components/listing-card";
-import { motion } from "framer-motion";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
-import { fadeUp, viewportOnce } from "@/lib/motion";
+import { AdSlot } from "@/components/ad-slot";
+import type { ListingRowData } from "@/components/listing-row";
+import { ListingRow } from "@/components/listing-row";
 
-export function FeedLatest({ listings }: { listings: ListingCardData[] }) {
-  const t = useTranslations("home");
+/** Rows to show before breaking the feed for the in-feed ad slot. */
+const AD_AFTER = 8;
 
+/**
+ * The main opportunity feed. Rows rather than cards so the landing page shows
+ * a directory's worth of listings above the fold instead of half a dozen.
+ *
+ * Server-rendered: dropping the per-item framer-motion entrance removes the
+ * client bundle this feed used to pull in, and lets the in-feed ad slot (a
+ * server component) compose directly into the list.
+ */
+export async function FeedLatest({ listings }: { listings: ListingRowData[] }) {
   if (listings.length === 0) return null;
+  const t = await getTranslations("home");
+
+  const head = listings.slice(0, AD_AFTER);
+  const tail = listings.slice(AD_AFTER);
 
   return (
-    <section>
-      <div className="mb-8 flex items-center justify-between px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">{t("latestTitle")}</h2>
+    <section aria-labelledby="latest-heading">
+      <div className="mb-3 flex items-center justify-between gap-4">
+        <h2 id="latest-heading" className="section-label">
+          {t("latestTitle")}
+        </h2>
         <Link href="/listings" className="text-sm font-semibold text-primary hover:underline">
           {t("viewAll")} →
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-5 px-4 sm:gap-6 sm:px-6 md:grid-cols-3 lg:grid-cols-4 lg:px-8">
-        {listings.map((listing) => (
-          <motion.div
-            key={listing.id}
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={viewportOnce}
-          >
-            <ListingCard listing={listing} />
-          </motion.div>
+      <div className="row-list">
+        {head.map((listing) => (
+          <ListingRow key={listing.id} listing={listing} />
         ))}
+      </div>
+
+      {/* Collapses to nothing when the slot is unsold, leaving the feed as one
+          continuous list. */}
+      <AdSlot slot="FEED_INLINE" className="my-4" />
+
+      {tail.length > 0 && (
+        <div className="row-list">
+          {tail.map((listing) => (
+            <ListingRow key={listing.id} listing={listing} />
+          ))}
+        </div>
+      )}
+
+      <div className="mt-4 text-center">
+        <Link href="/listings" className="btn-outline">
+          {t("viewAll")}
+        </Link>
       </div>
     </section>
   );

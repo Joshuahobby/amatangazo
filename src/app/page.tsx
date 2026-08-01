@@ -4,104 +4,86 @@ import { prisma } from "@/lib/prisma";
 import { MotionProvider } from "@/components/motion-provider";
 import { HeroSection } from "@/components/hero-section";
 import { TrustSection } from "@/components/trust-section";
+import { CategoryFilterBar } from "@/components/category-filter-bar";
 import { CategoryShowcase } from "@/components/category-showcase";
-import { FeedFeatured } from "@/components/feed-featured";
-import { FeedFilters } from "@/components/feed-filters";
+import { FeaturedBand } from "@/components/featured-band";
 import { FeedLatest } from "@/components/feed-latest";
 import { HowItWorks } from "@/components/how-it-works";
 import { PosterCta } from "@/components/poster-cta";
-import { StickySearch } from "@/components/sticky-search";
+import { PricingPackages } from "@/components/pricing-packages";
+import { Sidebar } from "@/components/sidebar";
 
 export default async function Home() {
-  // Trimmed landing (see docs/design-system.md § Design language + the UX
-  // remediation plan P1.4): hero+search → trust → categories → featured →
-  // latest → how-it-works → poster CTA. The category-specific discovery feeds
-  // (high-paying jobs, ending auctions, urgent tenders) and the testimonials/
-  // newsletter blocks were removed from the homepage to cut initial payload
-  // on low-end mobile; the mid-feed placeholder ad banner was removed (it read
-  // as fabricated inventory) and its slot repurposed as the closing poster CTA.
+  // Directory layout (see docs/design-system.md § Listing surfaces): a short
+  // hero → two-column [featured band + latest feed | sidebar] → trust →
+  // how-it-works → pricing → poster CTA. Listings render as compact rows rather
+  // than cards so a visitor sees a directory's worth of opportunities per
+  // screen, and the sidebar carries the boosted rail, categories, and ads.
+  //
+  // Ad slots collapse when unsold — nothing here fabricates inventory.
   // TODO(claude-code): re-surface the discovery feeds on their category pages.
-  const [
-    liveCount,
-    tenderCount,
-    verifiedCount,
-    userCount,
-    applicationAgg,
-    categoryCounts,
-    boostedListings,
-    latestListings,
-  ] = await Promise.all([
-    prisma.listing.count({ where: { status: "LIVE" } }),
-    prisma.listing.count({ where: { status: "LIVE", category: "TENDER" } }),
-    prisma.user.count({ where: { verificationStatus: "VERIFIED" } }),
-    prisma.user.count(),
-    prisma.listing.aggregate({ _sum: { applicationCount: true } }),
-    prisma.listing.groupBy({
-      by: ["category"],
-      where: { status: "LIVE" },
-      _count: { _all: true },
-    }),
-    prisma.listing.findMany({
-      where: { status: "LIVE", isCurrentlyBoosted: true },
-      orderBy: { publishedAt: "desc" },
-      take: 10,
-      include: listingInclude,
-    }),
-    prisma.listing.findMany({
-      where: { status: "LIVE" },
-      orderBy: { publishedAt: "desc" },
-      take: 18,
-      include: listingInclude,
-    }),
+  const [categoryCounts, boostedListings, latestListings] = await Promise.all([
+      prisma.listing.groupBy({
+        by: ["category"],
+        where: { status: "LIVE" },
+        _count: { _all: true },
+      }),
+      prisma.listing.findMany({
+        where: { status: "LIVE", isCurrentlyBoosted: true },
+        orderBy: { publishedAt: "desc" },
+        take: 15,
+        include: listingInclude,
+      }),
+      // Boosted listings are excluded here — they already have the featured
+      // band and the sidebar rail. Without this they rendered a third time, as
+      // the first rows of this feed, immediately repeating the band above.
+      prisma.listing.findMany({
+        where: { status: "LIVE", isCurrentlyBoosted: false },
+        orderBy: { publishedAt: "desc" },
+        take: 24,
+        include: listingInclude,
+      }),
   ]);
+
+  // Band and rail draw from the same query but never overlap: the rail picks up
+  // where the band stops. With 6 or fewer boosted listings the rail receives an
+  // empty array and hides itself rather than mirroring the band.
+  const bandListings = boostedListings.slice(0, 6);
+  const railListings = boostedListings.slice(6, 11);
 
   const counts = Object.fromEntries(
     categoryCounts.map((c) => [c.category, c._count._all]),
   ) as Record<string, number>;
 
-  // Only surface a stat once it clears a credibility floor. A "4+ live
-  // listings" / "1+ verified businesses" strip reads as empty and costs more
-  // trust than it earns; below the floor the whole strip simply doesn't render
-  // (the hero's Umucyo/mobile-money proof carries credibility at launch).
-  const STAT_MIN: Record<string, number> = {
-    statListings: 25,
-    statTenders: 5,
-    statVerified: 5,
-  };
-  const stats = [
-    { key: "statListings", value: liveCount },
-    { key: "statTenders", value: tenderCount },
-    { key: "statVerified", value: verifiedCount },
-  ].filter((stat) => stat.value >= (STAT_MIN[stat.key] ?? 1));
-
   return (
-    <main className="mx-auto max-w-6xl pb-20">
+    <main className="pb-20">
       <MotionProvider>
-        <StickySearch />
+        <HeroSection />
 
-        <HeroSection
-          stats={stats}
-          userCount={userCount}
-          applicationCount={applicationAgg._sum.applicationCount ?? 0}
-          categoryCount={categoryCounts.length}
-        />
+        {/* pt-4 rather than the scaffold's py-8: the hero already provides
+            separation, and every pixel here pushes listings below the fold. */}
+        <div className="page-wide pt-4">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
+            <div className="min-w-0 space-y-6">
+              {/* Also the category nav on mobile, where the sidebar stacks below. */}
+              <CategoryFilterBar />
+              <FeaturedBand listings={bandListings} />
+              <FeedLatest listings={latestListings} />
+            </div>
 
-        <TrustSection />
-
-        <CategoryShowcase counts={counts} />
-
-        <FeedFeatured listings={boostedListings} />
-
-        <div className="mt-16">
-          <FeedFilters />
-          <div className="mt-6">
-            <FeedLatest listings={latestListings} />
+            <Sidebar boosted={railListings} counts={counts} />
           </div>
+
+          <CategoryShowcase counts={counts} />
+
+          <TrustSection />
+
+          <HowItWorks />
+
+          <PricingPackages />
+
+          <PosterCta />
         </div>
-
-        <HowItWorks />
-
-        <PosterCta />
       </MotionProvider>
     </main>
   );

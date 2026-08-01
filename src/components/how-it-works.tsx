@@ -1,10 +1,7 @@
-"use client";
-
 import { useTranslations } from "next-intl";
-import { motion } from "framer-motion";
 
-import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
-
+// Entrance motion removed — see the note in trust-section.tsx. `initial="hidden"`
+// server-renders as inline opacity:0, which hid these steps until JS hydrated.
 const STEPS = [
   { key: "step1", number: "01", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
   {
@@ -27,18 +24,12 @@ export function HowItWorks() {
         <p className="mt-2 text-sm text-muted">{t("howItWorksSubtitle")}</p>
       </div>
 
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="show"
-        viewport={viewportOnce}
-        className="relative grid gap-8 sm:grid-cols-3"
-      >
+      <div className="relative grid gap-8 sm:grid-cols-3">
         {/* Connecting line */}
         <div className="absolute left-[20%] right-[20%] top-12 hidden h-px border-t-2 border-dashed border-border sm:block" aria-hidden />
 
         {STEPS.map((step) => (
-          <motion.div key={step.number} variants={fadeUp} className="relative flex flex-col items-center text-center">
+          <div key={step.number} className="relative flex flex-col items-center text-center">
             <div className="relative z-10 flex h-24 w-24 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm">
               <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={step.icon} />
@@ -49,9 +40,9 @@ export function HowItWorks() {
             </div>
             <h3 className="mt-5 text-lg font-bold text-foreground">{t(`${step.key}Title`)}</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted">{t(`${step.key}Desc`)}</p>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
     </section>
   );
 }

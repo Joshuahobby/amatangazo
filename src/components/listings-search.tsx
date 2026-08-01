@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { ListingCard, type ListingCardData } from "@/components/listing-card";
-import { ListingCardSkeleton } from "@/components/listing-card-skeleton";
+import { ListingRow, type ListingRowData } from "@/components/listing-row";
+import { ListingRowSkeleton } from "@/components/listing-row-skeleton";
 import { SaveButton } from "@/components/save-button";
 import { SaveSearchButton } from "@/components/save-search-button";
 import { experienceLevels, listingCategories } from "@/lib/validations/listing";
@@ -41,7 +41,7 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
   const [subcategory, setSubcategory] = useState("");
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
-  const [results, setResults] = useState<ListingCardData[]>([]);
+  const [results, setResults] = useState<ListingRowData[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -109,7 +109,7 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
   const loadedCount = results.length;
 
   return (
-    <main className="page">
+    <>
       <h1 className="page-title">{t("title")}</h1>
 
       <div className="mt-4 flex flex-wrap gap-2">
@@ -149,12 +149,12 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
           </select>
         )}
         {category === "CLASSIFIED" && (
-          <input placeholder="Subcategory" value={subcategory} onChange={(e) => setSubcategory(e.target.value)} className="input w-auto flex-1" />
+          <input placeholder={t("subcategory")} value={subcategory} onChange={(e) => setSubcategory(e.target.value)} className="input w-auto flex-1" />
         )}
         {category === "TENDER" && (
           <>
-            <input type="number" min="0" placeholder="Budget min (RWF)" value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} className="input w-auto flex-1" />
-            <input type="number" min="0" placeholder="Budget max (RWF)" value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} className="input w-auto flex-1" />
+            <input type="number" min="0" placeholder={t("budgetMin")} value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} className="input w-auto flex-1" />
+            <input type="number" min="0" placeholder={t("budgetMax")} value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} className="input w-auto flex-1" />
           </>
         )}
         <select value={sort} onChange={(e) => setSort(e.target.value)} className="input w-auto sm:max-w-36">
@@ -173,7 +173,7 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
       {!loading && (
         <p className="mt-4 text-sm text-muted" aria-live="polite">
           {t("results", { count: total })}
-          {loadedCount < total && ` · Showing ${loadedCount}`}
+          {loadedCount < total && ` · ${t("showing", { count: loadedCount })}`}
         </p>
       )}
 
@@ -184,25 +184,27 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <p className="mt-4 font-semibold text-foreground">No listings found</p>
-          <p className="mt-1 text-sm text-muted">Try adjusting your search terms or filters.</p>
+          <p className="mt-4 font-semibold text-foreground">{t("noResults")}</p>
+          <p className="mt-1 text-sm text-muted">{t("noResultsHint")}</p>
         </div>
       )}
 
-      <ul className="mt-3 grid gap-3 sm:grid-cols-2">
-        {loading
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <li key={i}><ListingCardSkeleton /></li>
-            ))
-          : results.map((listing) => (
-              <li key={listing.id} className="relative">
-                <ListingCard listing={listing} />
-                <span className="absolute top-3 right-3 z-10">
-                  <SaveButton listingId={listing.id} />
-                </span>
-              </li>
-            ))}
-      </ul>
+      {(loading || results.length > 0) && (
+        <div className="row-list mt-3">
+          {loading
+            ? Array.from({ length: 8 }).map((_, i) => <ListingRowSkeleton key={i} />)
+            : results.map((listing) => (
+                <div key={listing.id} className="relative">
+                  <ListingRow listing={listing} />
+                  {/* Sits outside the row's own <Link>, so it stays a separate
+                      control rather than a nested interactive element. */}
+                  <span className="absolute right-3 top-3 z-10 sm:right-24">
+                    <SaveButton listingId={listing.id} />
+                  </span>
+                </div>
+              ))}
+        </div>
+      )}
 
       {hasMore && !loading && (
         <div className="mt-6 text-center">
@@ -212,10 +214,10 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
             disabled={loadingMore}
             className="btn-outline btn-lg"
           >
-            {loadingMore ? "Loading..." : `Load more (${total - loadedCount} remaining)`}
+            {loadingMore ? t("loadingMore") : t("loadMore", { count: total - loadedCount })}
           </button>
         </div>
       )}
-    </main>
+    </>
   );
 }
