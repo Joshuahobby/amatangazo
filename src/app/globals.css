@@ -104,6 +104,12 @@ body {
   .page {
     @apply mx-auto w-full max-w-3xl px-4 py-8;
   }
+  /* Two-column shell (main + sidebar) for the landing and browse surfaces.
+     max-w-7xl deliberately matches site-header's own container so the content
+     column lines up with the nav above it. */
+  .page-wide {
+    @apply mx-auto w-full max-w-7xl px-4 py-8;
+  }
   .page-md {
     @apply mx-auto w-full max-w-xl px-4 py-8;
   }
@@ -242,6 +248,41 @@ body {
   /* Trust chip on the landing page (four-up strip under the hero). */
   .trust-card {
     @apply flex items-center gap-3 rounded-xl border border-border/50 bg-surface p-4 shadow-sm;
+  }
+
+  /*
+   * Listing rows. Rows — not cards — are the default listing surface on the
+   * landing and browse pages: a directory reads denser and puts far more
+   * opportunities on a screen. `.row-list` supplies the single shared border
+   * so rows divide with hairlines instead of each carrying its own card chrome.
+   */
+  .row-list {
+    @apply divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface;
+  }
+  .listing-row {
+    @apply flex items-start gap-3 p-3 transition-colors hover:bg-border/30;
+  }
+  /* Boosted listings. The accent edge is the paid-placement signal and must
+     read the same wherever a boosted listing appears (band, rail, or feed). */
+  .listing-row-featured {
+    @apply flex items-start gap-3 p-3 transition-colors hover:bg-border/30 border-l-2 border-accent bg-accent/5;
+  }
+  /* Section heading above a row list. */
+  .section-label {
+    @apply flex items-center gap-2 text-lg font-bold tracking-tight text-foreground;
+  }
+
+  /* Sidebar module shell (search, counter, featured rail, category links). */
+  .sidebar-widget {
+    @apply rounded-xl border border-border bg-surface p-4;
+  }
+  /* Ad container. Positioning context for the "Sponsored" label; the slot
+     collapses entirely when no ad is sold, so this never renders empty. */
+  .ad-slot {
+    @apply relative block overflow-hidden rounded-xl border border-border bg-surface;
+  }
+  .ad-slot-label {
+    @apply absolute left-2 top-2 rounded-full bg-surface/90 px-2 py-0.5 text-xs font-semibold text-muted;
   }
 }
 

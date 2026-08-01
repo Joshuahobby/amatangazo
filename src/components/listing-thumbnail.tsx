@@ -7,7 +7,7 @@ type ThumbnailData = {
   poster: { name: string; businessName: string | null; image?: string | null } | null;
 };
 
-function initialsFrom(label: string | null | undefined): string {
+export function initialsFrom(label: string | null | undefined): string {
   if (!label) return "";
   const parts = label.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "";
@@ -17,6 +17,44 @@ function initialsFrom(label: string | null | undefined): string {
 
 function getBusinessLabel(listing: ThumbnailData): string {
   return listing.poster?.businessName ?? listing.poster?.name ?? listing.title;
+}
+
+/**
+ * Small square logo for listing rows — the company mark, not a hero image.
+ *
+ * Uses a raw <img> rather than next/image on purpose: creatives and listing
+ * photos live on R2 and next.config.ts declares no images.remotePatterns, so
+ * next/image would reject them. Matches ListingThumbnail's existing approach.
+ */
+export function ListingLogo({ listing }: { listing: ThumbnailData }) {
+  const imageUrl = listing.images[0]?.url ?? listing.poster?.image ?? null;
+
+  if (imageUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={imageUrl}
+        alt=""
+        width={48}
+        height={48}
+        loading="lazy"
+        className="h-12 w-12 shrink-0 rounded-lg border border-border object-cover"
+      />
+    );
+  }
+
+  const color = CATEGORY_COLOR_VAR[listing.category] ?? CATEGORY_COLOR_VAR.CLASSIFIED;
+  const initials = initialsFrom(listing.poster?.businessName ?? listing.poster?.name);
+
+  return (
+    <div
+      aria-hidden
+      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white"
+      style={{ backgroundColor: color }}
+    >
+      {initials || <CategoryIcon category={listing.category} className="h-6 w-6" />}
+    </div>
+  );
 }
 
 export function ListingThumbnail({ listing }: { listing: ThumbnailData }) {

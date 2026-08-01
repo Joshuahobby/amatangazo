@@ -11,7 +11,7 @@ const presignRequestSchema = z
   .object({
     filename: z.string().trim().min(1),
     contentType: z.string().trim(),
-    purpose: z.enum(["listing-image", "verification-doc"]).default("listing-image"),
+    purpose: z.enum(["listing-image", "verification-doc", "ad-creative"]).default("listing-image"),
   })
   .refine(
     (data) =>
@@ -42,7 +42,8 @@ export async function POST(request: Request) {
 
   const { filename, contentType, purpose } = parsed.data;
   const extension = filename.includes(".") ? filename.slice(filename.lastIndexOf(".")) : "";
-  const prefix = purpose === "verification-doc" ? "verification" : "listings";
+  const prefix =
+    purpose === "verification-doc" ? "verification" : purpose === "ad-creative" ? "ads" : "listings";
   const objectKey = `${prefix}/${userId}/${randomUUID()}${extension}`;
 
   const command = new PutObjectCommand({

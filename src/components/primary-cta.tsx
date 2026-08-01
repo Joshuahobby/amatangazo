@@ -7,18 +7,23 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 
 const CTA_CLASS =
-  "inline-flex shrink-0 items-center rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition-all hover:bg-primary-hover hover:shadow-md active:scale-[0.98]";
+  "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition-all hover:bg-primary-hover hover:shadow-md active:scale-[0.98]";
 
 // Set once this device has ever held a session, so a later signed-out visit can
-// greet a returning user with "Log in" instead of "Get started".
+// greet a returning user with "Log in" instead of a post prompt.
 const RETURNING_KEY = "amz_returning";
 
 /**
- * State-aware header CTA.
- *   - Signed in → "Post a listing" → /post (the concrete action).
- *   - Signed out, brand-new device → "Get started" → /login (onboarding).
- *   - Signed out, returning device → "Log in" → /login (familiar wording).
- * All signed-out paths hit the one unified login page; only the label differs.
+ * The header's single CTA.
+ *   - Signed in → "Post a listing" → /post.
+ *   - Signed out, brand-new device → "Post a listing" → /login.
+ *   - Signed out, returning device → "Log in" → /login.
+ *
+ * One button, never two: a second signed-out CTA would point at /login as well,
+ * so it would differ only in wording. Posting leads because it names what the
+ * product is for and is the action that earns — "get started" says nothing.
+ * Returning devices get "Log in" instead, which is the only case where someone
+ * wants the header for a reason other than posting.
  */
 export function PrimaryCta() {
   const { data: session } = authClient.useSession();
@@ -39,17 +44,19 @@ export function PrimaryCta() {
     }
   }, [session]);
 
-  if (session) {
-    return (
-      <Link href="/post" className={CTA_CLASS}>
-        {t("postListing")}
-      </Link>
-    );
-  }
+  // Returning-but-signed-out is the one case where the header isn't about
+  // posting; everyone else gets the post prompt, routed to /login when there's
+  // no account yet (same convention as the mobile PostFab).
+  const isLogin = !session && returning;
 
   return (
-    <Link href="/login" className={CTA_CLASS}>
-      {returning ? tc("login") : t("getStarted")}
+    <Link href={session ? "/post" : "/login"} className={CTA_CLASS}>
+      {!isLogin && (
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+        </svg>
+      )}
+      {isLogin ? tc("login") : t("postListing")}
     </Link>
   );
 }

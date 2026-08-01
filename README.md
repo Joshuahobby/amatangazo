@@ -127,6 +127,19 @@ Key variables in `.env`:
 
 ---
 
+## Documentation
+
+| Doc | What's in it |
+| --- | ------------ |
+| [docs/API.md](docs/API.md) | Every `/api` route — auth, request/response shapes, error codes |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System design, data flow, key decisions |
+| [docs/data-schema.md](docs/data-schema.md) | Database models and relations |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Vercel + Supabase deployment and schema sync |
+| [docs/design-system.md](docs/design-system.md) | Design tokens, components, brand |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Workflow, conventions, PR process |
+
+---
+
 ## Project structure
 
 ```
