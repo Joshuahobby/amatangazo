@@ -1,10 +1,13 @@
-"use client";
-
 import { useTranslations } from "next-intl";
-import { motion } from "framer-motion";
 
-import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
-
+/*
+ * No scroll-triggered entrance here, deliberately. framer-motion's
+ * `initial="hidden"` is server-rendered as inline `opacity:0`, so the content
+ * stayed invisible until JS hydrated AND IntersectionObserver fired — a reader
+ * on slow 3G who scrolled before the bundle landed saw an empty strip. On a
+ * directory serving low-end Android, visibility beats a decorative fade.
+ * Dropping the motion also makes this a Server Component.
+ */
 const TRUST_ITEMS = [
   { key: "tenders", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
   { key: "employers", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" },
@@ -16,15 +19,9 @@ export function TrustSection() {
   const t = useTranslations("home");
 
   return (
-    <motion.section
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="show"
-      viewport={viewportOnce}
-      className="mx-auto mt-10 grid max-w-6xl grid-cols-2 gap-3 px-4 sm:grid-cols-4 sm:gap-4 sm:px-6 lg:px-8"
-    >
+    <section className="mx-auto mt-10 grid max-w-6xl grid-cols-2 gap-3 px-4 sm:grid-cols-4 sm:gap-4 sm:px-6 lg:px-8">
       {TRUST_ITEMS.map((item) => (
-        <motion.div key={item.key} variants={fadeUp} className="trust-card">
+        <div key={item.key} className="trust-card">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
@@ -33,8 +30,8 @@ export function TrustSection() {
           <span className="text-xs font-medium leading-tight text-foreground sm:text-sm">
             {t(`trust${item.key.charAt(0).toUpperCase()}${item.key.slice(1)}`)}
           </span>
-        </motion.div>
+        </div>
       ))}
-    </motion.section>
+    </section>
   );
 }

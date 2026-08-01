@@ -1,11 +1,10 @@
-"use client";
-
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { motion } from "framer-motion";
 
 import { CategoryIcon, CATEGORY_COLOR_VAR } from "@/components/category-icon";
-import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+
+// Entrance motion removed — see the note in trust-section.tsx. `initial="hidden"`
+// server-renders as inline opacity:0, which hid these tiles until JS hydrated.
 
 // The four real pillars the hero promises. Businesses (a conversion page, not a
 // browse category) and Real estate (a duplicate of Classifieds — the PRD ships
@@ -17,19 +16,13 @@ export function CategoryShowcase({ counts = {} }: { counts?: Record<string, numb
   const tb = useTranslations("browse");
 
   return (
-    <motion.section
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="show"
-      viewport={viewportOnce}
-      className="mx-auto mt-16 grid max-w-6xl grid-cols-2 gap-4 px-4 sm:grid-cols-4 sm:px-6 lg:px-8"
-    >
+    <section className="mx-auto mt-16 grid max-w-6xl grid-cols-2 gap-4 px-4 sm:grid-cols-4 sm:px-6 lg:px-8">
       {CATEGORIES.map((key) => {
         const color = CATEGORY_COLOR_VAR[key];
         const count = counts[key] ?? null;
 
         return (
-          <motion.div key={key} variants={fadeUp}>
+          <div key={key}>
             <Link
               href={`/listings?category=${key}`}
               className="group relative flex h-full min-h-[180px] flex-col justify-between overflow-hidden rounded-xl border border-border bg-surface p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-md active:translate-y-0"
@@ -59,9 +52,9 @@ export function CategoryShowcase({ counts = {} }: { counts?: Record<string, numb
                 </svg>
               </div>
             </Link>
-          </motion.div>
+          </div>
         );
       })}
-    </motion.section>
+    </section>
   );
 }

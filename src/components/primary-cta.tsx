@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 
@@ -12,6 +12,23 @@ const CTA_CLASS =
 // Set once this device has ever held a session, so a later signed-out visit can
 // greet a returning user with "Log in" instead of a post prompt.
 const RETURNING_KEY = "amz_returning";
+
+// Nothing external mutates this during a page's life, so the subscribe callback
+// is a no-op — the value only needs reading once per render.
+const subscribeNoop = () => () => {};
+
+function readReturning(): boolean {
+  try {
+    return localStorage.getItem(RETURNING_KEY) === "1";
+  } catch {
+    // localStorage blocked (private mode) — fall back to the new-visitor label.
+    return false;
+  }
+}
+
+// Server render can't see localStorage, so it assumes a new visitor; the client
+// swaps in the real value on hydration.
+const readReturningOnServer = () => false;
 
 /**
  * The header's single CTA.
@@ -29,18 +46,20 @@ export function PrimaryCta() {
   const { data: session } = authClient.useSession();
   const t = useTranslations("nav");
   const tc = useTranslations("common");
-  const [returning, setReturning] = useState(false);
+  // useSyncExternalStore rather than useState + useEffect: reading localStorage
+  // into state inside an effect forces a second render pass on every mount and
+  // is what the react-hooks "setState in an effect" rule flags. This reads the
+  // value during render instead, with a server snapshot so hydration matches.
+  const returning = useSyncExternalStore(subscribeNoop, readReturning, readReturningOnServer);
 
+  // The write side stays in an effect — that's a genuine side effect, and only
+  // the state update was the problem.
   useEffect(() => {
+    if (!session) return;
     try {
-      if (session) {
-        localStorage.setItem(RETURNING_KEY, "1");
-      } else {
-        setReturning(localStorage.getItem(RETURNING_KEY) === "1");
-      }
+      localStorage.setItem(RETURNING_KEY, "1");
     } catch {
-      // localStorage blocked (private mode) — fall back to the new-visitor
-      // label, the safe default.
+      // localStorage blocked — next signed-out visit just sees the default label.
     }
   }, [session]);
 

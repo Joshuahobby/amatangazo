@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-import { PLACED_AD_SLOTS } from "@/lib/ads";
+// From lib/ad-slots, not lib/ads: this is a client component, and lib/ads
+// imports Prisma, which would pull `pg` into the browser bundle.
+import { PLACED_AD_SLOTS } from "@/lib/ad-slots";
 
 type Ad = {
   id: string;

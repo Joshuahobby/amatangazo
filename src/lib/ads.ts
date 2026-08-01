@@ -3,30 +3,13 @@ import type { Ad, AdSlot } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 /**
- * Fixed intrinsic size per slot, used to reserve space so a slot that resolves
- * to an ad doesn't shift the layout once the image decodes.
+ * Server-only ad serving. This module imports Prisma, so a client component
+ * must never import from it — see lib/ad-slots.ts for the browser-safe
+ * constants (that split is what keeps `pg` out of the client bundle).
  */
-export const AD_SLOT_SIZE: Record<AdSlot, { width: number; height: number }> = {
-  SIDEBAR_TOP: { width: 300, height: 250 },
-  SIDEBAR_MID: { width: 300, height: 600 },
-  SIDEBAR_BOTTOM: { width: 300, height: 250 },
-  FEED_INLINE: { width: 728, height: 90 },
-  HEADER_LEADERBOARD: { width: 728, height: 90 },
-};
 
-/**
- * Slots that are actually placed on a page right now.
- *
- * SIDEBAR_BOTTOM and HEADER_LEADERBOARD remain in the enum — re-placing one is
- * a single line — but nothing renders them today, so the admin UI must not
- * offer them for new sales. Selling inventory that renders nowhere is worse
- * than having less inventory.
- */
-export const PLACED_AD_SLOTS: AdSlot[] = ["SIDEBAR_TOP", "SIDEBAR_MID", "FEED_INLINE"];
-
-export function isPlacedSlot(slot: AdSlot): boolean {
-  return PLACED_AD_SLOTS.includes(slot);
-}
+// Re-exported for server consumers so they need only one import.
+export { AD_SLOT_SIZE, PLACED_AD_SLOTS, isPlacedSlot } from "@/lib/ad-slots";
 
 /**
  * Picks the ad to show in a slot, or null when nothing is sold.
