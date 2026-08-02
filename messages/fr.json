@@ -12,7 +12,12 @@
     "statusEXPIRED": "Expirée",
     "statusREJECTED": "Refusée",
     "statusREMOVED": "Retirée",
-    "notFound": "Introuvable"
+    "notFound": "Introuvable",
+    "cancel": "Annuler",
+    "submit": "Envoyer",
+    "close": "Fermer",
+    "edit": "Modifier",
+    "remove": "Retirer"
   },
   "nav": {
     "main": "Navigation principale",
@@ -119,7 +124,30 @@
     "similarListings": "Annonces similaires",
     "seeAll": "Voir tout",
     "aiSummaryTitle": "Résumé rapide (IA)",
-    "aiSummaryDisclaimer": "Extrait automatiquement — vérifiez toujours l'avis officiel."
+    "aiSummaryDisclaimer": "Extrait automatiquement — vérifiez toujours l'avis officiel.",
+    "applyNow": "Postuler",
+    "applyTitle": "Envoyez votre candidature",
+    "applyMessagePlaceholder": "Court message ou lettre de motivation (facultatif)",
+    "applySend": "Envoyer",
+    "applySubmitted": "Candidature envoyée.",
+    "applyFailed": "Impossible d'envoyer votre candidature.",
+    "report": "Signaler",
+    "reportTitle": "Pourquoi signalez-vous cette annonce ?",
+    "reportSelectReason": "Choisissez une raison",
+    "reportDetailsPlaceholder": "Détails supplémentaires (facultatif)",
+    "reportSubmitted": "Signalement envoyé. Merci.",
+    "reportFailed": "Impossible d'envoyer le signalement.",
+    "reportReasonSpam": "Spam",
+    "reportReasonInappropriate": "Contenu inapproprié",
+    "reportReasonScam": "Arnaque",
+    "reportReasonDuplicate": "Annonce en double",
+    "reportReasonOther": "Autre",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié",
+    "galleryLabel": "Galerie d'images",
+    "galleryPrevious": "Image précédente",
+    "galleryNext": "Image suivante",
+    "galleryGoTo": "Aller à l'image {number}"
   },
   "post": {
     "chooserTitle": "Que souhaitez-vous publier ?",
@@ -262,7 +290,26 @@
     "empty": "Vous n'avez pas encore d'annonces.",
     "views": "Vues",
     "applications": "Candidatures",
-    "categoryAvg": "moy. catégorie"
+    "categoryAvg": "moy. catégorie",
+    "navApplications": "Candidatures",
+    "navBilling": "Facturation",
+    "navSettings": "Paramètres",
+    "newListing": "Nouvelle annonce",
+    "renew": "Renouveler",
+    "loadMore": "Voir plus",
+    "savedOn": "Enregistrée le {date}",
+    "applicationsTitle": "Mes candidatures",
+    "backToDashboard": "Retour au tableau de bord",
+    "applicationsEmpty": "Aucune candidature",
+    "applicationsEmptyHint": "Postulez aux offres qui vous intéressent.",
+    "appliedOn": "Postulé le {date}",
+    "applicationStatusPENDING": "En attente",
+    "applicationStatusCONTACTED": "Contacté",
+    "applicationStatusREJECTED": "Non retenue",
+    "tabAll": "Tout",
+    "tabSaved": "Enregistrées",
+    "savedEmpty": "Aucune annonce enregistrée.",
+    "expiresOn": "Expire le {date}"
   },
   "home": {
     "heroTitle": "Emplois, appels d'offres, enchères et petites annonces — tout le Rwanda au même endroit",
@@ -362,7 +409,12 @@
     "save": "Enregistrer les modifications",
     "verificationTitle": "Vérification d'entreprise",
     "verificationDesc": "Obtenez un badge vérifié sur toutes vos annonces.",
-    "verificationLink": "Aller à la vérification"
+    "verificationLink": "Aller à la vérification",
+    "dangerZone": "Zone sensible",
+    "dangerZoneDesc": "Supprimez définitivement votre compte et toutes vos données.",
+    "deleteAccount": "Supprimer le compte",
+    "deleteConfirm1": "Êtes-vous sûr ? Cette action est irréversible.",
+    "deleteConfirm2": "Toutes vos annonces, paiements et données seront supprimés. Continuer ?"
   },
   "notifications": {
     "title": "Notifications",
@@ -402,5 +454,12 @@
     "colAmount": "Montant",
     "colStatus": "Statut",
     "colListing": "Annonce"
+  },
+  "publicProfile": {
+    "accountBUSINESS": "Entreprise",
+    "accountINDIVIDUAL": "Particulier",
+    "memberSince": "Membre depuis le {date}",
+    "activeListings": "{count, plural, one {# annonce en ligne} other {# annonces en ligne}}",
+    "noListings": "Aucune annonce pour le moment."
   }
 }

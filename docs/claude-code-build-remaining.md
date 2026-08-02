@@ -70,11 +70,24 @@ in that doc.
   (`src/components/category-discovery.tsx`, `src/lib/discovery.ts`). The three old homepage feed
   components were deleted — they were unreferenced and built on the card-grid/framer-motion style the
   § 0 guardrails rule out.
-- **Hardcoded-string sweep.** Grep the codebase for remaining customer-facing English literals outside
-  `/admin` and route them through `next-intl`. Dev-only strings gated by `NODE_ENV !== "production"`
-  (e.g. "Dev mode — your code is…") may stay.
-- **sticky-search.tsx** still uses a small `backdrop-blur`; replace with a solid `bg-surface` per the
-  flat rule if you touch it.
+- ~~**Hardcoded-string sweep.**~~ Done for the interactive surfaces: apply, report and share buttons,
+  the image-gallery a11y labels, the dashboard (listings, applications, profile danger zone) and the
+  public profile page all go through `next-intl` now, in all three locales.
+
+  What's deliberately still English, and why:
+  - `/admin` — intentionally English-only (§ 0).
+  - Dev-gated blocks (`checkout` sandbox controls, the `login-form` test-user sign-in) — allowed here.
+  - `terms/page.tsx` and `privacy/page.tsx` — binding legal prose. Translating those is a legal
+    decision, not a code change; they need human-authored fr/rw text before the keys go in.
+  - Brand name ("Amatangazo") and format hints (`2507XXXXXXXX`, `https://...`).
+- ~~**sticky-search.tsx**~~ No longer exists; no production surface uses `backdrop-blur` (the only
+  remaining mention is the note in `globals.css` recording its removal).
+- **Localize dates and amounts.** Separate from the string sweep and still open: ~24 call sites use
+  bare `toLocaleDateString()` / `toLocaleString()`, which formats in the server's (or browser's)
+  default locale rather than the reader's — a French listing page shows `9/1/2026`. It's also an
+  SSR/hydration drift risk, the one `src/i18n/request.ts` pins `timeZone`/`now` to avoid. Route them
+  through `useFormatter` / `getFormatter` the way `use-listing-facts.ts` already does. Start with
+  `src/components/listing-details/*`, `dashboard/billing`, `notifications`, `referrals`.
 
 ## 5. Phase 4 — verification (required before calling this done)
 

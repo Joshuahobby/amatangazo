@@ -1,10 +1,24 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-const REASONS = ["spam", "inappropriate", "scam", "duplicate", "other"] as const;
+/**
+ * `value` goes to the API, `labelKey` to the reader. Kept as pairs because the
+ * API's reason vocabulary is lowercase and fixed, while the label is
+ * translated — deriving one from the other would couple them.
+ */
+const REASONS = [
+  { value: "spam", labelKey: "reportReasonSpam" },
+  { value: "inappropriate", labelKey: "reportReasonInappropriate" },
+  { value: "scam", labelKey: "reportReasonScam" },
+  { value: "duplicate", labelKey: "reportReasonDuplicate" },
+  { value: "other", labelKey: "reportReasonOther" },
+] as const;
 
 export function ReportButton({ listingId }: { listingId: string }) {
+  const t = useTranslations("listing");
+  const tc = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<string>("");
   const [description, setDescription] = useState("");
@@ -22,46 +36,47 @@ export function ReportButton({ listingId }: { listingId: string }) {
     if (res.ok) {
       setDone(true);
     } else {
-      const data = await res.json();
-      setError(data.error ?? "Failed to submit report");
+      // The API's own error text is English and internal, so it can't be shown
+      // to a reader on fr/rw — this states what failed in their language.
+      setError(t("reportFailed"));
     }
   }
 
-  if (done) return <p className="text-xs text-primary">Report submitted. Thank you.</p>;
+  if (done) return <p className="text-xs text-primary">{t("reportSubmitted")}</p>;
 
   return (
     <div className="relative">
       <button type="button" onClick={() => setOpen(!open)} className="btn-outline btn-sm text-xs">
-        Report
+        {t("report")}
       </button>
       {open && (
         <form
           onSubmit={handleSubmit}
           className="absolute right-0 top-full z-20 mt-1 w-64 rounded-xl border border-border bg-surface p-3 shadow-xl"
         >
-          <p className="mb-2 text-xs font-medium text-foreground">Why are you reporting this?</p>
+          <p className="mb-2 text-xs font-medium text-foreground">{t("reportTitle")}</p>
           <select
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             required
             className="input mb-2 text-xs"
           >
-            <option value="">Select a reason...</option>
+            <option value="">{t("reportSelectReason")}</option>
             {REASONS.map((r) => (
-              <option key={r} value={r}>{r}</option>
+              <option key={r.value} value={r.value}>{t(r.labelKey)}</option>
             ))}
           </select>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Additional details (optional)"
+            placeholder={t("reportDetailsPlaceholder")}
             rows={3}
             className="input mb-2 text-xs"
           />
           {error && <p className="mb-2 text-xs text-danger">{error}</p>}
           <div className="flex gap-2">
-            <button type="submit" className="btn-danger btn-sm flex-1">Submit</button>
-            <button type="button" onClick={() => setOpen(false)} className="btn-outline btn-sm">Cancel</button>
+            <button type="submit" className="btn-danger btn-sm flex-1">{tc("submit")}</button>
+            <button type="button" onClick={() => setOpen(false)} className="btn-outline btn-sm">{tc("cancel")}</button>
           </div>
         </form>
       )}

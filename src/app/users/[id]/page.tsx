@@ -1,3 +1,4 @@
+import { getFormatter, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { ListingCard, type ListingCardData } from "@/components/listing-card";
@@ -21,6 +22,7 @@ function Avatar({ name, image }: { name: string; image?: string | null }) {
 
 export default async function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const [t, format] = await Promise.all([getTranslations("publicProfile"), getFormatter()]);
   const [user, listings] = await Promise.all([
     prisma.user.findUnique({
       where: { id },
@@ -55,11 +57,11 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
           <div className="mt-1 flex flex-wrap items-center gap-2">
             {user.verificationStatus === "VERIFIED" && <VerifiedBadge />}
             <span className="text-xs text-muted">
-              {user.accountType === "BUSINESS" ? "Business" : "Individual"}
+              {user.accountType === "BUSINESS" ? t("accountBUSINESS") : t("accountINDIVIDUAL")}
               {" · "}
-              Member since {new Date(user.createdAt).toLocaleDateString()}
+              {t("memberSince", { date: format.dateTime(user.createdAt, { dateStyle: "medium" }) })}
               {" · "}
-              {user._count.listings} active listings
+              {t("activeListings", { count: user._count.listings })}
             </span>
           </div>
         </div>
@@ -68,7 +70,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
       <div className="my-6 border-t border-border" />
 
       {listings.length === 0 ? (
-        <p className="text-muted">No listings yet.</p>
+        <p className="text-muted">{t("noListings")}</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {listings.map((listing) => (

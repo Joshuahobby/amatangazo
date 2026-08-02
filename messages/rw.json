@@ -12,7 +12,12 @@
     "statusEXPIRED": "Ryarangiye",
     "statusREJECTED": "Ryanzwe",
     "statusREMOVED": "Ryakuwemo",
-    "notFound": "Ntibabonetse"
+    "notFound": "Ntibabonetse",
+    "cancel": "Kureka",
+    "submit": "Ohereza",
+    "close": "Funga",
+    "edit": "Hindura",
+    "remove": "Kuraho"
   },
   "nav": {
     "main": "Urutonde nyamukuru",
@@ -119,7 +124,30 @@
     "similarListings": "Amatangazo asa",
     "seeAll": "Reba byose",
     "aiSummaryTitle": "Incamake yihuse (AI)",
-    "aiSummaryDisclaimer": "Byakuwe mu buryo bwikora — buri gihe genzura itangazo ry'umwimerere."
+    "aiSummaryDisclaimer": "Byakuwe mu buryo bwikora — buri gihe genzura itangazo ry'umwimerere.",
+    "applyNow": "Saba akazi",
+    "applyTitle": "Ohereza ubusabe bwawe",
+    "applyMessagePlaceholder": "Ubutumwa bugufi cyangwa ibaruwa (si ngombwa)",
+    "applySend": "Ohereza",
+    "applySubmitted": "Ubusabe bwoherejwe.",
+    "applyFailed": "Ubusabe ntibwoherejwe.",
+    "report": "Tanga ikirego",
+    "reportTitle": "Kuki utanga ikirego kuri iri tangazo?",
+    "reportSelectReason": "Hitamo impamvu",
+    "reportDetailsPlaceholder": "Ibindi bisobanuro (si ngombwa)",
+    "reportSubmitted": "Ikirego cyoherejwe. Murakoze.",
+    "reportFailed": "Ikirego nticyoherejwe.",
+    "reportReasonSpam": "Ubutumwa butagira umumaro",
+    "reportReasonInappropriate": "Ibitakwiye",
+    "reportReasonScam": "Uburiganya",
+    "reportReasonDuplicate": "Itangazo risubiwemo",
+    "reportReasonOther": "Ikindi",
+    "copyLink": "Koporora umuyoboro",
+    "linkCopied": "Umuyoboro wakoporowe",
+    "galleryLabel": "Amafoto",
+    "galleryPrevious": "Ifoto ibanza",
+    "galleryNext": "Ifoto ikurikira",
+    "galleryGoTo": "Jya ku ifoto {number}"
   },
   "post": {
     "chooserTitle": "Urashaka gutangaza iki?",
@@ -262,7 +290,26 @@
     "empty": "Nta matangazo urafite.",
     "views": "Abarebye",
     "applications": "Abasabye",
-    "categoryAvg": "impuzandengo y'icyiciro"
+    "categoryAvg": "impuzandengo y'icyiciro",
+    "navApplications": "Ubusabe",
+    "navBilling": "Kwishyura",
+    "navSettings": "Igenamiterere",
+    "newListing": "Itangazo rishya",
+    "renew": "Ongera igihe",
+    "loadMore": "Reba ayandi",
+    "savedOn": "Byabitswe {date}",
+    "applicationsTitle": "Ubusabe bwanjye",
+    "backToDashboard": "Subira ku rubaho",
+    "applicationsEmpty": "Nta busabe burahaba",
+    "applicationsEmptyHint": "Saba akazi ukunda.",
+    "appliedOn": "Wasabye {date}",
+    "applicationStatusPENDING": "Bitegereje",
+    "applicationStatusCONTACTED": "Baragusanze",
+    "applicationStatusREJECTED": "Ntibwemewe",
+    "tabAll": "Byose",
+    "tabSaved": "Byabitswe",
+    "savedEmpty": "Nta matangazo yabitswe.",
+    "expiresOn": "Rirangira {date}"
   },
   "home": {
     "heroTitle": "Akazi, amasoko, cyamunara n'ibyamamazwa — u Rwanda rwose ahantu hamwe",
@@ -362,7 +409,12 @@
     "save": "Bika impinduka",
     "verificationTitle": "Kwemeza ubucuruzi",
     "verificationDesc": "Habwa ikimenyetso cyo kwemezwa ku matangazo yawe yose.",
-    "verificationLink": "Jya ku kwemeza ubucuruzi"
+    "verificationLink": "Jya ku kwemeza ubucuruzi",
+    "dangerZone": "Ahantu h'akaga",
+    "dangerZoneDesc": "Siba burundu konti yawe n'amakuru yawe yose.",
+    "deleteAccount": "Siba konti",
+    "deleteConfirm1": "Urabyemeza? Ibi ntibisubirwaho.",
+    "deleteConfirm2": "Amatangazo yawe yose, ubwishyu n'amakuru bizasibwa. Gukomeza?"
   },
   "notifications": {
     "title": "Amatangazo",
@@ -402,5 +454,12 @@
     "colAmount": "Amafaranga",
     "colStatus": "Uko bimeze",
     "colListing": "Itangazo"
+  },
+  "publicProfile": {
+    "accountBUSINESS": "Ikigo",
+    "accountINDIVIDUAL": "Umuntu ku giti cye",
+    "memberSince": "Yiyandikishije {date}",
+    "activeListings": "{count, plural, one {Itangazo # riri ku rubuga} other {Amatangazo # ari ku rubuga}}",
+    "noListings": "Nta matangazo arahaba."
   }
 }
