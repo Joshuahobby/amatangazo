@@ -79,7 +79,10 @@
     "noResultsHint": "Gerageza guhindura amagambo washakishije cyangwa muyunguruzi.",
     "showing": "Hagaragara {count}",
     "loadMore": "Reba ayandi ({count} asigaye)",
-    "loadingMore": "Birimo gutegurwa…"
+    "loadingMore": "Birimo gutegurwa…",
+    "discoveryJOB": "Imirimo ihemba neza",
+    "discoveryTENDER": "Amasoko yihutirwa",
+    "discoveryAUCTION": "Birangira vuba"
   },
   "listing": {
     "onlyVisibleToYou": "(ribonwa nawe gusa)",
@@ -267,11 +270,6 @@
     "heroBadge": "Amasoko ya Leta, avugururwa buri munsi ava kuri Umucyo",
     "latestTitle": "Amatangazo aheruka",
     "featuredTitle": "Amatangazo y'ibanze",
-    "jobsTitle": "Imirimo ihemba neza",
-    "auctionsTitle": "Birangira vuba",
-    "tendersTitle": "Amasoko yihutirwa",
-    "urgentTag": "Byihutirwa",
-    "seeAll": "Reba byose",
     "searchPlaceholder": "Shakisha akazi, amasoko, cyamunara cyangwa ibyamamazwa...",
     "searchCategory": "Ibyiciro byose",
     "searchLocation": "Ahantu hose",
@@ -287,7 +285,6 @@
     "newsletterEmailPlaceholder": "Shyiramo imeyili yawe",
     "newsletterSubscribe": "Kwiyandikisha",
     "sponsoredLabel": "Kwamamaza",
-    "trendingBadge": "Ikurikiranwa",
     "viewAll": "Reba byose",
     "howItWorksTitle": "Uko bikorwa",
     "howItWorksSubtitle": "Intambwe eshatu zikugeza ku kazi, ku isoko cyangwa ku masezerano.",

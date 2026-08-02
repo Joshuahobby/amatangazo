@@ -61,6 +61,7 @@ Browser ──► Next.js (Vercel) ──► PostgreSQL
 | `/api/auth/*`                  | (better-auth) | Authentication           |
 | `/api/listings`                | GET, POST   | List/create listings       |
 | `/api/listings/[id]`           | GET, PATCH  | Read/update listing        |
+| `/api/listings/discovery`      | GET         | Category discovery strip   |
 | `/api/favorites`               | GET, POST, DELETE | Save/unsave listings |
 | `/api/applications`            | GET, POST   | Job applications           |
 | `/api/reports`                 | POST        | Report a listing           |
@@ -134,6 +135,10 @@ enum ListingStatus { DRAFT, PENDING_PAYMENT, LIVE, EXPIRED, REMOVED }
 - Uses raw SQL with `pg_trgm` for fuzzy text matching
 - Category-specific filters (sector for JOB/TENDER, subcategory+price for CLASSIFIED)
 - Sort options: relevance, newest, salary desc, deadline asc, price asc/desc
+- Browsing a category (no keyword) also shows a short discovery strip above the
+  results — highest-paying jobs, tenders closing next, auctions happening next.
+  Separate from search (`src/lib/discovery.ts`): its ordering is editorial and it
+  always drops expired listings, which search must not do.
 
 ### Favorites
 - `Favorite` model with `@@unique([listingId, userId])`

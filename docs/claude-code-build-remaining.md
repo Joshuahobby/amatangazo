@@ -30,7 +30,7 @@ These edits are already in the repo. Verify they compile; don't rebuild them.
 - `src/components/hero-section.tsx` — rebuilt flat/light, search-first, no motion/emoji/orbs.
 - `src/components/marketplace-search.tsx` — now uses `.input` / `.btn-primary`.
 - `src/app/page.tsx` — homepage trimmed; removed 3 discovery feeds, 2nd ad, testimonials, newsletter,
-  and their unused queries. Left a `TODO(claude-code)` to re-surface discovery feeds on category pages.
+  and their unused queries. Those feeds now live on the category pages (see § 4).
 - `src/app/listings/[id]/page.tsx` — removed map placeholder; single WhatsApp share; i18n'd
   `shareWhatsApp` / `similarListings` / `seeAll`.
 - `src/components/site-header.tsx` — dropped redundant "pricing"→/post link; i18n'd "Notifications" and
@@ -65,9 +65,11 @@ in that doc.
 
 ## 4. Optional fast-follows (do if time allows, after P1.1)
 
-- **Re-surface discovery feeds.** The homepage no longer shows high-paying jobs / ending auctions /
-  urgent tenders. Add them to the relevant category listing pages (`/listings?category=…`) so the
-  content isn't lost. (Search for the `TODO(claude-code)` in `src/app/page.tsx`.)
+- ~~**Re-surface discovery feeds.**~~ Done: high-paying jobs / urgent tenders / ending auctions now
+  render as a discovery strip above the results on `/listings?category=…`
+  (`src/components/category-discovery.tsx`, `src/lib/discovery.ts`). The three old homepage feed
+  components were deleted — they were unreferenced and built on the card-grid/framer-motion style the
+  § 0 guardrails rule out.
 - **Hardcoded-string sweep.** Grep the codebase for remaining customer-facing English literals outside
   `/admin` and route them through `next-intl`. Dev-only strings gated by `NODE_ENV !== "production"`
   (e.g. "Dev mode — your code is…") may stay.

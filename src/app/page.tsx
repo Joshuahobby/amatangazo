@@ -21,7 +21,11 @@ export default async function Home() {
   // screen, and the sidebar carries the boosted rail, categories, and ads.
   //
   // Ad slots collapse when unsold — nothing here fabricates inventory.
-  // TODO(claude-code): re-surface the discovery feeds on their category pages.
+  //
+  // The discovery feeds this page used to carry (high-paying jobs, urgent
+  // tenders, auctions ending soon) now live on the category they belong to —
+  // see CategoryDiscovery on /listings?category=… — rather than stacking three
+  // more sections here.
   const [categoryCounts, boostedListings, latestListings] = await Promise.all([
       prisma.listing.groupBy({
         by: ["category"],

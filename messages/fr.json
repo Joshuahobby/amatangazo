@@ -79,7 +79,10 @@
     "noResultsHint": "Essayez de modifier vos mots-clés ou vos filtres.",
     "showing": "{count} affichées",
     "loadMore": "Voir plus ({count} restantes)",
-    "loadingMore": "Chargement…"
+    "loadingMore": "Chargement…",
+    "discoveryJOB": "Emplois bien rémunérés",
+    "discoveryTENDER": "Appels d'offres urgents",
+    "discoveryAUCTION": "Bientôt terminées"
   },
   "listing": {
     "onlyVisibleToYou": "(visible uniquement par vous)",
@@ -267,11 +270,6 @@
     "heroBadge": "Appels d'offres publics, mis à jour chaque jour depuis Umucyo",
     "latestTitle": "Dernières annonces",
     "featuredTitle": "Annonces premium",
-    "jobsTitle": "Emplois bien rémunérés",
-    "auctionsTitle": "Bientôt terminées",
-    "tendersTitle": "Appels d'offres urgents",
-    "urgentTag": "Urgent",
-    "seeAll": "Voir tout",
     "searchPlaceholder": "Rechercher emplois, appels d'offres, enchères ou annonces...",
     "searchCategory": "Toutes les catégories",
     "searchLocation": "Tous les lieux",
@@ -287,7 +285,6 @@
     "newsletterEmailPlaceholder": "Entrez votre adresse e-mail",
     "newsletterSubscribe": "S'abonner",
     "sponsoredLabel": "Sponsorisé",
-    "trendingBadge": "Tendance",
     "viewAll": "Voir tout",
     "howItWorksTitle": "Comment ça marche",
     "howItWorksSubtitle": "Trois étapes vers votre prochain emploi, marché ou bonne affaire.",

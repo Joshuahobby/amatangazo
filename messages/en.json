@@ -79,7 +79,10 @@
     "noResultsHint": "Try adjusting your search terms or filters.",
     "showing": "Showing {count}",
     "loadMore": "Load more ({count} remaining)",
-    "loadingMore": "Loading…"
+    "loadingMore": "Loading…",
+    "discoveryJOB": "High-paying jobs",
+    "discoveryTENDER": "Urgent tenders",
+    "discoveryAUCTION": "Ending soon"
   },
   "listing": {
     "onlyVisibleToYou": "(only visible to you)",
@@ -267,11 +270,6 @@
     "heroBadge": "Government tenders, updated daily from Umucyo",
     "latestTitle": "Latest listings",
     "featuredTitle": "Featured listings",
-    "jobsTitle": "High-paying jobs",
-    "auctionsTitle": "Ending soon",
-    "tendersTitle": "Urgent tenders",
-    "urgentTag": "Urgent",
-    "seeAll": "See all",
     "searchPlaceholder": "Search jobs, tenders, auctions or classifieds...",
     "searchCategory": "All categories",
     "searchLocation": "All locations",
@@ -287,7 +285,6 @@
     "newsletterEmailPlaceholder": "Enter your email address",
     "newsletterSubscribe": "Subscribe",
     "sponsoredLabel": "Sponsored",
-    "trendingBadge": "Trending",
     "viewAll": "View all",
     "howItWorksTitle": "How it works",
     "howItWorksSubtitle": "Three steps to your next job, contract or deal.",
