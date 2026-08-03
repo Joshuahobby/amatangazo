@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createListingSchema, updateListingSchema } from "@/lib/validations/listing";
+import { createListingSchema } from "@/lib/validations/listing";
 
 describe("createListingSchema", () => {
   it("accepts a valid JOB listing", () => {
@@ -61,14 +61,8 @@ describe("createListingSchema", () => {
   });
 });
 
-describe("updateListingSchema", () => {
-  it("accepts partial updates", () => {
-    const result = updateListingSchema.safeParse({ title: "Updated title" });
-    expect(result.success).toBe(true);
-  });
-
-  it("rejects invalid fields", () => {
-    const result = updateListingSchema.safeParse({ title: "" });
-    expect(result.success).toBe(false);
-  });
-});
+// updateListingSchema is covered in test/listing-update.test.ts, which owns it
+// end to end. The two cases that lived here — a partial update is accepted, an
+// invalid title is rejected — moved there intact. Both only ever touched the
+// base fields, never `details`, which is how the union that emptied every
+// detail payload went unnoticed for so long.

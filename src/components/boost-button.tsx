@@ -4,12 +4,23 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 import { MobileMoneyFields } from "@/components/mobile-money-fields";
-import { describeApiError } from "@/lib/api-error";
+import { describeApiError, readApiError } from "@/lib/api-error";
 import { isDevEnvironment } from "@/lib/env";
 import { type PawaPayProvider } from "@/lib/pawapay";
 
 /** How often to re-check whether the mobile-money deposit has settled. */
 const POLL_MS = 2000;
+
+/**
+ * How long to keep asking before giving up on a handset prompt.
+ *
+ * A deposit only ever leaves PENDING when the payer acts, so a prompt that is
+ * ignored — the common case, not the rare one — used to leave this polling
+ * every two seconds for as long as the tab stayed open, on a connection the
+ * payer is most likely paying for by the megabyte. Three minutes is past the
+ * point where someone who meant to approve still would have.
+ */
+const POLL_TIMEOUT_MS = 3 * 60_000;
 
 type BoostInfo = {
   quote: { kind: "FROM_ALLOTMENT" } | { kind: "SUBSCRIBER_DISCOUNT" | "STANDARD"; price: number };
@@ -21,6 +32,7 @@ type BoostInfo = {
 
 export function BoostButton({ listingId }: { listingId: string }) {
   const t = useTranslations("boost");
+  const tc = useTranslations("common");
   const format = useFormatter();
   const [info, setInfo] = useState<BoostInfo | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -35,9 +47,13 @@ export function BoostButton({ listingId }: { listingId: string }) {
       fetch(`/api/listings/${listingId}/boost`)
         .then((r) => (r.ok ? r.json() : null))
         .then((data: BoostInfo | null) => {
-          setInfo(data);
+          // Keep the last good state on a transient failure. Writing the null
+          // through would trip the `!info` guard below and unmount the whole
+          // card mid-payment, taking the pending-payment notice with it.
+          if (data) setInfo(data);
           return data;
-        }),
+        })
+        .catch(() => null),
     [listingId],
   );
 
@@ -50,14 +66,23 @@ export function BoostButton({ listingId }: { listingId: string }) {
   useEffect(() => {
     if (phase !== "waiting") return;
 
+    let waited = 0;
     const interval = setInterval(async () => {
+      waited += POLL_MS;
       const data = await load();
-      if (data?.latestBoostPayment?.status === "COMPLETED") {
+      const status = data?.latestBoostPayment?.status;
+
+      if (status === "COMPLETED") {
         setPhase("idle");
         setMessage(t("boosted"));
-      } else if (data?.latestBoostPayment?.status === "FAILED") {
+      } else if (status === "FAILED") {
         setPhase("idle");
         setError(t("paymentFailed"));
+      } else if (waited >= POLL_TIMEOUT_MS) {
+        // Deliberately not an error: the deposit may still land, and the
+        // webhook records it either way. This only stops us asking.
+        setPhase("idle");
+        setMessage(t("waitingTimedOut"));
       }
     }, POLL_MS);
 
@@ -70,65 +95,82 @@ export function BoostButton({ listingId }: { listingId: string }) {
     setError(null);
   }
 
-  async function handleRedeem() {
+  /**
+   * Every handler below runs its network work through here.
+   *
+   * `submitting` disables all of these buttons, so whatever happens, clearing
+   * it has to be unconditional — a dropped connection mid-request used to
+   * reject before the `setSubmitting(false)` line was reached and leave the
+   * payment controls dead until the visitor thought to reload the page.
+   */
+  async function run(work: () => Promise<void>) {
     begin();
-    const res = await fetch(`/api/listings/${listingId}/boost/redeem`, { method: "POST" });
-    setSubmitting(false);
-    if (res.ok) setMessage(t("boostedFromAllotment"));
-    else setError(describeApiError((await res.json()).error, t("couldNotStart")));
-    load();
-  }
-
-  async function handleRedeemCredit(creditId: string) {
-    begin();
-    const res = await fetch(`/api/listings/${listingId}/boost/redeem-credit`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ creditId }),
-    });
-    setSubmitting(false);
-    if (res.ok) setMessage(t("boostedFromCredit"));
-    else setError(describeApiError((await res.json()).error, t("couldNotStart")));
-    load();
-  }
-
-  async function handlePay() {
-    begin();
-    const res = await fetch(`/api/listings/${listingId}/boost`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phoneNumber, provider }),
-    });
-    setSubmitting(false);
-
-    const data = await res.json();
-    if (!res.ok) {
-      // Covers the not-configured case too: the server answers with a plain
-      // "payments aren't available right now" rather than throwing.
-      setError(describeApiError(data.error, t("payError")));
-      return;
+    try {
+      await work();
+    } catch {
+      setError(tc("networkError"));
+    } finally {
+      setSubmitting(false);
     }
-    setPhase("waiting");
+  }
+
+  function handleRedeem() {
+    return run(async () => {
+      const res = await fetch(`/api/listings/${listingId}/boost/redeem`, { method: "POST" });
+      if (res.ok) setMessage(t("boostedFromAllotment"));
+      else setError(await readApiError(res, t("couldNotStart")));
+      load();
+    });
+  }
+
+  function handleRedeemCredit(creditId: string) {
+    return run(async () => {
+      const res = await fetch(`/api/listings/${listingId}/boost/redeem-credit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ creditId }),
+      });
+      if (res.ok) setMessage(t("boostedFromCredit"));
+      else setError(await readApiError(res, t("couldNotStart")));
+      load();
+    });
+  }
+
+  function handlePay() {
+    return run(async () => {
+      const res = await fetch(`/api/listings/${listingId}/boost`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber, provider }),
+      });
+      if (!res.ok) {
+        // Covers the not-configured case too: the server answers with a plain
+        // "payments aren't available right now" rather than throwing.
+        setError(await readApiError(res, t("payError")));
+        return;
+      }
+      setPhase("waiting");
+    });
   }
 
   /** TODO(T2.1): delete once there's a live PawaPay sandbox account. */
-  async function handleSimulatePayment(outcome: "COMPLETED" | "FAILED") {
-    begin();
-    const initiate = await fetch(`/api/dev/simulate-boost/${listingId}`, { method: "POST" }).then((r) => r.json());
-    if (!initiate.payment) {
-      setSubmitting(false);
-      setError(describeApiError(initiate.error, t("couldNotStart")));
-      return;
-    }
-    await fetch("/api/dev/pawapay-webhook", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ paymentId: initiate.payment.id, outcome }),
+  function handleSimulatePayment(outcome: "COMPLETED" | "FAILED") {
+    return run(async () => {
+      const res = await fetch(`/api/dev/simulate-boost/${listingId}`, { method: "POST" });
+      const initiate = await res.json().catch(() => ({}));
+      if (!initiate.payment) {
+        setError(describeApiError(initiate.error, t("couldNotStart")));
+        return;
+      }
+      await fetch("/api/dev/pawapay-webhook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId: initiate.payment.id, outcome }),
+      });
+      if (outcome === "COMPLETED") setMessage(t("boostedSimulated"));
+      else setError(t("paymentFailed"));
+      load();
     });
-    setSubmitting(false);
-    if (outcome === "COMPLETED") setMessage(t("boostedSimulated"));
-    else setError(t("paymentFailed"));
-    load();
   }
 
   if (!info) return null;
@@ -145,7 +187,16 @@ export function BoostButton({ listingId }: { listingId: string }) {
         </p>
       )}
 
-      {phase === "waiting" && <p className="mt-1 text-sm text-muted">{t("waiting")}</p>}
+      {/* Waiting hides every other control, so without this the visitor whose
+          prompt never arrived has no way back short of reloading the page. */}
+      {phase === "waiting" && (
+        <>
+          <p className="mt-1 text-sm text-muted">{t("waiting")}</p>
+          <button type="button" onClick={() => setPhase("idle")} className="btn-outline btn-sm mt-2">
+            {t("stopWaiting")}
+          </button>
+        </>
+      )}
       {message && <p className="mt-1 text-sm text-foreground">{message}</p>}
       {error && <p className="mt-1 form-error">{error}</p>}
 

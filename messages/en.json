@@ -17,7 +17,8 @@
     "submit": "Submit",
     "close": "Close",
     "edit": "Edit",
-    "remove": "Remove"
+    "remove": "Remove",
+    "networkError": "Something went wrong. Check your connection and try again."
   },
   "nav": {
     "main": "Main navigation",
@@ -88,7 +89,8 @@
     "discoveryJOB": "High-paying jobs",
     "discoveryTENDER": "Urgent tenders",
     "discoveryAUCTION": "Ending soon",
-    "sortLabel": "Sort by"
+    "sortLabel": "Sort by",
+    "searchFailed": "Could not load listings. Check your connection and try again."
   },
   "listing": {
     "onlyVisibleToYou": "(only visible to you)",
@@ -443,7 +445,9 @@
     "waiting": "Check your phone and approve the mobile money payment request. This will update automatically...",
     "boosted": "Boosted — your listing is now featured.",
     "paymentFailed": "Payment failed or was declined.",
-    "payError": "Could not start the payment."
+    "payError": "Could not start the payment.",
+    "stopWaiting": "Stop waiting",
+    "waitingTimedOut": "We haven't heard back about this payment yet. If you approved it on your phone, it will appear shortly."
   },
   "billing": {
     "title": "Billing & subscription",

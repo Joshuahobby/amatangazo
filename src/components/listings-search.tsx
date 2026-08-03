@@ -57,6 +57,8 @@ export function ListingsSearch({
   const [total, setTotal] = useState(initialTotal);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  /** A request that failed, as opposed to one that legitimately matched nothing. */
+  const [failed, setFailed] = useState(false);
   const pageRef = useRef(1);
   const searchKeyRef = useRef(0);
   /** The server already ran this exact query; refetching would blank the list
@@ -98,6 +100,7 @@ export function ListingsSearch({
       const query = params.toString();
       window.history.replaceState(null, "", query ? `/listings?${query}` : "/listings");
       setLoading(true);
+      setFailed(false);
       setResults([]);
       fetch(`/api/listings/search?${params.toString()}`)
         .then((r) => r.json())
@@ -105,6 +108,15 @@ export function ListingsSearch({
           if (key === searchKeyRef.current) {
             setResults(data.listings ?? []);
             setTotal(data.total ?? 0);
+          }
+        })
+        .catch(() => {
+          // Without this the results were already blanked, so a dropped
+          // connection rendered the empty state — telling the visitor their
+          // search matched nothing when it was never actually run.
+          if (key === searchKeyRef.current) {
+            setFailed(true);
+            setTotal(0);
           }
         })
         .finally(() => {
@@ -117,13 +129,27 @@ export function ListingsSearch({
 
   const handleLoadMore = async () => {
     const nextPage = pageRef.current + 1;
+    // The page this click belongs to. Changing a filter while the request is in
+    // flight bumps the key, and appending is blind — it would have merged this
+    // page of jobs into a list that is now tenders, and left pageRef past the
+    // new search's page 1 so the next click skipped a page.
+    const key = searchKeyRef.current;
     setLoadingMore(true);
-    const params = buildParams(nextPage);
-    const res = await fetch(`/api/listings/search?${params.toString()}`);
-    const data = await res.json();
-    setResults((prev) => [...prev, ...(data.listings ?? [])]);
-    pageRef.current = nextPage;
-    setLoadingMore(false);
+    try {
+      const params = buildParams(nextPage);
+      const res = await fetch(`/api/listings/search?${params.toString()}`);
+      const data = await res.json();
+      if (key !== searchKeyRef.current) return;
+      setResults((prev) => [...prev, ...(data.listings ?? [])]);
+      pageRef.current = nextPage;
+    } catch {
+      // The results already on screen still stand; only the extra page is lost.
+      if (key === searchKeyRef.current) setFailed(true);
+    } finally {
+      // Unconditionally: nothing else owns this flag, so a superseded click
+      // that left it set would disable the button until the next remount.
+      setLoadingMore(false);
+    }
   };
 
   const hasMore = results.length < total;
@@ -155,11 +181,15 @@ export function ListingsSearch({
         ))}
       </div>
 
+      {/* Every control in this row is label-less by design, so each carries its
+          own accessible name. A placeholder is not a substitute: it is gone the
+          moment the field has a value, which is exactly when someone tabbing
+          back through the filters needs to know what they are standing in. */}
       <div className="mt-4 flex flex-wrap gap-2">
-        <input placeholder={t("searchKeyword")} value={q} onChange={(e) => setQ(e.target.value)} className="input w-auto flex-1" />
-        <input placeholder={t("location")} value={location} onChange={(e) => setLocation(e.target.value)} className="input w-auto flex-1" />
+        <input aria-label={t("searchKeyword")} placeholder={t("searchKeyword")} value={q} onChange={(e) => setQ(e.target.value)} className="input w-auto flex-1" />
+        <input aria-label={t("location")} placeholder={t("location")} value={location} onChange={(e) => setLocation(e.target.value)} className="input w-auto flex-1" />
         {(category === "JOB" || category === "TENDER") && (
-          <input placeholder={t("sector")} value={sector} onChange={(e) => setSector(e.target.value)} className="input w-auto flex-1" />
+          <input aria-label={t("sector")} placeholder={t("sector")} value={sector} onChange={(e) => setSector(e.target.value)} className="input w-auto flex-1" />
         )}
         {category === "JOB" && (
           <select
@@ -175,16 +205,14 @@ export function ListingsSearch({
           </select>
         )}
         {category === "CLASSIFIED" && (
-          <input placeholder={t("subcategory")} value={subcategory} onChange={(e) => setSubcategory(e.target.value)} className="input w-auto flex-1" />
+          <input aria-label={t("subcategory")} placeholder={t("subcategory")} value={subcategory} onChange={(e) => setSubcategory(e.target.value)} className="input w-auto flex-1" />
         )}
         {category === "TENDER" && (
           <>
-            <input type="number" min="0" placeholder={t("budgetMin")} value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} className="input w-auto flex-1" />
-            <input type="number" min="0" placeholder={t("budgetMax")} value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} className="input w-auto flex-1" />
+            <input aria-label={t("budgetMin")} type="number" min="0" placeholder={t("budgetMin")} value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} className="input w-auto flex-1" />
+            <input aria-label={t("budgetMax")} type="number" min="0" placeholder={t("budgetMax")} value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} className="input w-auto flex-1" />
           </>
         )}
-        {/* The filter row is label-less by design, so the control needs its
-            own accessible name — nothing on screen supplies one. */}
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}
@@ -217,14 +245,23 @@ export function ListingsSearch({
         />
       )}
 
-      {!loading && (
+      {/* Hidden only when the failure left nothing to count — a "0 results"
+          line beside the error would be the same false negative in another
+          place. A failed *load more* keeps its count, which is still true. */}
+      {!loading && !(failed && results.length === 0) && (
         <p className="mt-4 text-sm text-muted" aria-live="polite">
           {t("results", { count: total })}
           {loadedCount < total && ` · ${t("showing", { count: loadedCount })}`}
         </p>
       )}
 
-      {!loading && results.length === 0 && (
+      {!loading && failed && (
+        <p className="mt-4 form-error" role="alert">
+          {t("searchFailed")}
+        </p>
+      )}
+
+      {!loading && !failed && results.length === 0 && (
         <div className="mt-12 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-border/40 text-muted">
             <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

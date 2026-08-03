@@ -74,6 +74,11 @@ export default function EditListingPage() {
         ),
       );
       setLoading(false);
+    }).catch(() => {
+      // Nothing here cleared `loading`, so a dropped connection left the page
+      // showing its skeletons forever with no way forward.
+      setNotFound(true);
+      setLoading(false);
     });
   }, [id]);
 
@@ -129,7 +134,9 @@ export default function EditListingPage() {
 
     setSubmitting(false);
     if (!res.ok) {
-      const data = await res.json();
+      // Not every rejection is a validation failure — a 502 answers with HTML,
+      // and parsing it unguarded threw instead of showing the poster anything.
+      const data = await res.json().catch(() => ({}));
       setErrors(formatListingFormErrors(data, t));
       return;
     }

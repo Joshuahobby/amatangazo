@@ -13,3 +13,18 @@ export function describeApiError(error: unknown, fallback: string): string {
   }
   return fallback;
 }
+
+/**
+ * The message for a failed response, read without trusting the body to be JSON.
+ *
+ * A route that dies before its handler runs — a crash in middleware, a gateway
+ * timeout, a 502 from the platform — answers with HTML or nothing at all, and
+ * `res.json()` then rejects. Callers were reaching straight into
+ * `(await res.json()).error`, so that second failure landed *while handling the
+ * first*, replacing a message the visitor could act on with an unhandled
+ * rejection. Parsing here keeps the failure path total.
+ */
+export async function readApiError(response: Response, fallback: string): Promise<string> {
+  const body = await response.json().catch(() => null);
+  return describeApiError((body as { error?: unknown } | null)?.error, fallback);
+}

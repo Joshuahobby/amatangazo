@@ -17,7 +17,8 @@
     "submit": "Envoyer",
     "close": "Fermer",
     "edit": "Modifier",
-    "remove": "Retirer"
+    "remove": "Retirer",
+    "networkError": "Une erreur est survenue. Vérifiez votre connexion et réessayez."
   },
   "nav": {
     "main": "Navigation principale",
@@ -88,7 +89,8 @@
     "discoveryJOB": "Emplois bien rémunérés",
     "discoveryTENDER": "Appels d'offres urgents",
     "discoveryAUCTION": "Bientôt terminées",
-    "sortLabel": "Trier par"
+    "sortLabel": "Trier par",
+    "searchFailed": "Impossible de charger les annonces. Vérifiez votre connexion et réessayez."
   },
   "listing": {
     "onlyVisibleToYou": "(visible uniquement par vous)",
@@ -443,7 +445,9 @@
     "waiting": "Vérifiez votre téléphone et approuvez la demande de paiement mobile money. Cette page se mettra à jour automatiquement...",
     "boosted": "Boostée — votre annonce est maintenant en vedette.",
     "paymentFailed": "Le paiement a échoué ou a été refusé.",
-    "payError": "Impossible de démarrer le paiement."
+    "payError": "Impossible de démarrer le paiement.",
+    "stopWaiting": "Arrêter l'attente",
+    "waitingTimedOut": "Toujours pas de confirmation pour ce paiement. Si vous l'avez approuvé sur votre téléphone, il apparaîtra sous peu."
   },
   "billing": {
     "title": "Facturation et abonnement",
