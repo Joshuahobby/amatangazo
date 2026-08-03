@@ -33,7 +33,7 @@
     "notifications": "Integuza",
     "account": "Konti",
     "menuToggle": "Fungura/Funga urutonde",
-    "searchPlaceholder": "Shakisha amatangazo…"
+    "searchPlaceholder": "Shakisha amatangazo..."
   },
   "auth": {
     "title": "Injira",
@@ -85,7 +85,7 @@
     "noResultsHint": "Gerageza guhindura amagambo washakishije cyangwa muyunguruzi.",
     "showing": "Hagaragara {count}",
     "loadMore": "Reba ayandi ({count} asigaye)",
-    "loadingMore": "Birimo gutegurwa…",
+    "loadingMore": "Birimo gutegurwa...",
     "discoveryJOB": "Imirimo ihemba neza",
     "discoveryTENDER": "Amasoko yihutirwa",
     "discoveryAUCTION": "Birangira vuba",

@@ -33,7 +33,7 @@
     "notifications": "Notifications",
     "account": "Account",
     "menuToggle": "Toggle navigation menu",
-    "searchPlaceholder": "Search listings…"
+    "searchPlaceholder": "Search listings..."
   },
   "auth": {
     "title": "Log in",
@@ -85,7 +85,7 @@
     "noResultsHint": "Try adjusting your search terms or filters.",
     "showing": "Showing {count}",
     "loadMore": "Load more ({count} remaining)",
-    "loadingMore": "Loading…",
+    "loadingMore": "Loading...",
     "discoveryJOB": "High-paying jobs",
     "discoveryTENDER": "Urgent tenders",
     "discoveryAUCTION": "Ending soon",
@@ -213,7 +213,7 @@
     "languageEN": "English",
     "languageFR": "French",
     "languageRW": "Kinyarwanda",
-    "genericError": "Something went wrong. Please try again.",
+    "genericError": "Something went wrong. Try again.",
     "errorRequired": "is required",
     "errorMinLength": "must be at least {count} characters",
     "errorMinValue": "must be {count} or greater",
@@ -227,7 +227,7 @@
     "saving": "Saving...",
     "cancel": "Cancel",
     "uploadStartFailed": "Could not start the upload.",
-    "uploadStorageFailed": "Upload failed. Please try again.",
+    "uploadStorageFailed": "Upload failed. Try again.",
     "uploadAttachFailed": "Could not attach the image."
   },
   "checkout": {
@@ -249,9 +249,9 @@
     "listingIsLive": "Your listing is live",
     "viewListing": "View listing",
     "paymentFailed": "Payment failed or was declined.",
-    "couldNotPublish": "Couldn't publish this listing.",
-    "couldNotRedeemCredit": "Couldn't redeem this credit.",
-    "couldNotStartPayment": "Couldn't start the payment.",
+    "couldNotPublish": "Could not publish this listing.",
+    "couldNotRedeemCredit": "Could not redeem this credit.",
+    "couldNotStartPayment": "Could not start the payment.",
     "howItWorks": "How mobile money payment works",
     "step1": "Choose your plan and enter the phone number linked to your mobile money account.",
     "step2": "You'll get a payment prompt on that phone — enter your PIN to approve.",

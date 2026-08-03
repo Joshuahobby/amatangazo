@@ -33,7 +33,7 @@
     "notifications": "Notifications",
     "account": "Compte",
     "menuToggle": "Ouvrir/fermer le menu",
-    "searchPlaceholder": "Rechercher des annonces…"
+    "searchPlaceholder": "Rechercher des annonces..."
   },
   "auth": {
     "title": "Se connecter",
@@ -85,7 +85,7 @@
     "noResultsHint": "Essayez de modifier vos mots-clés ou vos filtres.",
     "showing": "{count} affichées",
     "loadMore": "Voir plus ({count} restantes)",
-    "loadingMore": "Chargement…",
+    "loadingMore": "Chargement...",
     "discoveryJOB": "Emplois bien rémunérés",
     "discoveryTENDER": "Appels d'offres urgents",
     "discoveryAUCTION": "Bientôt terminées",
@@ -213,7 +213,7 @@
     "languageEN": "Anglais",
     "languageFR": "Français",
     "languageRW": "Kinyarwanda",
-    "genericError": "Une erreur s'est produite. Veuillez réessayer.",
+    "genericError": "Une erreur est survenue. Réessayez.",
     "errorRequired": "est requis",
     "errorMinLength": "doit contenir au moins {count} caractères",
     "errorMinValue": "doit être {count} ou plus",
@@ -227,7 +227,7 @@
     "saving": "Enregistrement...",
     "cancel": "Annuler",
     "uploadStartFailed": "Impossible de démarrer l'envoi.",
-    "uploadStorageFailed": "L'envoi a échoué. Veuillez réessayer.",
+    "uploadStorageFailed": "L'envoi a échoué. Réessayez.",
     "uploadAttachFailed": "Impossible d'ajouter l'image."
   },
   "checkout": {
