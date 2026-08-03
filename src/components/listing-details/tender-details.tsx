@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 import type { ListingWithDetails } from "@/lib/listings";
 
@@ -6,6 +6,7 @@ export async function TenderDetailsSection({ listing }: { listing: ListingWithDe
   const details = listing.tenderDetails;
   if (!details) return null;
   const t = await getTranslations("listing");
+  const format = await getFormatter();
 
   return (
     <>
@@ -45,12 +46,13 @@ export async function TenderDetailsSection({ listing }: { listing: ListingWithDe
           <>
             <dt>{t("budgetBand")}</dt>
             <dd>
-              {details.budgetMin?.toLocaleString() ?? "?"} – {details.budgetMax?.toLocaleString() ?? "?"} RWF
+              {details.budgetMin != null ? format.number(details.budgetMin) : "?"} –{" "}
+              {details.budgetMax != null ? format.number(details.budgetMax) : "?"} RWF
             </dd>
           </>
         )}
         <dt>{t("submissionDeadline")}</dt>
-        <dd>{details.submissionDeadline.toLocaleDateString()}</dd>
+        <dd>{format.dateTime(details.submissionDeadline, { dateStyle: "medium" })}</dd>
         {details.eligibilitySummary && (
           <>
             <dt>{t("eligibility")}</dt>

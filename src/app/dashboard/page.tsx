@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -29,6 +29,7 @@ const PAGE_SIZE = 20;
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
   const tc = useTranslations("common");
+  const format = useFormatter();
   const [listings, setListings] = useState<DashboardListing[]>([]);
   const [benchmarks, setBenchmarks] = useState<Benchmarks>({});
   const [unauthenticated, setUnauthenticated] = useState(false);
@@ -109,10 +110,10 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <h1 className="page-title">{t("title")}</h1>
         <div className="flex items-center gap-2">
-          <Link href="/dashboard/applications" className="btn-outline btn-sm">Applications</Link>
-          <Link href="/dashboard/billing" className="btn-outline btn-sm">Billing</Link>
-          <Link href="/dashboard/profile" className="btn-outline btn-sm">Settings</Link>
-          {!isSavedTab && <Link href="/post" className="btn-primary btn-sm">+ New Listing</Link>}
+          <Link href="/dashboard/applications" className="btn-outline btn-sm">{t("navApplications")}</Link>
+          <Link href="/dashboard/billing" className="btn-outline btn-sm">{t("navBilling")}</Link>
+          <Link href="/dashboard/profile" className="btn-outline btn-sm">{t("navSettings")}</Link>
+          {!isSavedTab && <Link href="/post" className="btn-primary btn-sm">+ {t("newListing")}</Link>}
         </div>
       </div>
 
@@ -128,7 +129,7 @@ export default function DashboardPage() {
                 : "text-muted hover:text-foreground"
             }`}
           >
-            {tab === "ALL" ? "All" : tab === "SAVED" ? "Saved" : tc(`status${tab}`)}
+            {tab === "ALL" ? t("tabAll") : tab === "SAVED" ? t("tabSaved") : tc(`status${tab}`)}
           </button>
         ))}
       </div>
@@ -137,8 +138,8 @@ export default function DashboardPage() {
 
       {!loading && listings.length === 0 && (
         <div className="mt-8 text-center">
-          <p className="text-muted">{isSavedTab ? "No saved listings yet." : t("empty")}</p>
-          {!isSavedTab && <Link href="/post" className="btn-primary mt-4 inline-block">+ New Listing</Link>}
+          <p className="text-muted">{isSavedTab ? t("savedEmpty") : t("empty")}</p>
+          {!isSavedTab && <Link href="/post" className="btn-primary mt-4 inline-block">+ {t("newListing")}</Link>}
         </div>
       )}
 
@@ -157,7 +158,7 @@ export default function DashboardPage() {
                   {listing.isCurrentlyBoosted && <FeaturedBadge />}
                 </span>
                 {isSavedTab && listing.favoritedAt && (
-                  <p className="mt-1 text-xs text-muted">Saved {new Date(listing.favoritedAt).toLocaleDateString()}</p>
+                  <p className="mt-1 text-xs text-muted">{t("savedOn", { date: format.dateTime(new Date(listing.favoritedAt), { dateStyle: "medium" }) })}</p>
                 )}
                 {!isSavedTab && (
                   <p className="mt-1.5 text-sm text-foreground">
@@ -170,7 +171,7 @@ export default function DashboardPage() {
                 )}
                 {listing.status === "LIVE" && listing.expiresAt && (
                   <p className="mt-1 text-xs text-muted">
-                    Expires {new Date(listing.expiresAt).toLocaleDateString()}
+                    {t("expiresOn", { date: format.dateTime(new Date(listing.expiresAt), { dateStyle: "medium" }) })}
                   </p>
                 )}
               </div>
@@ -182,14 +183,14 @@ export default function DashboardPage() {
                     href={`/checkout/${listing.id}`}
                     className="btn-primary btn-sm"
                   >
-                    Renew
+                    {t("renew")}
                   </Link>
                 ) : (
                   <>
                     <Link
                       href={`/listings/${listing.id}/edit`}
                       className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-border/50 hover:text-foreground"
-                      aria-label="Edit"
+                      aria-label={tc("edit")}
                     >
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -199,7 +200,7 @@ export default function DashboardPage() {
                       type="button"
                       onClick={() => handleDelete(listing.id)}
                       className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-danger-surface hover:text-danger"
-                      aria-label="Remove"
+                      aria-label={tc("remove")}
                     >
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -220,7 +221,7 @@ export default function DashboardPage() {
             onClick={loadMore}
             className="btn-outline btn-lg"
           >
-            Load more
+            {t("loadMore")}
           </button>
         </div>
       )}

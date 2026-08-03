@@ -130,19 +130,19 @@ export default function ProfileSettingsPage() {
       </div>
 
       <div className="mt-8 border-t border-border pt-6">
-        <h2 className="font-semibold text-danger">Danger zone</h2>
-        <p className="mt-1 text-sm text-muted">Permanently delete your account and all data.</p>
+        <h2 className="font-semibold text-danger">{t("dangerZone")}</h2>
+        <p className="mt-1 text-sm text-muted">{t("dangerZoneDesc")}</p>
         <button
           type="button"
           onClick={async () => {
-            if (!confirm("Are you sure? This cannot be undone.")) return;
-            if (!confirm("All your listings, payments, and data will be deleted. Continue?")) return;
+            if (!confirm(t("deleteConfirm1"))) return;
+            if (!confirm(t("deleteConfirm2"))) return;
             const res = await fetch("/api/account", { method: "DELETE" });
             if (res.ok) window.location.href = "/";
           }}
           className="btn-danger btn-sm mt-3"
         >
-          Delete account
+          {t("deleteAccount")}
         </button>
       </div>
     </main>

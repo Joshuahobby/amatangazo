@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { CategoryDiscovery } from "@/components/category-discovery";
 import { ListingRow, type ListingRowData } from "@/components/listing-row";
 import { ListingRowSkeleton } from "@/components/listing-row-skeleton";
 import { SaveButton } from "@/components/save-button";
@@ -169,6 +170,11 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
           <SaveSearchButton category={category} filters={{ keyword: q, location, sector, experienceLevel }} />
         </p>
       )}
+
+      {/* Only while browsing a category, never once a keyword narrows it: a
+          visitor who typed "driver" is answering their own question, and a
+          strip of unrelated top-paying jobs above the answer is in the way. */}
+      {!q && <CategoryDiscovery key={category} category={category} totalResults={total} />}
 
       {!loading && (
         <p className="mt-4 text-sm text-muted" aria-live="polite">

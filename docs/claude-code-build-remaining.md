@@ -30,7 +30,7 @@ These edits are already in the repo. Verify they compile; don't rebuild them.
 - `src/components/hero-section.tsx` — rebuilt flat/light, search-first, no motion/emoji/orbs.
 - `src/components/marketplace-search.tsx` — now uses `.input` / `.btn-primary`.
 - `src/app/page.tsx` — homepage trimmed; removed 3 discovery feeds, 2nd ad, testimonials, newsletter,
-  and their unused queries. Left a `TODO(claude-code)` to re-surface discovery feeds on category pages.
+  and their unused queries. Those feeds now live on the category pages (see § 4).
 - `src/app/listings/[id]/page.tsx` — removed map placeholder; single WhatsApp share; i18n'd
   `shareWhatsApp` / `similarListings` / `seeAll`.
 - `src/components/site-header.tsx` — dropped redundant "pricing"→/post link; i18n'd "Notifications" and
@@ -65,14 +65,52 @@ in that doc.
 
 ## 4. Optional fast-follows (do if time allows, after P1.1)
 
-- **Re-surface discovery feeds.** The homepage no longer shows high-paying jobs / ending auctions /
-  urgent tenders. Add them to the relevant category listing pages (`/listings?category=…`) so the
-  content isn't lost. (Search for the `TODO(claude-code)` in `src/app/page.tsx`.)
-- **Hardcoded-string sweep.** Grep the codebase for remaining customer-facing English literals outside
-  `/admin` and route them through `next-intl`. Dev-only strings gated by `NODE_ENV !== "production"`
-  (e.g. "Dev mode — your code is…") may stay.
-- **sticky-search.tsx** still uses a small `backdrop-blur`; replace with a solid `bg-surface` per the
-  flat rule if you touch it.
+- ~~**Re-surface discovery feeds.**~~ Done: high-paying jobs / urgent tenders / ending auctions now
+  render as a discovery strip above the results on `/listings?category=…`
+  (`src/components/category-discovery.tsx`, `src/lib/discovery.ts`). The three old homepage feed
+  components were deleted — they were unreferenced and built on the card-grid/framer-motion style the
+  § 0 guardrails rule out.
+- ~~**Hardcoded-string sweep.**~~ Done for the interactive surfaces: apply, report and share buttons,
+  the image-gallery a11y labels, the dashboard (listings, applications, profile danger zone) and the
+  public profile page all go through `next-intl` now, in all three locales.
+
+  What's deliberately still English, and why:
+  - `/admin` — intentionally English-only (§ 0).
+  - Dev-gated blocks (`checkout` sandbox controls, the `login-form` test-user sign-in) — allowed here.
+  - `terms/page.tsx` and `privacy/page.tsx` — binding legal prose. Translating those is a legal
+    decision, not a code change; they need human-authored fr/rw text before the keys go in.
+  - Brand name ("Amatangazo") and format hints (`2507XXXXXXXX`, `https://...`).
+- ~~**sticky-search.tsx**~~ No longer exists; no production surface uses `backdrop-blur` (the only
+  remaining mention is the note in `globals.css` recording its removal).
+- ~~**Localize dates and amounts.**~~ Done: every rendered `toLocaleDateString()` /
+  `toLocaleString()` outside `/admin` now goes through `useFormatter` / `getFormatter`, so dates and
+  amounts follow the reader's locale instead of the server's. A French listing page showed `9/1/2026`
+  before; it shows `1 sept. 2026` now.
+
+  Two call sites are deliberately untouched, because neither renders per reader:
+  - `src/lib/tender-summary.ts` formats a budget into the AI summary text that is **stored** on the
+    tender. One row, one string, every reader — making it locale-aware means storing a summary per
+    locale, which is a schema decision.
+  - `src/lib/referrals.ts` builds a notification body that is hardcoded English (`"You earned a
+    RWF … referral credit"`). The number is the least of it — notification copy isn't translated at
+    all yet, and it needs a decision first: translate at send time from the recipient's
+    `preferredLanguage`, or store a key + params and translate at render time.
+
+### Known gap: Kinyarwanda dates on client-rendered surfaces
+
+Worth knowing before anyone files it as a bug in the above. **Chromium ships no `rw` locale data** —
+`Intl.DateTimeFormat.supportedLocalesOf(["rw"])` and the `NumberFormat` equivalent both return `[]`,
+and `rw` resolves to `en-US`. Node's ICU *does* have `rw`. So for a Kinyarwanda reader:
+
+- server-rendered dates and amounts (listing detail pages, the landing feed) format in Kinyarwanda;
+- client-rendered ones (browse results, notifications, dashboard lists) fall back to US English.
+
+It doesn't crash and it doesn't produce a hydration mismatch — the client-rendered surfaces fetch
+their data after mount, so those dates were never in the SSR HTML to disagree with. But a reader can
+see `2026 Kan. 1` on one page and `Aug 10, 2026` on the next. Fixing it means choosing what a
+Kinyarwanda date should look like everywhere — either accept the English fallback on both sides for
+consistency, or format dates from our own message strings rather than from `Intl`. That's a product
+call, not a refactor, which is why it's written down here instead of guessed at.
 
 ## 5. Phase 4 — verification (required before calling this done)
 

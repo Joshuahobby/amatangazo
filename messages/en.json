@@ -12,7 +12,12 @@
     "statusEXPIRED": "Expired",
     "statusREJECTED": "Rejected",
     "statusREMOVED": "Removed",
-    "notFound": "Not found"
+    "notFound": "Not found",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "close": "Close",
+    "edit": "Edit",
+    "remove": "Remove"
   },
   "nav": {
     "main": "Main navigation",
@@ -79,7 +84,10 @@
     "noResultsHint": "Try adjusting your search terms or filters.",
     "showing": "Showing {count}",
     "loadMore": "Load more ({count} remaining)",
-    "loadingMore": "Loading…"
+    "loadingMore": "Loading…",
+    "discoveryJOB": "High-paying jobs",
+    "discoveryTENDER": "Urgent tenders",
+    "discoveryAUCTION": "Ending soon"
   },
   "listing": {
     "onlyVisibleToYou": "(only visible to you)",
@@ -116,7 +124,30 @@
     "similarListings": "Similar listings",
     "seeAll": "See all",
     "aiSummaryTitle": "Quick summary (AI)",
-    "aiSummaryDisclaimer": "Automatically extracted — always verify against the official notice."
+    "aiSummaryDisclaimer": "Automatically extracted — always verify against the official notice.",
+    "applyNow": "Apply now",
+    "applyTitle": "Send your application",
+    "applyMessagePlaceholder": "Brief message or cover note (optional)",
+    "applySend": "Send",
+    "applySubmitted": "Application sent.",
+    "applyFailed": "Could not send your application.",
+    "report": "Report",
+    "reportTitle": "Why are you reporting this?",
+    "reportSelectReason": "Select a reason",
+    "reportDetailsPlaceholder": "Additional details (optional)",
+    "reportSubmitted": "Report submitted. Thank you.",
+    "reportFailed": "Could not submit the report.",
+    "reportReasonSpam": "Spam",
+    "reportReasonInappropriate": "Inappropriate content",
+    "reportReasonScam": "Scam",
+    "reportReasonDuplicate": "Duplicate listing",
+    "reportReasonOther": "Other",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied",
+    "galleryLabel": "Image gallery",
+    "galleryPrevious": "Previous image",
+    "galleryNext": "Next image",
+    "galleryGoTo": "Go to image {number}"
   },
   "post": {
     "chooserTitle": "What would you like to post?",
@@ -259,7 +290,26 @@
     "empty": "You have no listings yet.",
     "views": "Views",
     "applications": "Applications",
-    "categoryAvg": "category avg"
+    "categoryAvg": "category avg",
+    "navApplications": "Applications",
+    "navBilling": "Billing",
+    "navSettings": "Settings",
+    "newListing": "New listing",
+    "renew": "Renew",
+    "loadMore": "Load more",
+    "savedOn": "Saved {date}",
+    "applicationsTitle": "My applications",
+    "backToDashboard": "Back to dashboard",
+    "applicationsEmpty": "No applications yet",
+    "applicationsEmptyHint": "Apply to jobs you're interested in.",
+    "appliedOn": "Applied {date}",
+    "applicationStatusPENDING": "Pending",
+    "applicationStatusCONTACTED": "Contacted",
+    "applicationStatusREJECTED": "Not selected",
+    "tabAll": "All",
+    "tabSaved": "Saved",
+    "savedEmpty": "No saved listings yet.",
+    "expiresOn": "Expires {date}"
   },
   "home": {
     "heroTitle": "Jobs, tenders, auctions & classifieds — all of Rwanda in one place",
@@ -267,11 +317,6 @@
     "heroBadge": "Government tenders, updated daily from Umucyo",
     "latestTitle": "Latest listings",
     "featuredTitle": "Featured listings",
-    "jobsTitle": "High-paying jobs",
-    "auctionsTitle": "Ending soon",
-    "tendersTitle": "Urgent tenders",
-    "urgentTag": "Urgent",
-    "seeAll": "See all",
     "searchPlaceholder": "Search jobs, tenders, auctions or classifieds...",
     "searchCategory": "All categories",
     "searchLocation": "All locations",
@@ -287,7 +332,6 @@
     "newsletterEmailPlaceholder": "Enter your email address",
     "newsletterSubscribe": "Subscribe",
     "sponsoredLabel": "Sponsored",
-    "trendingBadge": "Trending",
     "viewAll": "View all",
     "howItWorksTitle": "How it works",
     "howItWorksSubtitle": "Three steps to your next job, contract or deal.",
@@ -365,7 +409,12 @@
     "save": "Save changes",
     "verificationTitle": "Business verification",
     "verificationDesc": "Get a verified badge on all your listings.",
-    "verificationLink": "Go to verification"
+    "verificationLink": "Go to verification",
+    "dangerZone": "Danger zone",
+    "dangerZoneDesc": "Permanently delete your account and all data.",
+    "deleteAccount": "Delete account",
+    "deleteConfirm1": "Are you sure? This cannot be undone.",
+    "deleteConfirm2": "All your listings, payments, and data will be deleted. Continue?"
   },
   "notifications": {
     "title": "Notifications",
@@ -405,5 +454,12 @@
     "colAmount": "Amount",
     "colStatus": "Status",
     "colListing": "Listing"
+  },
+  "publicProfile": {
+    "accountBUSINESS": "Business",
+    "accountINDIVIDUAL": "Individual",
+    "memberSince": "Member since {date}",
+    "activeListings": "{count, plural, one {# active listing} other {# active listings}}",
+    "noListings": "No listings yet."
   }
 }

@@ -4,25 +4,51 @@ import { listingInclude, type ListingWithDetails } from "@/lib/listings";
 import { prisma } from "@/lib/prisma";
 import type { ListingSearchQuery } from "@/lib/validations/search";
 
-function getSortExpr(sort: string | undefined, rankExpr: Prisma.Sql, category: string | undefined): Prisma.Sql {
+/**
+ * The primary ORDER BY term, direction included.
+ *
+ * The direction belongs on the term rather than at the call site: a sort like
+ * `deadline_asc` ascends while the rest descend, and appending a second
+ * direction to a term that already carries one (`… ASC NULLS LAST DESC`) is a
+ * Postgres syntax error, not a precedence quirk. Every branch therefore returns
+ * a complete term and `buildOrderBy` adds none of its own.
+ *
+ * A sort that doesn't apply to the filtered category — a salary sort over
+ * tenders — has no column to order by, so it falls back to newest-first.
+ */
+function getSortOrder(sort: string | undefined, rankExpr: Prisma.Sql, category: string | undefined): Prisma.Sql {
+  const newestFirst = Prisma.sql`l."createdAt" DESC`;
+
   switch (sort) {
     case "newest":
-      return Prisma.sql`l."createdAt"`;
+      return newestFirst;
     case "salary_desc":
       if (category === "JOB") return Prisma.sql`jd."salaryRangeMax" DESC NULLS LAST`;
-      return Prisma.sql`l."createdAt"`;
+      return newestFirst;
     case "deadline_asc":
       if (category === "TENDER") return Prisma.sql`td."submissionDeadline" ASC NULLS LAST`;
-      return Prisma.sql`l."createdAt"`;
+      return newestFirst;
     case "price_asc":
       if (category === "CLASSIFIED") return Prisma.sql`cd.price ASC NULLS LAST`;
-      return Prisma.sql`l."createdAt"`;
+      return newestFirst;
     case "price_desc":
       if (category === "CLASSIFIED") return Prisma.sql`cd.price DESC NULLS LAST`;
-      return Prisma.sql`l."createdAt"`;
+      return newestFirst;
     default:
-      return rankExpr;
+      return Prisma.sql`${rankExpr} DESC`;
   }
+}
+
+/**
+ * The full ORDER BY clause. Exported so the composition is testable without a
+ * database — this is where the malformed double direction used to be introduced,
+ * so asserting on the assembled clause is what actually guards it.
+ *
+ * `createdAt` is the tiebreaker throughout, which keeps pagination stable when
+ * the primary term ties (several tenders closing the same day).
+ */
+export function buildOrderBy(sort: string | undefined, rankExpr: Prisma.Sql, category: string | undefined): Prisma.Sql {
+  return Prisma.sql`ORDER BY ${getSortOrder(sort, rankExpr, category)}, l."createdAt" DESC`;
 }
 
 /**
@@ -77,7 +103,7 @@ export async function searchListings(query: ListingSearchQuery): Promise<{
     FROM "Listing" l
     ${joinClause}
     WHERE ${whereClause}
-    ORDER BY ${getSortExpr(sort, rankExpr, category)} DESC, l."createdAt" DESC
+    ${buildOrderBy(sort, rankExpr, category)}
     LIMIT ${limit} OFFSET ${(page - 1) * limit}
   `);
 

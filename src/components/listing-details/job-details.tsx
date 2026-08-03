@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 import { ApplyLink } from "@/components/apply-link";
 import type { ListingWithDetails } from "@/lib/listings";
@@ -8,6 +8,7 @@ export async function JobDetailsSection({ listing }: { listing: ListingWithDetai
   if (!details) return null;
   const t = await getTranslations("listing");
   const tp = await getTranslations("post");
+  const format = await getFormatter();
 
   return (
     <dl className="detail-grid">
@@ -16,12 +17,13 @@ export async function JobDetailsSection({ listing }: { listing: ListingWithDetai
       <dt>{t("experienceLevel")}</dt>
       <dd>{tp(`experienceLevel${details.experienceLevel}`)}</dd>
       <dt>{t("applicationDeadline")}</dt>
-      <dd>{details.applicationDeadline.toLocaleDateString()}</dd>
+      <dd>{format.dateTime(details.applicationDeadline, { dateStyle: "medium" })}</dd>
       {(details.salaryRangeMin || details.salaryRangeMax) && (
         <>
           <dt>{t("salaryRange")}</dt>
           <dd>
-            {details.salaryRangeMin?.toLocaleString() ?? "?"} – {details.salaryRangeMax?.toLocaleString() ?? "?"} RWF
+            {details.salaryRangeMin != null ? format.number(details.salaryRangeMin) : "?"} –{" "}
+            {details.salaryRangeMax != null ? format.number(details.salaryRangeMax) : "?"} RWF
           </dd>
         </>
       )}

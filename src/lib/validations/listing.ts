@@ -5,6 +5,20 @@ export const applicationMethods = ["PLATFORM", "EXTERNAL_URL", "EMAIL"] as const
 export const preferredLanguages = ["EN", "FR", "RW"] as const;
 export const listingCategories = ["JOB", "TENDER", "AUCTION", "CLASSIFIED"] as const;
 
+/**
+ * Categories with a discovery angle worth highlighting above the browse results
+ * (see `src/lib/discovery.ts`). CLASSIFIED has none — "cheapest first" is the
+ * price sort, not an editorial signal. Lives here rather than in `lib/discovery`
+ * so the client-side strip can read it without pulling Prisma into the bundle.
+ */
+export const discoveryCategories = ["JOB", "TENDER", "AUCTION"] as const;
+
+export type DiscoveryCategory = (typeof discoveryCategories)[number];
+
+export function isDiscoveryCategory(value: string): value is DiscoveryCategory {
+  return (discoveryCategories as readonly string[]).includes(value);
+}
+
 const baseListingFields = {
   title: z.string().trim().min(3).max(200),
   description: z.string().trim().min(10),
