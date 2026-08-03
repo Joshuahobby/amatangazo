@@ -433,8 +433,11 @@
     "boostedSimulated": "Boosted (simulated payment).",
     "useCredit": "Use RWF {amount} referral credit",
     "boostFree": "Boost now (free — monthly allotment)",
-    "boostPaid": "Boost now — RWF {price} (sandbox)",
-    "boostUnavailable": "Paid boosts aren't available yet."
+    "boostPaid": "Boost now — RWF {price}",
+    "waiting": "Check your phone and approve the mobile money payment request. This will update automatically...",
+    "boosted": "Boosted — your listing is now featured.",
+    "paymentFailed": "Payment failed or was declined.",
+    "payError": "Could not start the payment."
   },
   "billing": {
     "title": "Billing & subscription",

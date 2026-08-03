@@ -433,8 +433,11 @@
     "boostedSimulated": "Mis en avant (paiement simulé).",
     "useCredit": "Utiliser le crédit de parrainage de {amount} RWF",
     "boostFree": "Mettre en avant (gratuit — quota mensuel)",
-    "boostPaid": "Mettre en avant — {price} RWF (bac à sable)",
-    "boostUnavailable": "La mise en avant payante n'est pas encore disponible."
+    "boostPaid": "Mettre en avant — {price} RWF",
+    "waiting": "Vérifiez votre téléphone et approuvez la demande de paiement mobile money. Cette page se mettra à jour automatiquement...",
+    "boosted": "Boostée — votre annonce est maintenant en vedette.",
+    "paymentFailed": "Le paiement a échoué ou a été refusé.",
+    "payError": "Impossible de démarrer le paiement."
   },
   "billing": {
     "title": "Facturation et abonnement",

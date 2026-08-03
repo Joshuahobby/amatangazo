@@ -433,8 +433,11 @@
     "boostedSimulated": "Ryimuriwe ku isonga (kwishyura kw'ikitegererezo).",
     "useCredit": "Koresha amanota ya RWF {amount} yo kumenyekanisha",
     "boostFree": "Rimura ku isonga ubu (ku buntu — umugabane wa buri kwezi)",
-    "boostPaid": "Rimura ku isonga ubu — RWF {price} (igerageza)",
-    "boostUnavailable": "Kwishyura ngo ujye ku isonga ntibirakora."
+    "boostPaid": "Rimura ku isonga ubu — RWF {price}",
+    "waiting": "Reba kuri telefoni yawe wemeze ubusabe bwo kwishyura. Bizahita bivugururwa...",
+    "boosted": "Ryashyizwe ku isonga — itangazo ryawe rirambaye.",
+    "paymentFailed": "Kwishyura ntibyakunze cyangwa byanzwe.",
+    "payError": "Kwishyura ntibyatangiye."
   },
   "billing": {
     "title": "Kwishyura n'ifatabuguzi",
