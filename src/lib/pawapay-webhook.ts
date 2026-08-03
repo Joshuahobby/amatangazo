@@ -70,6 +70,23 @@ export async function verifyPawaPayWebhook(request: IncomingWebhookRequest): Pro
           return ppVerifier(publicKey);
         },
         requiredFields: ["signature-date", "content-digest", "content-type"],
+        // Two clocks have to agree here, and they never quite do.
+        //
+        // The library defaults to `tolerance: 0` and `notAfter: now`, which
+        // reduces the check to `created > now` — so a callback signed on
+        // PawaPay's clock is rejected outright if our clock is even one second
+        // behind theirs. It surfaces as "Signature is too old", which reads
+        // backwards: the signature is too *new* for us. A machine running 45s
+        // slow rejected every callback this way.
+        //
+        // A minute each way covers ordinary NTP drift without meaningfully
+        // widening the replay window, and maxAge puts an upper bound on age
+        // that PawaPay's own `expires` parameter would otherwise have to carry
+        // alone. It is deliberately generous: PawaPay retries a failed
+        // callback with the *original* signature, so anything tighter would
+        // reject the retries of a delivery that was only briefly disrupted.
+        tolerance: 60,
+        maxAge: 900,
       },
       {
         method: request.method,
