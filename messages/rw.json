@@ -17,7 +17,8 @@
     "submit": "Ohereza",
     "close": "Funga",
     "edit": "Hindura",
-    "remove": "Kuraho"
+    "remove": "Kuraho",
+    "networkError": "Habaye ikibazo. Reba interineti yawe wongere ugerageze."
   },
   "nav": {
     "main": "Urutonde nyamukuru",
@@ -88,7 +89,8 @@
     "discoveryJOB": "Imirimo ihemba neza",
     "discoveryTENDER": "Amasoko yihutirwa",
     "discoveryAUCTION": "Birangira vuba",
-    "sortLabel": "Shungura ukurikije"
+    "sortLabel": "Shungura ukurikije",
+    "searchFailed": "Ntibyashobotse gupakira amatangazo. Reba interineti yawe wongere ugerageze."
   },
   "listing": {
     "onlyVisibleToYou": "(ribonwa nawe gusa)",
@@ -443,7 +445,9 @@
     "waiting": "Reba kuri telefoni yawe wemeze ubusabe bwo kwishyura. Bizahita bivugururwa...",
     "boosted": "Ryashyizwe ku isonga — itangazo ryawe rirambaye.",
     "paymentFailed": "Kwishyura ntibyakunze cyangwa byanzwe.",
-    "payError": "Kwishyura ntibyatangiye."
+    "payError": "Kwishyura ntibyatangiye.",
+    "stopWaiting": "Reka gutegereza",
+    "waitingTimedOut": "Nta gisubizo kiraboneka kuri uku kwishyura. Niba wabyemeje kuri telefoni yawe, bizagaragara vuba."
   },
   "billing": {
     "title": "Kwishyura n'ifatabuguzi",

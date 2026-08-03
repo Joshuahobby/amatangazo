@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { describeApiError } from "@/lib/api-error";
+import { describeApiError, readApiError } from "@/lib/api-error";
 
 const FALLBACK = "Something went wrong.";
 
@@ -42,5 +42,37 @@ describe("describeApiError", () => {
     for (const input of inputs) {
       expect(typeof describeApiError(input, FALLBACK)).toBe("string");
     }
+  });
+});
+
+describe("readApiError", () => {
+  const jsonResponse = (body: unknown) => new Response(JSON.stringify(body), { status: 400 });
+
+  it("reads the error out of a JSON body", async () => {
+    await expect(readApiError(jsonResponse({ error: "Boost already active" }), FALLBACK)).resolves.toBe(
+      "Boost already active",
+    );
+  });
+
+  it("unwraps a Zod .flatten() body the same way describeApiError does", async () => {
+    const body = { error: { formErrors: [], fieldErrors: { phoneNumber: ["Enter a valid number"] } } };
+    await expect(readApiError(jsonResponse(body), FALLBACK)).resolves.toBe("Enter a valid number");
+  });
+
+  // The reason this wrapper exists. A route that dies before its handler runs
+  // answers with HTML or an empty body, and the old `(await res.json()).error`
+  // then rejected *while handling the failure* — the caller's `setSubmitting`
+  // never ran and the payment buttons stayed disabled until a page reload.
+  it("falls back instead of throwing when the body is not JSON", async () => {
+    const html = new Response("<html><body>502 Bad Gateway</body></html>", { status: 502 });
+    await expect(readApiError(html, FALLBACK)).resolves.toBe(FALLBACK);
+  });
+
+  it("falls back instead of throwing on an empty body", async () => {
+    await expect(readApiError(new Response(null, { status: 504 }), FALLBACK)).resolves.toBe(FALLBACK);
+  });
+
+  it("falls back when the JSON body carries no error field", async () => {
+    await expect(readApiError(jsonResponse({ ok: false }), FALLBACK)).resolves.toBe(FALLBACK);
   });
 });
