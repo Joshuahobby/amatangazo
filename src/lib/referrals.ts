@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 
-import { notifyUser } from "@/lib/notifications";
+import { notifyUser, referralCreditMessage } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 
 type Db = typeof prisma | Prisma.TransactionClient;
@@ -102,7 +102,7 @@ export async function issueReferralCredit(payment: {
     }),
   ]);
 
-  await notifyUser(referral.referrerUserId, `You earned a RWF ${amount.toLocaleString()} referral credit on Amatangazo.`);
+  await notifyUser(referral.referrerUserId, referralCreditMessage(amount));
 }
 
 /**

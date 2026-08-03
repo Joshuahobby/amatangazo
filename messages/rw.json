@@ -433,6 +433,17 @@
     "sent": "Ryoherejwe",
     "failed": "Ntirwashobotse koherezwa"
   },
+  "notificationTemplates": {
+    "listingLiveSubject": "Itangazo ryawe ryatangajwe",
+    "listingLiveBody": "Itangazo ryawe \"{title}\" ryatangajwe kuri Amatangazo. Rireba hano: {url}",
+    "subscriptionActiveSubject": "Ifatabuguzi ryawe rirakora",
+    "subscriptionActiveBody": "Ifatabuguzi ryawe rya Amatangazo rirakora kandi \"{title}\" ryatangajwe. Rireba hano: {url}",
+    "referralCreditSubject": "Wahawe amanota yo kumenyekanisha",
+    "referralCreditBody": "Wahawe amanota ya RWF {amount, number} yo kumenyekanisha kuri Amatangazo. Uzayakoreshe mu kwishyura itangazo rikurikira.",
+    "digestSubject": "Amatangazo mashya ahuye n'ubushakashatsi wabitse",
+    "digestHeading": "{category} — {count, plural, one {itangazo rishya # rihuye n'ubushakashatsi bwawe bwabitswe} other {amatangazo mashya # ahuye n'ubushakashatsi bwawe bwabitswe}}",
+    "digestMore": "N'ayandi {count}."
+  },
   "boost": {
     "currentlyFeaturedUntil": "Iri ku isonga kugeza {date}.",
     "boostedFromAllotment": "Ryimuriwe ku isonga ukoresheje umugabane wawe wa buri kwezi.",

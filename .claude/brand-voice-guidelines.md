@@ -252,6 +252,13 @@ the verification SLA.
 **Payment** = tell them what happens on their phone, then reassure about what you don't hold:
 `Payments are processed securely by PawaPay. We never see or store your PIN.`
 
+**Notification** = a subject that names the event, then a body carrying the fact and the link.
+Every notification gets its own subject — never a generic `Amatangazo update`, because email
+readers triage on the subject line. Copy lives in the `notificationTemplates` namespace and renders
+in the **recipient's** `User.preferredLanguage`, resolved at send time: the person who triggers a
+notification is usually not the person who reads it, and cron has no locale at all. Keep bodies
+short enough to survive a single SMS segment where possible.
+
 ---
 
 ## 9. Visual identity
@@ -348,17 +355,21 @@ diagnoses a connection, the other doesn't. Do not collapse them into a single ke
 | Positioning and audiences (§ 1–2) | **High** | `docs/prd.md` v4, marked fully resolved |
 | Terminology (§ 6) | **Medium-high** | Product terms are consistent in code; the prohibited list is partly inferred from absence |
 | Long-form marketing voice | **Low** | The landing page is the only marketing surface in-repo |
-| Email, SMS and WhatsApp voice | **None** | Channels exist in the product; no message templates found in-repo |
+| Email, SMS and WhatsApp voice | **Medium-high** | Nine templates in the `notificationTemplates` namespace, localised across all three catalogues (August 2026). English and French are solid; Kinyarwanda needs a native-speaker pass |
 | Social and press voice | **None** | No evidence in this repository |
 | Spoken/sales voice | **None** | No call transcripts were reachable |
 
 **Open questions:**
 
-1. **What do the notification templates say?** Saved-search alerts go out over WhatsApp, SMS and
-   email, but no template copy lives in this repo. These are high-volume, and right now they are
-   ungoverned.
+1. **Does the Kinyarwanda notification copy read naturally?** It was built from vocabulary already
+   in `rw.json` (`ubushakashatsi bwabitswe`, `amanota yo kumenyekanisha`, `Itangazo ryawe
+   ryatangajwe`) rather than translated fresh, but it has not been reviewed by a native speaker.
+   These go out over SMS to real users — this is the highest-value review in the document.
 2. **Is there a French and Kinyarwanda voice standard, or only translations?** The mechanics in
    § 7 are English-specific. Someone fluent should decide whether rw copy has its own register.
+3. **Should OTP messages be localised too?** `sendOtpSms` and `sendOtpEmail` still hardcode English
+   ("Your Amatangazo verification code is …"). They fire pre-login, where the recipient's
+   `preferredLanguage` may not be known yet, so they were left out of the notification work.
 3. **Should `common.submit` ("Submit") exist at all?** § 6 prohibits "Submit" as a primary CTA, yet
    a generic key remains. Either remove it or document where a generic fallback is legitimate.
 4. **Is "Not stated" the standard for every absent value**, or only AI tender extraction?

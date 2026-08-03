@@ -433,6 +433,17 @@
     "sent": "Envoyée",
     "failed": "Échec d'envoi"
   },
+  "notificationTemplates": {
+    "listingLiveSubject": "Votre annonce est en ligne",
+    "listingLiveBody": "Votre annonce « {title} » est en ligne sur Amatangazo. Voir l'annonce : {url}",
+    "subscriptionActiveSubject": "Votre abonnement est actif",
+    "subscriptionActiveBody": "Votre abonnement Amatangazo est actif et « {title} » est en ligne. Voir l'annonce : {url}",
+    "referralCreditSubject": "Vous avez gagné un crédit de parrainage",
+    "referralCreditBody": "Vous avez gagné un crédit de parrainage de {amount, number} RWF sur Amatangazo. Utilisez-le au paiement de votre prochaine annonce.",
+    "digestSubject": "Nouvelles annonces correspondant à votre recherche enregistrée",
+    "digestHeading": "{category} — {count, plural, one {# nouvelle annonce correspond à votre recherche enregistrée} other {# nouvelles annonces correspondent à votre recherche enregistrée}}",
+    "digestMore": "Et {count} autres."
+  },
   "boost": {
     "currentlyFeaturedUntil": "Actuellement mis en avant jusqu'au {date}.",
     "boostedFromAllotment": "Mis en avant grâce à votre quota mensuel.",

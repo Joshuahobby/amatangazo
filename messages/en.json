@@ -433,6 +433,17 @@
     "sent": "Sent",
     "failed": "Failed to send"
   },
+  "notificationTemplates": {
+    "listingLiveSubject": "Your listing is live",
+    "listingLiveBody": "Your listing \"{title}\" is live on Amatangazo. View it: {url}",
+    "subscriptionActiveSubject": "Your subscription is active",
+    "subscriptionActiveBody": "Your Amatangazo subscription is active and \"{title}\" is live. View it: {url}",
+    "referralCreditSubject": "You earned a referral credit",
+    "referralCreditBody": "You earned a RWF {amount, number} referral credit on Amatangazo. Use it at checkout on your next listing.",
+    "digestSubject": "New listings matching your saved search",
+    "digestHeading": "{category} — {count, plural, one {# new listing matches your saved search} other {# new listings match your saved search}}",
+    "digestMore": "And {count} more."
+  },
   "boost": {
     "currentlyFeaturedUntil": "Currently featured until {date}.",
     "boostedFromAllotment": "Boosted using your monthly allotment.",
