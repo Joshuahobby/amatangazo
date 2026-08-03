@@ -222,7 +222,10 @@
     "editTitle": "Modifier l'annonce",
     "saveChanges": "Enregistrer les modifications",
     "saving": "Enregistrement...",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "uploadStartFailed": "Impossible de démarrer l'envoi.",
+    "uploadStorageFailed": "L'envoi a échoué. Veuillez réessayer.",
+    "uploadAttachFailed": "Impossible d'ajouter l'image."
   },
   "checkout": {
     "title": "Paiement",
@@ -414,7 +417,8 @@
     "dangerZoneDesc": "Supprimez définitivement votre compte et toutes vos données.",
     "deleteAccount": "Supprimer le compte",
     "deleteConfirm1": "Êtes-vous sûr ? Cette action est irréversible.",
-    "deleteConfirm2": "Toutes vos annonces, paiements et données seront supprimés. Continuer ?"
+    "deleteConfirm2": "Toutes vos annonces, paiements et données seront supprimés. Continuer ?",
+    "saveFailed": "Impossible d'enregistrer vos modifications."
   },
   "notifications": {
     "title": "Notifications",

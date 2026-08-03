@@ -222,7 +222,10 @@
     "editTitle": "Hindura itangazo",
     "saveChanges": "Bika impinduka",
     "saving": "Birimo kubikwa...",
-    "cancel": "Reka"
+    "cancel": "Reka",
+    "uploadStartFailed": "Kohereza ntibyatangiye.",
+    "uploadStorageFailed": "Kohereza ntibyakunze. Ongera ugerageze.",
+    "uploadAttachFailed": "Ifoto ntiyashyizweho."
   },
   "checkout": {
     "title": "Kwishyura",
@@ -414,7 +417,8 @@
     "dangerZoneDesc": "Siba burundu konti yawe n'amakuru yawe yose.",
     "deleteAccount": "Siba konti",
     "deleteConfirm1": "Urabyemeza? Ibi ntibisubirwaho.",
-    "deleteConfirm2": "Amatangazo yawe yose, ubwishyu n'amakuru bizasibwa. Gukomeza?"
+    "deleteConfirm2": "Amatangazo yawe yose, ubwishyu n'amakuru bizasibwa. Gukomeza?",
+    "saveFailed": "Impinduka zawe ntizabitswe."
   },
   "notifications": {
     "title": "Amatangazo",

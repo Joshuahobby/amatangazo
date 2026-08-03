@@ -1,6 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+
+import { describeApiError } from "@/lib/api-error";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -45,7 +47,7 @@ export default function ProfileSettingsPage() {
     setSaving(false);
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error ?? "Something went wrong");
+      setError(describeApiError(data.error, t("saveFailed")));
       return;
     }
     setSaved(true);

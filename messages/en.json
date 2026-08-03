@@ -222,7 +222,10 @@
     "editTitle": "Edit listing",
     "saveChanges": "Save changes",
     "saving": "Saving...",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "uploadStartFailed": "Could not start the upload.",
+    "uploadStorageFailed": "Upload failed. Please try again.",
+    "uploadAttachFailed": "Could not attach the image."
   },
   "checkout": {
     "title": "Checkout",
@@ -414,7 +417,8 @@
     "dangerZoneDesc": "Permanently delete your account and all data.",
     "deleteAccount": "Delete account",
     "deleteConfirm1": "Are you sure? This cannot be undone.",
-    "deleteConfirm2": "All your listings, payments, and data will be deleted. Continue?"
+    "deleteConfirm2": "All your listings, payments, and data will be deleted. Continue?",
+    "saveFailed": "Could not save your changes."
   },
   "notifications": {
     "title": "Notifications",
