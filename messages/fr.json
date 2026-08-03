@@ -442,7 +442,9 @@
     "referralCreditBody": "Vous avez gagné un crédit de parrainage de {amount, number} RWF sur Amatangazo. Utilisez-le au paiement de votre prochaine annonce.",
     "digestSubject": "Nouvelles annonces correspondant à votre recherche enregistrée",
     "digestHeading": "{category} — {count, plural, one {# nouvelle annonce correspond à votre recherche enregistrée} other {# nouvelles annonces correspondent à votre recherche enregistrée}}",
-    "digestMore": "Et {count} autres."
+    "digestMore": "Et {count} autres.",
+    "otpSubject": "Votre code de vérification Amatangazo",
+    "otpBody": "Votre code de vérification Amatangazo est {code}. Nous ne vous le demanderons jamais."
   },
   "boost": {
     "currentlyFeaturedUntil": "Actuellement mis en avant jusqu'au {date}.",

@@ -85,6 +85,19 @@ export function referralCreditMessage(amount: number): NotificationMessage {
   });
 }
 
+/**
+ * Sent before the recipient is necessarily a user, so the language comes from
+ * languageForEmail/languageForPhone in recipient-locale.ts rather than a User
+ * row. `code` interpolates as a plain string — never `{code, number}`, which
+ * would render 123456 as "123,456".
+ */
+export function otpMessage(code: string): NotificationMessage {
+  return (t) => ({
+    subject: t("notificationTemplates.otpSubject"),
+    body: t("notificationTemplates.otpBody", { code }),
+  });
+}
+
 export function digestMessage(
   category: ListingCategory,
   listings: { id: string; title: string }[],

@@ -442,7 +442,9 @@
     "referralCreditBody": "Wahawe amanota ya RWF {amount, number} yo kumenyekanisha kuri Amatangazo. Uzayakoreshe mu kwishyura itangazo rikurikira.",
     "digestSubject": "Amatangazo mashya ahuye n'ubushakashatsi wabitse",
     "digestHeading": "{category} — {count, plural, one {itangazo rishya # rihuye n'ubushakashatsi bwawe bwabitswe} other {amatangazo mashya # ahuye n'ubushakashatsi bwawe bwabitswe}}",
-    "digestMore": "N'ayandi {count}."
+    "digestMore": "N'ayandi {count}.",
+    "otpSubject": "Kode yawe yo kwemeza kuri Amatangazo",
+    "otpBody": "Kode yawe yo kwemeza kuri Amatangazo ni {code}. Ntituzigera tuyigusaba."
   },
   "boost": {
     "currentlyFeaturedUntil": "Iri ku isonga kugeza {date}.",

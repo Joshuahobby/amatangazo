@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   digestMessage,
   listingPublishedMessage,
+  otpMessage,
   referralCreditMessage,
   subscriptionActivatedMessage,
   translatorFor,
@@ -104,5 +105,41 @@ describe("notification templates", () => {
     const listings = [{ id: "a1", title: "Driver" }];
     const { body } = digestMessage("JOB", listings, 1, "https://amatangazo.com")(translatorFor("EN"));
     expect(body).not.toContain("more.");
+  });
+});
+
+describe("OTP template", () => {
+  it("renders the code verbatim, never digit-grouped", () => {
+    // A six-digit code run through `{code, number}` would arrive as "123,456"
+    // and every entered code would fail. Guard the whole set of locales,
+    // including French, which groups with a space.
+    for (const language of LANGUAGES) {
+      const { body } = otpMessage("123456")(translatorFor(language));
+      expect(body).toContain("123456");
+      expect(body).not.toContain("123,456");
+      expect(body).not.toContain("123 456");
+    }
+  });
+
+  it("carries a subject and body in every language", () => {
+    for (const language of LANGUAGES) {
+      const { subject, body } = otpMessage("482910")(translatorFor(language));
+      expect(subject.length).toBeGreaterThan(0);
+      expect(body).not.toContain("notificationTemplates.");
+    }
+  });
+
+  it("does not leak the internal OTP type into the copy", () => {
+    const { body } = otpMessage("123456")(translatorFor("EN"));
+    for (const internal of ["sign-in", "email-verification", "forget-password"]) {
+      expect(body).not.toContain(internal);
+    }
+  });
+
+  it("fits a single GSM-7 SMS segment in every language", () => {
+    for (const language of LANGUAGES) {
+      const { body } = otpMessage("123456")(translatorFor(language));
+      expect(body.length).toBeLessThanOrEqual(160);
+    }
   });
 });

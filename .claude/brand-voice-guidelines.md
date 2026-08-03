@@ -257,7 +257,14 @@ Every notification gets its own subject — never a generic `Amatangazo update`,
 readers triage on the subject line. Copy lives in the `notificationTemplates` namespace and renders
 in the **recipient's** `User.preferredLanguage`, resolved at send time: the person who triggers a
 notification is usually not the person who reads it, and cron has no locale at all. Keep bodies
-short enough to survive a single SMS segment where possible.
+short enough to survive a single SMS segment (160 GSM-7 characters) where possible.
+
+**Verification code (OTP)** = the code, and nothing that competes with it. The recipient may not
+have an account yet, so the language falls back in three steps: the user's stored
+`preferredLanguage`, then the `NEXT_LOCALE` cookie (they are on the site in *some* language right
+now), then English. Never interpolate a code through `{code, number}` — `123456` would render as
+`123,456` and every entered code would fail. Pair the code with an anti-phishing line
+(`We will never ask you for it.`) and never expose internal auth tokens like `sign-in` in the body.
 
 ---
 
@@ -355,7 +362,7 @@ diagnoses a connection, the other doesn't. Do not collapse them into a single ke
 | Positioning and audiences (§ 1–2) | **High** | `docs/prd.md` v4, marked fully resolved |
 | Terminology (§ 6) | **Medium-high** | Product terms are consistent in code; the prohibited list is partly inferred from absence |
 | Long-form marketing voice | **Low** | The landing page is the only marketing surface in-repo |
-| Email, SMS and WhatsApp voice | **Medium-high** | Nine templates in the `notificationTemplates` namespace, localised across all three catalogues (August 2026). English and French are solid; Kinyarwanda needs a native-speaker pass |
+| Email, SMS and WhatsApp voice | **Medium-high** | Eleven keys covering five messages in the `notificationTemplates` namespace — listing live, subscription active, referral credit, saved-search digest, and OTP — localised across all three catalogues (August 2026). English and French are solid; Kinyarwanda needs a native-speaker pass |
 | Social and press voice | **None** | No evidence in this repository |
 | Spoken/sales voice | **None** | No call transcripts were reachable |
 
@@ -367,9 +374,10 @@ diagnoses a connection, the other doesn't. Do not collapse them into a single ke
    These go out over SMS to real users — this is the highest-value review in the document.
 2. **Is there a French and Kinyarwanda voice standard, or only translations?** The mechanics in
    § 7 are English-specific. Someone fluent should decide whether rw copy has its own register.
-3. **Should OTP messages be localised too?** `sendOtpSms` and `sendOtpEmail` still hardcode English
-   ("Your Amatangazo verification code is …"). They fire pre-login, where the recipient's
-   `preferredLanguage` may not be known yet, so they were left out of the notification work.
+3. **Should the OTP message state an expiry?** Codes do expire, but neither auth plugin configures
+   `expiresIn`, so the window is Better Auth's default and could change without anyone touching the
+   copy. Naming a number would be a claim the code doesn't guarantee — § 4.4 — so the copy stays
+   silent on it. Set `expiresIn` explicitly and the copy can say so.
 3. **Should `common.submit` ("Submit") exist at all?** § 6 prohibits "Submit" as a primary CTA, yet
    a generic key remains. Either remove it or document where a generic fallback is legitimate.
 4. **Is "Not stated" the standard for every absent value**, or only AI tender extraction?

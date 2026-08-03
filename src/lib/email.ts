@@ -37,7 +37,12 @@ export async function sendEmail(to: string, subject: string, text: string): Prom
   recordDevMessage({ channel: "EMAIL", to, body: `${subject}\n${text}` });
 }
 
-export async function sendOtpEmail(email: string, otp: string, type: string): Promise<void> {
+/**
+ * `subject`/`text` are composed by the caller so the copy can be localised —
+ * see otpMessage() in notification-messages.ts. `otp` is still passed
+ * separately because the dev fallback below stores it for /api/dev/last-otp.
+ */
+export async function sendOtpEmail(email: string, otp: string, subject: string, text: string): Promise<void> {
   if (isEmailConfigured()) {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -45,12 +50,7 @@ export async function sendOtpEmail(email: string, otp: string, type: string): Pr
         Authorization: `Bearer ${RESEND_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        from: FROM_ADDRESS,
-        to: email,
-        subject: "Your Amatangazo verification code",
-        text: `Your verification code is ${otp}. (${type})`,
-      }),
+      body: JSON.stringify({ from: FROM_ADDRESS, to: email, subject, text }),
     });
     if (!response.ok) {
       throw new Error(`Resend email send failed: ${response.status} ${await response.text()}`);
@@ -62,6 +62,6 @@ export async function sendOtpEmail(email: string, otp: string, type: string): Pr
   if (process.env.NODE_ENV === "production") {
     throw new Error("Email is not configured (RESEND_API_KEY missing) and the dev fallback is disabled in production");
   }
-  console.log(`[dev-otp] Email to ${email} (${type}): your Amatangazo code is ${otp}`);
+  console.log(`[dev-otp] Email to ${email}: ${text}`);
   lastDevOtpByEmail.set(email, otp);
 }

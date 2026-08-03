@@ -442,7 +442,9 @@
     "referralCreditBody": "You earned a RWF {amount, number} referral credit on Amatangazo. Use it at checkout on your next listing.",
     "digestSubject": "New listings matching your saved search",
     "digestHeading": "{category} — {count, plural, one {# new listing matches your saved search} other {# new listings match your saved search}}",
-    "digestMore": "And {count} more."
+    "digestMore": "And {count} more.",
+    "otpSubject": "Your Amatangazo verification code",
+    "otpBody": "Your Amatangazo verification code is {code}. We will never ask you for it."
   },
   "boost": {
     "currentlyFeaturedUntil": "Currently featured until {date}.",
