@@ -30,7 +30,18 @@ export type ListingsSearchInitial = {
   sort: string;
 };
 
-export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) {
+export function ListingsSearch({
+  initial,
+  initialResults,
+  initialTotal,
+  initialDiscovery,
+}: {
+  initial: ListingsSearchInitial;
+  /** First page of results, already rendered on the server for these filters. */
+  initialResults: ListingRowData[];
+  initialTotal: number;
+  initialDiscovery: ListingRowData[];
+}) {
   const t = useTranslations("browse");
   const tp = useTranslations("post");
   const [q, setQ] = useState(initial.q);
@@ -42,12 +53,15 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
   const [subcategory, setSubcategory] = useState("");
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
-  const [results, setResults] = useState<ListingRowData[]>([]);
-  const [total, setTotal] = useState(0);
+  const [results, setResults] = useState<ListingRowData[]>(initialResults);
+  const [total, setTotal] = useState(initialTotal);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const pageRef = useRef(1);
   const searchKeyRef = useRef(0);
+  /** The server already ran this exact query; refetching would blank the list
+   *  it rendered and reintroduce the layout shift this avoids. */
+  const serverResultsAreCurrent = useRef(true);
 
   const buildParams = useCallback((page: number) => {
     const params = new URLSearchParams();
@@ -72,6 +86,12 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
   useEffect(() => {
     const params = buildParams(1);
     pageRef.current = 1;
+
+    if (serverResultsAreCurrent.current) {
+      serverResultsAreCurrent.current = false;
+      return;
+    }
+
     const key = ++searchKeyRef.current;
 
     const timeout = setTimeout(() => {
@@ -186,7 +206,16 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
       {/* Only while browsing a category, never once a keyword narrows it: a
           visitor who typed "driver" is answering their own question, and a
           strip of unrelated top-paying jobs above the answer is in the way. */}
-      {!q && <CategoryDiscovery key={category} category={category} totalResults={total} />}
+      {!q && (
+        <CategoryDiscovery
+          key={category}
+          category={category}
+          totalResults={total}
+          // Only the category the server rendered for starts with its rows in
+          // hand; switching category in place falls back to fetching.
+          initialListings={category === initial.category ? initialDiscovery : undefined}
+        />
+      )}
 
       {!loading && (
         <p className="mt-4 text-sm text-muted" aria-live="polite">

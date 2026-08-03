@@ -1,10 +1,17 @@
+import type { ListingRowData } from "@/components/listing-row";
 import { ListingsSearch, type ListingsSearchInitial } from "@/components/listings-search";
 import { Sidebar } from "@/components/sidebar";
+import { getDiscoveryFeed } from "@/lib/discovery";
 import { listingInclude } from "@/lib/listings";
 import { prisma } from "@/lib/prisma";
-import { experienceLevels, listingCategories } from "@/lib/validations/listing";
+import { searchListings } from "@/lib/search";
+import { listingSearchQuerySchema } from "@/lib/validations/search";
+import { isDiscoveryCategory, experienceLevels, listingCategories } from "@/lib/validations/listing";
 
 const SORT_OPTIONS = ["relevance", "newest", "salary_desc", "deadline_asc", "price_asc", "price_desc"] as const;
+
+/** Must match PAGE_SIZE in ListingsSearch — the server renders that first page. */
+const PAGE_SIZE = 20;
 
 type RawSearchParams = { [key: string]: string | string[] | undefined };
 
@@ -27,9 +34,13 @@ export default async function ListingsSearchPage({ searchParams }: { searchParam
     sort: oneOf(first(params.sort), SORT_OPTIONS),
   };
 
-  // Sidebar data is independent of the client-side search, so it renders on the
-  // server once and stays put while filters change.
-  const [categoryCounts, boosted] = await Promise.all([
+  // The first page of results is rendered here rather than fetched after mount.
+  // It used to arrive client-side, so the list grew from eight skeletons to a
+  // full page and shoved everything below it down — most of this page's
+  // cumulative layout shift. ListingsSearch takes over once a filter changes.
+  //
+  // Sidebar data is independent of the search, so it renders once and stays put.
+  const [categoryCounts, boosted, initialSearch, initialDiscovery] = await Promise.all([
     prisma.listing.groupBy({
       by: ["category"],
       where: { status: "LIVE" },
@@ -41,6 +52,20 @@ export default async function ListingsSearchPage({ searchParams }: { searchParam
       take: 5,
       include: listingInclude,
     }),
+    // Parsed through the same schema the search API uses, so the server's first
+    // page can't drift from what the client would have asked for. Empty strings
+    // are dropped rather than passed as filters.
+    searchListings(
+      listingSearchQuerySchema.parse({
+        ...Object.fromEntries(Object.entries(initial).filter(([, v]) => v !== "")),
+        page: 1,
+        limit: PAGE_SIZE,
+      }),
+    ),
+    // Same reasoning for the discovery strip: it sits *above* the results, so
+    // arriving late moved the whole list. Only fetched when it could be shown —
+    // a keyword search hides it, as does a category with no discovery angle.
+    !initial.q && isDiscoveryCategory(initial.category) ? getDiscoveryFeed(initial.category) : null,
   ]);
 
   const counts = Object.fromEntries(
@@ -55,7 +80,13 @@ export default async function ListingsSearchPage({ searchParams }: { searchParam
               state on real navigations (home tiles, header search, back/forward)
               while its own history.replaceState URL syncing never re-renders
               this server page. */}
-          <ListingsSearch key={JSON.stringify(initial)} initial={initial} />
+          <ListingsSearch
+            key={JSON.stringify(initial)}
+            initial={initial}
+            initialResults={initialSearch.listings as unknown as ListingRowData[]}
+            initialTotal={initialSearch.total}
+            initialDiscovery={(initialDiscovery ?? []) as unknown as ListingRowData[]}
+          />
         </div>
 
         <Sidebar boosted={boosted} counts={counts} />
