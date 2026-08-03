@@ -444,7 +444,7 @@
     "digestHeading": "{category} — {count, plural, one {# new listing matches your saved search} other {# new listings match your saved search}}",
     "digestMore": "And {count} more.",
     "otpSubject": "Your Amatangazo verification code",
-    "otpBody": "Your Amatangazo verification code is {code}. We will never ask you for it."
+    "otpBody": "Your Amatangazo verification code is {code}. It expires in {minutes, plural, one {# minute} other {# minutes}}. We will never ask you for it."
   },
   "boost": {
     "currentlyFeaturedUntil": "Currently featured until {date}.",

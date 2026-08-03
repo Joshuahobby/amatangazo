@@ -4,7 +4,7 @@ import { emailOTP, phoneNumber } from "better-auth/plugins";
 
 import { sendOtpEmail } from "@/lib/email";
 import { isGoogleConfigured } from "@/lib/google-auth";
-import { otpMessage, translatorFor } from "@/lib/notification-messages";
+import { OTP_EXPIRY_SECONDS, otpMessage, translatorFor } from "@/lib/notification-messages";
 import { prisma } from "@/lib/prisma";
 import { languageForEmail, languageForPhone } from "@/lib/recipient-locale";
 import { linkReferralOnSignup } from "@/lib/referrals";
@@ -54,12 +54,16 @@ export const auth = betterAuth({
 
   plugins: [
     emailOTP({
+      // Set explicitly rather than left to the plugin default, because the OTP
+      // copy states this window — see OTP_EXPIRY_SECONDS.
+      expiresIn: OTP_EXPIRY_SECONDS,
       async sendVerificationOTP({ email, otp }) {
         const { subject, body } = otpMessage(otp)(translatorFor(await languageForEmail(email)));
         await sendOtpEmail(email, otp, subject, body);
       },
     }),
     phoneNumber({
+      expiresIn: OTP_EXPIRY_SECONDS,
       async sendOTP({ phoneNumber, code }) {
         const { body } = otpMessage(code)(translatorFor(await languageForPhone(phoneNumber)));
         await sendOtpSms(phoneNumber, code, body);

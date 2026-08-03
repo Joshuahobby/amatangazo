@@ -266,6 +266,11 @@ now), then English. Never interpolate a code through `{code, number}` — `12345
 `123,456` and every entered code would fail. Pair the code with an anti-phishing line
 (`We will never ask you for it.`) and never expose internal auth tokens like `sign-in` in the body.
 
+State the expiry, and take the number from `OTP_EXPIRY_SECONDS` rather than typing it into the
+copy. That constant is what `auth-server.ts` passes to both auth plugins, so the window a user is
+promised is the window the code enforces — this is § 4.4 applied to a number instead of a claim. If
+a duration in copy can't be traced to the constant that controls it, don't state it.
+
 ---
 
 ## 9. Visual identity
@@ -374,10 +379,9 @@ diagnoses a connection, the other doesn't. Do not collapse them into a single ke
    These go out over SMS to real users — this is the highest-value review in the document.
 2. **Is there a French and Kinyarwanda voice standard, or only translations?** The mechanics in
    § 7 are English-specific. Someone fluent should decide whether rw copy has its own register.
-3. **Should the OTP message state an expiry?** Codes do expire, but neither auth plugin configures
-   `expiresIn`, so the window is Better Auth's default and could change without anyone touching the
-   copy. Naming a number would be a claim the code doesn't guarantee — § 4.4 — so the copy stays
-   silent on it. Set `expiresIn` explicitly and the copy can say so.
+3. **Is five minutes the right OTP window?** `OTP_EXPIRY_SECONDS` is now set explicitly at 300s,
+   and the copy states it. That is Better Auth's default rather than a considered product decision
+   — on a slow network an SMS can take a while to land, so it may deserve a deliberate look.
 3. **Should `common.submit` ("Submit") exist at all?** § 6 prohibits "Submit" as a primary CTA, yet
    a generic key remains. Either remove it or document where a generic fallback is legitimate.
 4. **Is "Not stated" the standard for every absent value**, or only AI tender extraction?

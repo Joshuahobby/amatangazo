@@ -5,6 +5,7 @@ import {
   digestMessage,
   listingPublishedMessage,
   otpMessage,
+  OTP_EXPIRY_SECONDS,
   referralCreditMessage,
   subscriptionActivatedMessage,
   translatorFor,
@@ -127,6 +128,15 @@ describe("OTP template", () => {
       expect(subject.length).toBeGreaterThan(0);
       expect(body).not.toContain("notificationTemplates.");
     }
+  });
+
+  it("states the expiry the plugins are actually configured with", () => {
+    // auth-server.ts passes OTP_EXPIRY_SECONDS to both plugins, so this is the
+    // guard against the copy promising a window the code doesn't honour.
+    const minutes = OTP_EXPIRY_SECONDS / 60;
+    expect(otpMessage("123456")(translatorFor("EN")).body).toContain(`expires in ${minutes} minutes`);
+    expect(otpMessage("123456")(translatorFor("FR")).body).toContain(`expire dans ${minutes} minutes`);
+    expect(otpMessage("123456")(translatorFor("RW")).body).toContain(`mu minota ${minutes}`);
   });
 
   it("does not leak the internal OTP type into the copy", () => {

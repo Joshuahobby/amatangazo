@@ -444,7 +444,7 @@
     "digestHeading": "{category} — {count, plural, one {itangazo rishya # rihuye n'ubushakashatsi bwawe bwabitswe} other {amatangazo mashya # ahuye n'ubushakashatsi bwawe bwabitswe}}",
     "digestMore": "N'ayandi {count}.",
     "otpSubject": "Kode yawe yo kwemeza kuri Amatangazo",
-    "otpBody": "Kode yawe yo kwemeza kuri Amatangazo ni {code}. Ntituzigera tuyigusaba."
+    "otpBody": "Kode yawe yo kwemeza kuri Amatangazo ni {code}. Irangira mu {minutes, plural, one {munota #} other {minota #}}. Ntituzigera tuyigusaba."
   },
   "boost": {
     "currentlyFeaturedUntil": "Iri ku isonga kugeza {date}.",

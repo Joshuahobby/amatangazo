@@ -86,6 +86,18 @@ export function referralCreditMessage(amount: number): NotificationMessage {
 }
 
 /**
+ * How long a verification code stays valid. Passed to both auth plugins in
+ * auth-server.ts *and* interpolated into the copy below, so the expiry a user
+ * is told is the expiry the code actually has. Change it here and both move
+ * together; there is no second number to forget.
+ *
+ * 300s matches what Better Auth would default to — stated explicitly so the
+ * copy is allowed to make the claim (§ 4.4 of the brand voice guidelines: a
+ * claim in copy has to be one the code guarantees).
+ */
+export const OTP_EXPIRY_SECONDS = 300;
+
+/**
  * Sent before the recipient is necessarily a user, so the language comes from
  * languageForEmail/languageForPhone in recipient-locale.ts rather than a User
  * row. `code` interpolates as a plain string — never `{code, number}`, which
@@ -94,7 +106,7 @@ export function referralCreditMessage(amount: number): NotificationMessage {
 export function otpMessage(code: string): NotificationMessage {
   return (t) => ({
     subject: t("notificationTemplates.otpSubject"),
-    body: t("notificationTemplates.otpBody", { code }),
+    body: t("notificationTemplates.otpBody", { code, minutes: OTP_EXPIRY_SECONDS / 60 }),
   });
 }
 
