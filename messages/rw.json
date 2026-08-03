@@ -87,7 +87,8 @@
     "loadingMore": "Birimo gutegurwa…",
     "discoveryJOB": "Imirimo ihemba neza",
     "discoveryTENDER": "Amasoko yihutirwa",
-    "discoveryAUCTION": "Birangira vuba"
+    "discoveryAUCTION": "Birangira vuba",
+    "sortLabel": "Shungura ukurikije"
   },
   "listing": {
     "onlyVisibleToYou": "(ribonwa nawe gusa)",
@@ -270,7 +271,8 @@
     "error": "Ntibyashobotse kubika",
     "channelWHATSAPP": "WhatsApp",
     "channelSMS": "SMS",
-    "channelEMAIL": "Imeyili"
+    "channelEMAIL": "Imeyili",
+    "channelLabel": "Uburyo bwo kumenyeshwa"
   },
   "verification": {
     "title": "Kwemeza ubucuruzi",

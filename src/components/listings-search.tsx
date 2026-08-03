@@ -142,7 +142,12 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
           <input placeholder={t("sector")} value={sector} onChange={(e) => setSector(e.target.value)} className="input w-auto flex-1" />
         )}
         {category === "JOB" && (
-          <select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)} className="input w-auto flex-1">
+          <select
+            value={experienceLevel}
+            onChange={(e) => setExperienceLevel(e.target.value)}
+            aria-label={tp("fieldExperienceLevel")}
+            className="input w-auto flex-1"
+          >
             <option value="">{t("anyExperienceLevel")}</option>
             {experienceLevels.map((level) => (
               <option key={level} value={level}>{tp(`experienceLevel${level}`)}</option>
@@ -158,7 +163,14 @@ export function ListingsSearch({ initial }: { initial: ListingsSearchInitial }) 
             <input type="number" min="0" placeholder={t("budgetMax")} value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} className="input w-auto flex-1" />
           </>
         )}
-        <select value={sort} onChange={(e) => setSort(e.target.value)} className="input w-auto sm:max-w-36">
+        {/* The filter row is label-less by design, so the control needs its
+            own accessible name — nothing on screen supplies one. */}
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          aria-label={t("sortLabel")}
+          className="input w-auto sm:max-w-36"
+        >
           {SORT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{t(opt.labelKey)}</option>
           ))}

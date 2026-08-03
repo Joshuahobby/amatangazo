@@ -87,7 +87,8 @@
     "loadingMore": "Chargement…",
     "discoveryJOB": "Emplois bien rémunérés",
     "discoveryTENDER": "Appels d'offres urgents",
-    "discoveryAUCTION": "Bientôt terminées"
+    "discoveryAUCTION": "Bientôt terminées",
+    "sortLabel": "Trier par"
   },
   "listing": {
     "onlyVisibleToYou": "(visible uniquement par vous)",
@@ -270,7 +271,8 @@
     "error": "Échec de l'enregistrement",
     "channelWHATSAPP": "WhatsApp",
     "channelSMS": "SMS",
-    "channelEMAIL": "E-mail"
+    "channelEMAIL": "E-mail",
+    "channelLabel": "Canal d'alerte"
   },
   "verification": {
     "title": "Vérification d'entreprise",

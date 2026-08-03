@@ -87,7 +87,8 @@
     "loadingMore": "Loading…",
     "discoveryJOB": "High-paying jobs",
     "discoveryTENDER": "Urgent tenders",
-    "discoveryAUCTION": "Ending soon"
+    "discoveryAUCTION": "Ending soon",
+    "sortLabel": "Sort by"
   },
   "listing": {
     "onlyVisibleToYou": "(only visible to you)",
@@ -270,7 +271,8 @@
     "error": "Could not save",
     "channelWHATSAPP": "WhatsApp",
     "channelSMS": "SMS",
-    "channelEMAIL": "Email"
+    "channelEMAIL": "Email",
+    "channelLabel": "Alert channel"
   },
   "verification": {
     "title": "Business verification",
