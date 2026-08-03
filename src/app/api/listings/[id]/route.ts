@@ -45,19 +45,24 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   const body = await request.json().catch(() => null);
-  const parsed = updateListingSchema.safeParse(body);
+  // Validated against the category this listing already is — the payload does
+  // not carry one, and guessing from the payload is what silently dropped the
+  // detail fields before.
+  const parsed = updateListingSchema(existing.category).safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
   const { details, ...base } = parsed.data;
 
+  // An empty `details` is a no-op update, not an update to nothing: skip it so
+  // a caller sending `{}` can't read a 200 as "your change was saved".
+  const hasDetails = details && Object.keys(details).length > 0;
+
   const listing = await prisma.listing.update({
     where: { id },
     data: {
       ...base,
-      ...(details
-        ? { [detailsRelationKey[existing.category]]: { update: details } }
-        : {}),
+      ...(hasDetails ? { [detailsRelationKey[existing.category]]: { update: details } } : {}),
     },
     include: listingInclude,
   });
