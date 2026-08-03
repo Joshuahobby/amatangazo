@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ListingRow, type ListingRowData } from "@/components/listing-row";
 import { isDiscoveryCategory } from "@/lib/validations/listing";
@@ -11,11 +11,14 @@ import { isDiscoveryCategory } from "@/lib/validations/listing";
  * closing next, auctions happening next — depending on which category is
  * filtered. Renders nothing for "all" and for CLASSIFIED.
  *
- * A client component fetching for itself rather than a server-rendered section,
- * because the browse page changes category without a navigation (ListingsSearch
- * syncs the URL with `history.replaceState`). Server-rendering this from the
- * search params would leave a "high-paying jobs" strip sitting above a list of
- * tenders.
+ * Rendered on the server for the category in the URL, and fetched on the client
+ * for any category the visitor switches to afterwards. It needs both halves:
+ * server data keeps the strip out of the layout-shift budget, since arriving
+ * late would shove the whole results list down; and the client fetch is what
+ * keeps it honest, because the browse page changes category without a
+ * navigation (ListingsSearch syncs the URL with `history.replaceState`), so a
+ * purely server-rendered strip would leave "high-paying jobs" sitting above a
+ * list of tenders.
  *
  * Some of these listings appear again in the results below — that repetition is
  * the point, since the strip reorders them by a signal the default sort doesn't
@@ -29,15 +32,24 @@ import { isDiscoveryCategory } from "@/lib/validations/listing";
 export function CategoryDiscovery({
   category,
   totalResults,
+  initialListings,
 }: {
   category: string;
   totalResults: number;
+  /** Present when the server already rendered this category's strip. */
+  initialListings?: ListingRowData[];
 }) {
   const t = useTranslations("browse");
-  const [listings, setListings] = useState<ListingRowData[]>([]);
+  const [listings, setListings] = useState<ListingRowData[]>(initialListings ?? []);
+  const serverListingsAreCurrent = useRef(initialListings !== undefined);
 
   useEffect(() => {
     if (!isDiscoveryCategory(category)) return;
+    // Fetching here would replace identical rows and shift the results below.
+    if (serverListingsAreCurrent.current) {
+      serverListingsAreCurrent.current = false;
+      return;
+    }
 
     let current = true;
     fetch(`/api/listings/discovery?category=${category}`)

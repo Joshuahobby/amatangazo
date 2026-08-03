@@ -126,23 +126,22 @@ and axe-core. Re-run these before any release; the scripts are throwaway, the me
   menu toggle is 40×40 and the bottom nav 75×49+; the language switcher was 30px tall and now carries
   `min-h-10`. Everything else under 40px is inline text (footer/nav links) and passes WCAG 2.2 target
   size via the spacing exception.
-- ⚠️ **Mobile performance** — 390px, 4× CPU throttle, slow-4G (150ms RTT / 1.6Mbps):
+- ✅ **Mobile performance** — 390px, 4× CPU throttle, slow-4G (150ms RTT / 1.6Mbps):
 
-  | Page | FCP | LCP | CLS |
+  | Page | LCP | CLS before | CLS now |
   |---|---|---|---|
-  | `/` | 1176ms | 1176ms (good) | 0 (good) |
-  | `/listings/[id]` | 1040ms | 1040ms (good) | 0 (good) |
-  | `/listings` | 808ms | 808ms (good) | **0.146 (needs work)** |
+  | `/` | 960ms | 0 | 0 |
+  | `/listings` | 968ms | 0.146 | **0** |
+  | `/listings?category=TENDER` | 888ms | 0.223 | **0** |
 
-  No `backdrop-filter`, `mix-blend-mode` or large blurs in the built CSS. **Open item:** browse-page
-  CLS exceeds the 0.1 target and reaches ~0.22 on a category page. Two contributors, and the layout-
-  shift attribution can't separate them because both use `.row-list.mt-3`: the results list is
-  client-fetched, so eight skeletons are replaced by up to twenty rows; and `CategoryDiscovery`
-  inserts itself above those results when its own fetch resolves. The durable fix is to server-render
-  the first page of results and the strip — the browse page already computes per-category counts for
-  the sidebar, so the strip's visibility could be decided server-side too — and let the client
-  component take over only when the category changes in place. Not attempted here: it's an
-  architectural change, not a verification fix.
+  No `backdrop-filter`, `mix-blend-mode` or large blurs in the built CSS. The browse page used to
+  fetch its first page of results after mount, so eight skeletons were replaced by a full page and
+  everything below them jumped; `CategoryDiscovery` then inserted itself *above* those results when
+  its own fetch resolved. Both now render on the server for the filters in the URL, and the client
+  skips the redundant first fetch, so nothing moves after paint. The client path still owns every
+  later filter change — that's what keeps the strip honest when the category changes without a
+  navigation.
+
 - ✅ **Localization smoke test** — `/`, `/listings`, `/listings/[id]`, `/post`, `/login` × en/fr/rw ×
   390px/1280px: no missing-key or ICU errors, no horizontal overflow, no English islands. (The
   detail page's `h1` is identical in all three locales because it's the listing title — user content,
@@ -158,6 +157,5 @@ and axe-core. Re-run these before any release; the scripts are throwaway, the me
 
 - `npm run lint && npm run build` green.
 - P1.1 acceptance criteria (spec doc) all met.
-- Phase 4 verification passes on all four checks — three of four pass; browse-page CLS is the one
-  open item (see § 5).
+- Phase 4 verification passes on all four checks.
 - No new violations of the guardrails in § 0.
