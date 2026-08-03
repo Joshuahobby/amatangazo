@@ -82,12 +82,35 @@ in that doc.
   - Brand name ("Amatangazo") and format hints (`2507XXXXXXXX`, `https://...`).
 - ~~**sticky-search.tsx**~~ No longer exists; no production surface uses `backdrop-blur` (the only
   remaining mention is the note in `globals.css` recording its removal).
-- **Localize dates and amounts.** Separate from the string sweep and still open: ~24 call sites use
-  bare `toLocaleDateString()` / `toLocaleString()`, which formats in the server's (or browser's)
-  default locale rather than the reader's — a French listing page shows `9/1/2026`. It's also an
-  SSR/hydration drift risk, the one `src/i18n/request.ts` pins `timeZone`/`now` to avoid. Route them
-  through `useFormatter` / `getFormatter` the way `use-listing-facts.ts` already does. Start with
-  `src/components/listing-details/*`, `dashboard/billing`, `notifications`, `referrals`.
+- ~~**Localize dates and amounts.**~~ Done: every rendered `toLocaleDateString()` /
+  `toLocaleString()` outside `/admin` now goes through `useFormatter` / `getFormatter`, so dates and
+  amounts follow the reader's locale instead of the server's. A French listing page showed `9/1/2026`
+  before; it shows `1 sept. 2026` now.
+
+  Two call sites are deliberately untouched, because neither renders per reader:
+  - `src/lib/tender-summary.ts` formats a budget into the AI summary text that is **stored** on the
+    tender. One row, one string, every reader — making it locale-aware means storing a summary per
+    locale, which is a schema decision.
+  - `src/lib/referrals.ts` builds a notification body that is hardcoded English (`"You earned a
+    RWF … referral credit"`). The number is the least of it — notification copy isn't translated at
+    all yet, and it needs a decision first: translate at send time from the recipient's
+    `preferredLanguage`, or store a key + params and translate at render time.
+
+### Known gap: Kinyarwanda dates on client-rendered surfaces
+
+Worth knowing before anyone files it as a bug in the above. **Chromium ships no `rw` locale data** —
+`Intl.DateTimeFormat.supportedLocalesOf(["rw"])` and the `NumberFormat` equivalent both return `[]`,
+and `rw` resolves to `en-US`. Node's ICU *does* have `rw`. So for a Kinyarwanda reader:
+
+- server-rendered dates and amounts (listing detail pages, the landing feed) format in Kinyarwanda;
+- client-rendered ones (browse results, notifications, dashboard lists) fall back to US English.
+
+It doesn't crash and it doesn't produce a hydration mismatch — the client-rendered surfaces fetch
+their data after mount, so those dates were never in the SSR HTML to disagree with. But a reader can
+see `2026 Kan. 1` on one page and `Aug 10, 2026` on the next. Fixing it means choosing what a
+Kinyarwanda date should look like everywhere — either accept the English fallback on both sides for
+consistency, or format dates from our own message strings rather than from `Intl`. That's a product
+call, not a refactor, which is why it's written down here instead of guessed at.
 
 ## 5. Phase 4 — verification (required before calling this done)
 

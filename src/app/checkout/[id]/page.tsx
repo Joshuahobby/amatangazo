@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
@@ -36,6 +36,7 @@ function describeApiError(error: unknown, fallback: string): string {
 export default function CheckoutPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const t = useTranslations("checkout");
+  const format = useFormatter();
   const tc = useTranslations("common");
   const [info, setInfo] = useState<CheckoutInfo | null>(null);
   const [tier, setTier] = useState<Tier>("PAY_PER_BOOST");
@@ -180,7 +181,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
                 disabled={submitting}
                 className="btn-accent btn-sm"
               >
-                {t("useCredit", { amount: credit.amount.toLocaleString() })}
+                {t("useCredit", { amount: format.number(credit.amount) })}
               </button>
             ))}
           </div>
@@ -201,7 +202,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
                 className="mr-1.5"
               />
               {t("payPerListing")}
-              <p className="mt-1 font-bold text-foreground">RWF {info.pricing.payPerBoost.toLocaleString()}</p>
+              <p className="mt-1 font-bold text-foreground">RWF {format.number(info.pricing.payPerBoost)}</p>
               <p className="mt-1 text-xs text-muted">{t("payPerListingDetail")}</p>
             </label>
             <label
@@ -216,7 +217,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
               />
               {t("annualSubscription")}
               <p className="mt-1 font-bold text-foreground">
-                RWF {info.pricing.annualSubscription.toLocaleString()}
+                RWF {format.number(info.pricing.annualSubscription)}
                 {t("perYear")}
               </p>
               <p className="mt-1 text-xs text-muted">{t("subscriptionDetail", { count: breakEvenListings })}</p>

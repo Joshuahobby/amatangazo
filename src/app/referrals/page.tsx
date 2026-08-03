@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 type ReferralData = {
@@ -20,6 +20,7 @@ type ReferralData = {
 
 export default function ReferralsPage() {
   const t = useTranslations("referrals");
+  const format = useFormatter();
   const [data, setData] = useState<ReferralData | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -63,7 +64,7 @@ export default function ReferralsPage() {
           <p className="text-sm text-muted">{t("converted")}</p>
         </div>
         <div className="card flex-1">
-          <p className="text-2xl font-bold text-foreground">RWF {data.availableCreditTotal.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-foreground">RWF {format.number(data.availableCreditTotal)}</p>
           <p className="text-sm text-muted">{t("availableCredit")}</p>
         </div>
       </div>
@@ -75,8 +76,8 @@ export default function ReferralsPage() {
             {data.availableCredits.map((c) => (
               <li key={c.id}>
                 {t("creditExpires", {
-                  amount: c.amount.toLocaleString(),
-                  date: new Date(c.expiresAt).toLocaleDateString(),
+                  amount: format.number(c.amount),
+                  date: format.dateTime(new Date(c.expiresAt), { dateStyle: "medium" }),
                 })}
               </li>
             ))}
@@ -99,7 +100,7 @@ export default function ReferralsPage() {
             <tr key={r.id}>
               <td>{r.referredUser.name}</td>
               <td>{r.status}</td>
-              <td>{new Date(r.createdAt).toLocaleDateString()}</td>
+              <td>{format.dateTime(new Date(r.createdAt), { dateStyle: "medium" })}</td>
             </tr>
           ))}
         </tbody>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -12,6 +12,7 @@ type VerificationInfo = {
 
 export default function VerificationPage() {
   const t = useTranslations("verification");
+  const format = useFormatter();
   const tc = useTranslations("common");
   const [info, setInfo] = useState<VerificationInfo | null>(null);
   const [unauthenticated, setUnauthenticated] = useState(false);
@@ -100,7 +101,7 @@ export default function VerificationPage() {
       {info.status === "PENDING" && (
         <p className="mt-4 text-accent-hover">
           {t("statusPending")}
-          {info.submittedAt && ` (${new Date(info.submittedAt).toLocaleDateString()})`}
+          {info.submittedAt && ` (${format.dateTime(new Date(info.submittedAt), { dateStyle: "medium" })})`}
         </p>
       )}
       {info.status === "REJECTED" && <p className="mt-4 text-danger">{t("statusRejected")}</p>}

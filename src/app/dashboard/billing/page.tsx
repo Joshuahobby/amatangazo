@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -33,6 +33,7 @@ type CreditInfo = {
 
 export default function BillingPage() {
   const t = useTranslations("billing");
+  const format = useFormatter();
   const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
@@ -78,7 +79,7 @@ export default function BillingPage() {
                 {t("subscriptionActive")}
               </span>
               <span className="text-sm text-muted">
-                {t("expires")} {new Date(subscription.expiresAt).toLocaleDateString()}
+                {t("expires")} {format.dateTime(new Date(subscription.expiresAt), { dateStyle: "medium" })}
               </span>
             </div>
             <p className="mt-3 text-sm text-foreground">
@@ -103,7 +104,7 @@ export default function BillingPage() {
             {credits.map((c) => (
               <div key={c.id} className="card p-3 text-sm">
                 <span className="font-semibold text-primary">{c.amount} RWF</span>
-                <span className="text-muted"> — {t("expires")} {new Date(c.expiresAt).toLocaleDateString()}</span>
+                <span className="text-muted"> — {t("expires")} {format.dateTime(new Date(c.expiresAt), { dateStyle: "medium" })}</span>
               </div>
             ))}
           </div>
@@ -130,7 +131,7 @@ export default function BillingPage() {
               <tbody>
                 {payments.map((p) => (
                   <tr key={p.id} className="border-b border-border last:border-0 hover:bg-surface">
-                    <td className="p-3 text-muted">{new Date(p.createdAt).toLocaleDateString()}</td>
+                    <td className="p-3 text-muted">{format.dateTime(new Date(p.createdAt), { dateStyle: "medium" })}</td>
                     <td className="p-3 font-medium text-foreground">{p.type.replace(/_/g, " ")}</td>
                     <td className="p-3 text-foreground">{p.amount} {p.currency}</td>
                     <td className="p-3">

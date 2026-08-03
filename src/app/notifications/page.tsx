@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -15,6 +15,7 @@ type NotificationItem = {
 
 export default function NotificationsPage() {
   const t = useTranslations("notifications");
+  const format = useFormatter();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -82,7 +83,7 @@ export default function NotificationsPage() {
                 )}
               </p>
               <p className="mt-0.5 text-xs text-muted">
-                {new Date(n.sentAt).toLocaleString()}
+                {format.dateTime(new Date(n.sentAt), { dateStyle: "medium", timeStyle: "short" })}
               </p>
             </div>
           </li>

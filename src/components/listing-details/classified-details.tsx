@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 import type { ListingWithDetails } from "@/lib/listings";
 
@@ -6,6 +6,7 @@ export async function ClassifiedDetailsSection({ listing }: { listing: ListingWi
   const details = listing.classifiedDetails;
   if (!details) return null;
   const t = await getTranslations("listing");
+  const format = await getFormatter();
 
   return (
     <dl className="detail-grid">
@@ -14,7 +15,7 @@ export async function ClassifiedDetailsSection({ listing }: { listing: ListingWi
       {details.price && (
         <>
           <dt>{t("price")}</dt>
-          <dd>{details.price.toLocaleString()} RWF</dd>
+          <dd>{format.number(details.price)} RWF</dd>
         </>
       )}
     </dl>

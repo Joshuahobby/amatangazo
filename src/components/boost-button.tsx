@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { isDevEnvironment } from "@/lib/env";
@@ -14,6 +14,7 @@ type BoostInfo = {
 
 export function BoostButton({ listingId }: { listingId: string }) {
   const t = useTranslations("boost");
+  const format = useFormatter();
   const [info, setInfo] = useState<BoostInfo | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -74,7 +75,7 @@ export function BoostButton({ listingId }: { listingId: string }) {
     <div className="card border-dashed">
       {info.isCurrentlyBoosted && info.boostExpiresAt && (
         <p className="text-sm text-muted">
-          {t("currentlyFeaturedUntil", { date: new Date(info.boostExpiresAt).toLocaleString() })}
+          {t("currentlyFeaturedUntil", { date: format.dateTime(new Date(info.boostExpiresAt), { dateStyle: "medium", timeStyle: "short" }) })}
         </p>
       )}
       {message && <p className="mt-1 text-sm text-foreground">{message}</p>}
@@ -87,7 +88,7 @@ export function BoostButton({ listingId }: { listingId: string }) {
             disabled={submitting}
             className="btn-accent btn-sm"
           >
-            {t("useCredit", { amount: credit.amount.toLocaleString() })}
+            {t("useCredit", { amount: format.number(credit.amount) })}
           </button>
         ))}
         {info.quote.kind === "FROM_ALLOTMENT" ? (
@@ -96,7 +97,7 @@ export function BoostButton({ listingId }: { listingId: string }) {
           </button>
         ) : isDevEnvironment ? (
           <button type="button" onClick={handleSimulatePay} disabled={submitting} className="btn-primary btn-sm">
-            {t("boostPaid", { price: info.quote.price.toLocaleString() })}
+            {t("boostPaid", { price: format.number(info.quote.price) })}
           </button>
         ) : (
           <p className="text-sm text-muted">{t("boostUnavailable")}</p>
