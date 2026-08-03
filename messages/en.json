@@ -87,7 +87,8 @@
     "loadingMore": "Loading…",
     "discoveryJOB": "High-paying jobs",
     "discoveryTENDER": "Urgent tenders",
-    "discoveryAUCTION": "Ending soon"
+    "discoveryAUCTION": "Ending soon",
+    "sortLabel": "Sort by"
   },
   "listing": {
     "onlyVisibleToYou": "(only visible to you)",
@@ -222,7 +223,10 @@
     "editTitle": "Edit listing",
     "saveChanges": "Save changes",
     "saving": "Saving...",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "uploadStartFailed": "Could not start the upload.",
+    "uploadStorageFailed": "Upload failed. Please try again.",
+    "uploadAttachFailed": "Could not attach the image."
   },
   "checkout": {
     "title": "Checkout",
@@ -267,7 +271,8 @@
     "error": "Could not save",
     "channelWHATSAPP": "WhatsApp",
     "channelSMS": "SMS",
-    "channelEMAIL": "Email"
+    "channelEMAIL": "Email",
+    "channelLabel": "Alert channel"
   },
   "verification": {
     "title": "Business verification",
@@ -414,7 +419,8 @@
     "dangerZoneDesc": "Permanently delete your account and all data.",
     "deleteAccount": "Delete account",
     "deleteConfirm1": "Are you sure? This cannot be undone.",
-    "deleteConfirm2": "All your listings, payments, and data will be deleted. Continue?"
+    "deleteConfirm2": "All your listings, payments, and data will be deleted. Continue?",
+    "saveFailed": "Could not save your changes."
   },
   "notifications": {
     "title": "Notifications",
@@ -433,8 +439,11 @@
     "boostedSimulated": "Boosted (simulated payment).",
     "useCredit": "Use RWF {amount} referral credit",
     "boostFree": "Boost now (free — monthly allotment)",
-    "boostPaid": "Boost now — RWF {price} (sandbox)",
-    "boostUnavailable": "Paid boosts aren't available yet."
+    "boostPaid": "Boost now — RWF {price}",
+    "waiting": "Check your phone and approve the mobile money payment request. This will update automatically...",
+    "boosted": "Boosted — your listing is now featured.",
+    "paymentFailed": "Payment failed or was declined.",
+    "payError": "Could not start the payment."
   },
   "billing": {
     "title": "Billing & subscription",

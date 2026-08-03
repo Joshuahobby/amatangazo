@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { describeApiError } from "@/lib/api-error";
+
 type UploadedImage = { id: string; url: string };
 
 export function ImageUpload({ listingId, initialImages = [] }: { listingId: string; initialImages?: UploadedImage[] }) {
@@ -26,7 +28,9 @@ export function ImageUpload({ listingId, initialImages = [] }: { listingId: stri
       });
       const presignData = await presignRes.json();
       if (!presignRes.ok) {
-        setError(presignData.error ?? "Could not start upload");
+        // Validation failures answer with a Zod .flatten() object; rendering
+        // one into JSX throws, so it has to be unwrapped to a string first.
+        setError(describeApiError(presignData.error, t("uploadStartFailed")));
         return;
       }
 
@@ -36,7 +40,7 @@ export function ImageUpload({ listingId, initialImages = [] }: { listingId: stri
         body: file,
       });
       if (!putRes.ok) {
-        setError("Upload to storage failed");
+        setError(t("uploadStorageFailed"));
         return;
       }
 
@@ -47,7 +51,7 @@ export function ImageUpload({ listingId, initialImages = [] }: { listingId: stri
       });
       const attachData = await attachRes.json();
       if (!attachRes.ok) {
-        setError(attachData.error ?? "Could not attach image");
+        setError(describeApiError(attachData.error, t("uploadAttachFailed")));
         return;
       }
 

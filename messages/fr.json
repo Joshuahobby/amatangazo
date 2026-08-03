@@ -87,7 +87,8 @@
     "loadingMore": "Chargement…",
     "discoveryJOB": "Emplois bien rémunérés",
     "discoveryTENDER": "Appels d'offres urgents",
-    "discoveryAUCTION": "Bientôt terminées"
+    "discoveryAUCTION": "Bientôt terminées",
+    "sortLabel": "Trier par"
   },
   "listing": {
     "onlyVisibleToYou": "(visible uniquement par vous)",
@@ -222,7 +223,10 @@
     "editTitle": "Modifier l'annonce",
     "saveChanges": "Enregistrer les modifications",
     "saving": "Enregistrement...",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "uploadStartFailed": "Impossible de démarrer l'envoi.",
+    "uploadStorageFailed": "L'envoi a échoué. Veuillez réessayer.",
+    "uploadAttachFailed": "Impossible d'ajouter l'image."
   },
   "checkout": {
     "title": "Paiement",
@@ -267,7 +271,8 @@
     "error": "Échec de l'enregistrement",
     "channelWHATSAPP": "WhatsApp",
     "channelSMS": "SMS",
-    "channelEMAIL": "E-mail"
+    "channelEMAIL": "E-mail",
+    "channelLabel": "Canal d'alerte"
   },
   "verification": {
     "title": "Vérification d'entreprise",
@@ -414,7 +419,8 @@
     "dangerZoneDesc": "Supprimez définitivement votre compte et toutes vos données.",
     "deleteAccount": "Supprimer le compte",
     "deleteConfirm1": "Êtes-vous sûr ? Cette action est irréversible.",
-    "deleteConfirm2": "Toutes vos annonces, paiements et données seront supprimés. Continuer ?"
+    "deleteConfirm2": "Toutes vos annonces, paiements et données seront supprimés. Continuer ?",
+    "saveFailed": "Impossible d'enregistrer vos modifications."
   },
   "notifications": {
     "title": "Notifications",
@@ -433,8 +439,11 @@
     "boostedSimulated": "Mis en avant (paiement simulé).",
     "useCredit": "Utiliser le crédit de parrainage de {amount} RWF",
     "boostFree": "Mettre en avant (gratuit — quota mensuel)",
-    "boostPaid": "Mettre en avant — {price} RWF (bac à sable)",
-    "boostUnavailable": "La mise en avant payante n'est pas encore disponible."
+    "boostPaid": "Mettre en avant — {price} RWF",
+    "waiting": "Vérifiez votre téléphone et approuvez la demande de paiement mobile money. Cette page se mettra à jour automatiquement...",
+    "boosted": "Boostée — votre annonce est maintenant en vedette.",
+    "paymentFailed": "Le paiement a échoué ou a été refusé.",
+    "payError": "Impossible de démarrer le paiement."
   },
   "billing": {
     "title": "Facturation et abonnement",

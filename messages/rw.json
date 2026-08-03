@@ -87,7 +87,8 @@
     "loadingMore": "Birimo gutegurwa…",
     "discoveryJOB": "Imirimo ihemba neza",
     "discoveryTENDER": "Amasoko yihutirwa",
-    "discoveryAUCTION": "Birangira vuba"
+    "discoveryAUCTION": "Birangira vuba",
+    "sortLabel": "Shungura ukurikije"
   },
   "listing": {
     "onlyVisibleToYou": "(ribonwa nawe gusa)",
@@ -222,7 +223,10 @@
     "editTitle": "Hindura itangazo",
     "saveChanges": "Bika impinduka",
     "saving": "Birimo kubikwa...",
-    "cancel": "Reka"
+    "cancel": "Reka",
+    "uploadStartFailed": "Kohereza ntibyatangiye.",
+    "uploadStorageFailed": "Kohereza ntibyakunze. Ongera ugerageze.",
+    "uploadAttachFailed": "Ifoto ntiyashyizweho."
   },
   "checkout": {
     "title": "Kwishyura",
@@ -267,7 +271,8 @@
     "error": "Ntibyashobotse kubika",
     "channelWHATSAPP": "WhatsApp",
     "channelSMS": "SMS",
-    "channelEMAIL": "Imeyili"
+    "channelEMAIL": "Imeyili",
+    "channelLabel": "Uburyo bwo kumenyeshwa"
   },
   "verification": {
     "title": "Kwemeza ubucuruzi",
@@ -414,7 +419,8 @@
     "dangerZoneDesc": "Siba burundu konti yawe n'amakuru yawe yose.",
     "deleteAccount": "Siba konti",
     "deleteConfirm1": "Urabyemeza? Ibi ntibisubirwaho.",
-    "deleteConfirm2": "Amatangazo yawe yose, ubwishyu n'amakuru bizasibwa. Gukomeza?"
+    "deleteConfirm2": "Amatangazo yawe yose, ubwishyu n'amakuru bizasibwa. Gukomeza?",
+    "saveFailed": "Impinduka zawe ntizabitswe."
   },
   "notifications": {
     "title": "Amatangazo",
@@ -433,8 +439,11 @@
     "boostedSimulated": "Ryimuriwe ku isonga (kwishyura kw'ikitegererezo).",
     "useCredit": "Koresha amanota ya RWF {amount} yo kumenyekanisha",
     "boostFree": "Rimura ku isonga ubu (ku buntu — umugabane wa buri kwezi)",
-    "boostPaid": "Rimura ku isonga ubu — RWF {price} (igerageza)",
-    "boostUnavailable": "Kwishyura ngo ujye ku isonga ntibirakora."
+    "boostPaid": "Rimura ku isonga ubu — RWF {price}",
+    "waiting": "Reba kuri telefoni yawe wemeze ubusabe bwo kwishyura. Bizahita bivugururwa...",
+    "boosted": "Ryashyizwe ku isonga — itangazo ryawe rirambaye.",
+    "paymentFailed": "Kwishyura ntibyakunze cyangwa byanzwe.",
+    "payError": "Kwishyura ntibyatangiye."
   },
   "billing": {
     "title": "Kwishyura n'ifatabuguzi",

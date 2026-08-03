@@ -53,6 +53,7 @@ export function SaveSearchButton({ category, filters }: { category: string; filt
       <select
         value={channel}
         onChange={(e) => setChannel(e.target.value as (typeof channels)[number])}
+        aria-label={t("channelLabel")}
         className="input w-auto py-1"
       >
         {channels.map((c) => (
