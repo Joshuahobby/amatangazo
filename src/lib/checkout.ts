@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 
 import { listingPublishedMessage, notifyUser, subscriptionActivatedMessage } from "@/lib/notifications";
 import { initiateDeposit, isPawaPayConfigured, type PawaPayProvider } from "@/lib/pawapay";
+import { DEFAULT_PRICES } from "@/lib/pricing";
 import { prisma } from "@/lib/prisma";
 import { issueReferralCredit, markCreditRedeemed, validateCredit } from "@/lib/referrals";
 
@@ -75,9 +76,9 @@ export async function getPricing() {
   const rows = await prisma.pricingConfig.findMany({ where: { category: null } });
   const byTier = Object.fromEntries(rows.map((row) => [row.tier, row.price]));
   return {
-    payPerBoost: byTier.PAY_PER_BOOST ?? 10000,
-    annualSubscription: byTier.ANNUAL_SUBSCRIPTION ?? 300000,
-    subscriberBoostDiscount: byTier.SUBSCRIBER_BOOST_DISCOUNT ?? 8000,
+    payPerBoost: byTier.PAY_PER_BOOST ?? DEFAULT_PRICES.PAY_PER_BOOST,
+    annualSubscription: byTier.ANNUAL_SUBSCRIPTION ?? DEFAULT_PRICES.ANNUAL_SUBSCRIPTION,
+    subscriberBoostDiscount: byTier.SUBSCRIBER_BOOST_DISCOUNT ?? DEFAULT_PRICES.SUBSCRIBER_BOOST_DISCOUNT,
   };
 }
 
