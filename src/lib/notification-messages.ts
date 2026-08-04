@@ -91,11 +91,12 @@ export function referralCreditMessage(amount: number): NotificationMessage {
  * is told is the expiry the code actually has. Change it here and both move
  * together; there is no second number to forget.
  *
- * 300s matches what Better Auth would default to — stated explicitly so the
- * copy is allowed to make the claim (§ 4.4 of the brand voice guidelines: a
- * claim in copy has to be one the code guarantees).
+ * 600s rather than Better Auth's 300s default: an SMS on a congested mobile
+ * network can take minutes to arrive, and a code that expires while it is
+ * still in transit reads to the user as a login that simply doesn't work.
+ * Ten minutes is still short enough to bound the risk of an intercepted code.
  */
-export const OTP_EXPIRY_SECONDS = 300;
+export const OTP_EXPIRY_SECONDS = 600;
 
 /**
  * Sent before the recipient is necessarily a user, so the language comes from
