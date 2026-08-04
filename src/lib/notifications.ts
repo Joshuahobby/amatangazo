@@ -182,10 +182,21 @@ export async function runNotificationDigest(): Promise<DigestRunResult> {
           status,
         })),
       }),
-      prisma.savedSearch.update({
-        where: { id: search.id },
-        data: { lastNotifiedAt: new Date() },
-      }),
+      // Only advance the window on a successful send. lastNotifiedAt becomes
+      // the next run's `since`, and buildSearchWhere filters on
+      // `publishedAt > since` — so advancing it after a failed send moves these
+      // listings out of the candidate set permanently. The dedup above would
+      // happily let them through (it only excludes status "sent"), but they'd
+      // never get that far. Leaving it put means the next run retries the same
+      // window; `take: 50` keeps that bounded if delivery stays broken.
+      ...(status === "sent"
+        ? [
+            prisma.savedSearch.update({
+              where: { id: search.id },
+              data: { lastNotifiedAt: new Date() },
+            }),
+          ]
+        : []),
     ]);
 
     if (status === "sent") result.notificationsSent += 1;
