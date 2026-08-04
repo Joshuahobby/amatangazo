@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { requireAdmin } from "@/lib/admin";
 import { getCurrentUserId } from "@/lib/auth";
+import { PRICING_TIERS } from "@/lib/pricing";
 import { prisma } from "@/lib/prisma";
 import { listingCategories } from "@/lib/validations/listing";
 
@@ -13,7 +14,9 @@ export async function GET() {
 }
 
 const updateSchema = z.object({
-  tier: z.enum(["PAY_PER_BOOST", "ANNUAL_SUBSCRIPTION", "SUBSCRIBER_BOOST_DISCOUNT"]),
+  // From the shared tier list rather than a second copy of the enum, so the
+  // admin screen and this validator cannot drift apart.
+  tier: z.enum(PRICING_TIERS),
   category: z.enum(listingCategories).nullable(),
   price: z.coerce.number().int().positive(),
 });
