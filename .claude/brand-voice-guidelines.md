@@ -379,9 +379,9 @@ diagnoses a connection, the other doesn't. Do not collapse them into a single ke
    These go out over SMS to real users — this is the highest-value review in the document.
 2. **Is there a French and Kinyarwanda voice standard, or only translations?** The mechanics in
    § 7 are English-specific. Someone fluent should decide whether rw copy has its own register.
-3. **Is five minutes the right OTP window?** `OTP_EXPIRY_SECONDS` is now set explicitly at 300s,
-   and the copy states it. That is Better Auth's default rather than a considered product decision
-   — on a slow network an SMS can take a while to land, so it may deserve a deliberate look.
+3. **Do any other durations in copy lack a constant behind them?** The OTP window is now traced to
+   `OTP_EXPIRY_SECONDS`, but the 24-hour boost window and the 1-business-day verification SLA are
+   both stated in copy without an equivalent single source. Worth an audit.
 3. **Should `common.submit` ("Submit") exist at all?** § 6 prohibits "Submit" as a primary CTA, yet
    a generic key remains. Either remove it or document where a generic fallback is legitimate.
 4. **Is "Not stated" the standard for every absent value**, or only AI tender extraction?
