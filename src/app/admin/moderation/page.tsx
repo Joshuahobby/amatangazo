@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
+
 type QueueListing = {
   id: string;
   title: string;
@@ -72,7 +74,7 @@ export default function AdminModerationPage() {
         ))}
       </div>
 
-      {message && <p className="mt-2 text-sm text-primary">{message}</p>}
+      <StatusMessage tone="info" className="mt-2 text-sm text-primary">{message}</StatusMessage>
       {listings.length === 0 && <p className="mt-4 text-sm text-muted">Nothing in this queue.</p>}
 
       <ul className="mt-4 flex flex-col gap-3">

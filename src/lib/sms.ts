@@ -63,9 +63,14 @@ export async function sendWhatsApp(phoneNumber: string, body: string): Promise<v
   recordDevMessage({ channel: "WHATSAPP", to: phoneNumber, body });
 }
 
-export async function sendOtpSms(phoneNumber: string, code: string): Promise<void> {
+/**
+ * `body` is composed by the caller so the copy can be localised — see
+ * otpMessage() in notification-messages.ts. `code` is still passed separately
+ * because the dev fallback below stores it for /api/dev/last-otp.
+ */
+export async function sendOtpSms(phoneNumber: string, code: string, body: string): Promise<void> {
   if (isTwilioConfigured()) {
-    await sendTwilioMessage(phoneNumber, TWILIO_FROM_NUMBER!, `Your Amatangazo verification code is ${code}`);
+    await sendTwilioMessage(phoneNumber, TWILIO_FROM_NUMBER!, body);
     return;
   }
 
@@ -73,6 +78,6 @@ export async function sendOtpSms(phoneNumber: string, code: string): Promise<voi
   if (process.env.NODE_ENV === "production") {
     throw new Error("SMS is not configured (Twilio env vars missing) and the dev fallback is disabled in production");
   }
-  console.log(`[dev-otp] SMS to ${phoneNumber}: your Amatangazo code is ${code}`);
+  console.log(`[dev-otp] SMS to ${phoneNumber}: ${body}`);
   lastDevOtpByPhone.set(phoneNumber, code);
 }

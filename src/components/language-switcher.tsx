@@ -28,15 +28,23 @@ export function LanguageSwitcher({ up = false }: { up?: boolean }) {
   const t = useTranslations("common");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const current = LOCALES.find((l) => l.code === locale) ?? LOCALES[0];
 
   useEffect(() => {
     if (!open) return;
     function onPointer(e: MouseEvent) {
+      // No focus restore here: dismissing by clicking elsewhere means focus
+      // belongs wherever the click landed, not back on this button.
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      // Escape is a keyboard dismissal, and the menu holding focus is about to
+      // unmount — without this, focus fell to <body> and a keyboard user
+      // restarted from the top of the page.
+      triggerRef.current?.focus();
     }
     document.addEventListener("mousedown", onPointer);
     document.addEventListener("keydown", onKey);
@@ -49,6 +57,9 @@ export function LanguageSwitcher({ up = false }: { up?: boolean }) {
   function switchTo(code: string) {
     setLocaleCookie(code);
     setOpen(false);
+    // Picking a language unmounts the item that was just activated, so hand
+    // focus back before refreshing rather than leaving it on nothing.
+    triggerRef.current?.focus();
     router.refresh();
   }
 
@@ -57,9 +68,9 @@ export function LanguageSwitcher({ up = false }: { up?: boolean }) {
       {/* min-h-10 matches the 40px menu toggle beside it — the control is small
           enough that padding alone left a 30px-tall tap target. */}
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
         aria-expanded={open}
         aria-label={`${t("language")} — ${current.label}`}
         className="flex min-h-10 items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-primary hover:text-primary active:scale-95"
@@ -79,17 +90,23 @@ export function LanguageSwitcher({ up = false }: { up?: boolean }) {
         </svg>
       </button>
 
+      {/*
+        Plain buttons in a plain container, deliberately not role="menu". That
+        role advertises the APG menu keyboard interface — arrow keys, Home/End,
+        a roving tabindex — none of which is implemented here, so it promised a
+        reader something the component does not do. Three native buttons reached
+        with Tab are honest and fully operable. aria-current marks the active
+        language, which needs no role to be understood.
+      */}
       {open && (
         <div
-          role="menu"
           className={`absolute right-0 z-50 w-44 overflow-hidden rounded-lg border border-border bg-surface py-1 shadow-lg ${up ? "bottom-full mb-1" : "mt-1"}`}
         >
           {LOCALES.map((l) => (
             <button
               key={l.code}
               type="button"
-              role="menuitemradio"
-              aria-checked={l.code === locale}
+              aria-current={l.code === locale ? "true" : undefined}
               onClick={() => switchTo(l.code)}
               className={`flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-primary/5 ${
                 l.code === locale ? "font-semibold text-primary" : "text-foreground"

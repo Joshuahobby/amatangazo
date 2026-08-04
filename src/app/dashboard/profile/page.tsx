@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
+import { StatusMessage } from "@/components/status-message";
 import { describeApiError } from "@/lib/api-error";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -77,6 +78,7 @@ export default function ProfileSettingsPage() {
           <input
             name="name"
             required
+            autoComplete="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="input font-normal"
@@ -99,6 +101,7 @@ export default function ProfileSettingsPage() {
           <input
             name="email"
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="input font-normal"
@@ -109,14 +112,16 @@ export default function ProfileSettingsPage() {
           {t("phoneNumber")}
           <input
             name="phoneNumber"
+            type="tel"
+            autoComplete="tel"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             className="input font-normal"
           />
         </label>
 
-        {error && <p className="form-error">{error}</p>}
-        {saved && <p className="text-sm text-primary">{t("saved")}</p>}
+        <StatusMessage tone="error">{error}</StatusMessage>
+        <StatusMessage tone="success">{saved ? t("saved") : null}</StatusMessage>
 
         <button type="submit" disabled={saving} className="btn-primary">
           {saving ? t("saving") : t("save")}

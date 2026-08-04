@@ -22,6 +22,8 @@
   },
   "nav": {
     "main": "Urutonde nyamukuru",
+    "quick": "Urutonde rwihuse",
+    "skipToContent": "Jya ku bikubiyemo",
     "home": "Ahabanza",
     "browse": "Amatangazo",
     "jobs": "Akazi",
@@ -33,12 +35,15 @@
     "notifications": "Integuza",
     "account": "Konti",
     "menuToggle": "Fungura/Funga urutonde",
-    "searchPlaceholder": "Shakisha amatangazo…"
+    "searchPlaceholder": "Shakisha amatangazo..."
   },
   "auth": {
     "title": "Injira",
     "signInWithGoogle": "Injira ukoresheje Google",
     "orUseEmail": "Cyangwa ukoreshe imeyili",
+    "emailLabel": "Imeyili",
+    "codeLabel": "Kode yo kwemeza",
+    "phoneLabel": "Numero ya telefoni",
     "emailPlaceholder": "wowe@urugero.com",
     "sendCode": "Ohereza kode",
     "verify": "Emeza",
@@ -85,7 +90,7 @@
     "noResultsHint": "Gerageza guhindura amagambo washakishije cyangwa muyunguruzi.",
     "showing": "Hagaragara {count}",
     "loadMore": "Reba ayandi ({count} asigaye)",
-    "loadingMore": "Birimo gutegurwa…",
+    "loadingMore": "Birimo gutegurwa...",
     "discoveryJOB": "Imirimo ihemba neza",
     "discoveryTENDER": "Amasoko yihutirwa",
     "discoveryAUCTION": "Birangira vuba",
@@ -93,6 +98,8 @@
     "searchFailed": "Ntibyashobotse gupakira amatangazo. Reba interineti yawe wongere ugerageze."
   },
   "listing": {
+    "saveListing": "Bika itangazo",
+    "removeFromSaved": "Kura mu byabitswe",
     "onlyVisibleToYou": "(ribonwa nawe gusa)",
     "postedBy": "Ryatanzwe na",
     "verified": "Byemejwe",
@@ -175,6 +182,7 @@
     "createdAsDraft": "Itangazo ryabitswe nka <b>AGATEGANYO</b>. Ishyura kugira ngo ritangazwe, cyangwa ukoreshe ifatabuguzi ryawe niba urifite.",
     "continueToCheckout": "Komeza wishyure",
     "previewListing": "Reba itangazo",
+    "removePhoto": "Kura ifoto",
     "addPhoto": "Ongeraho ifoto",
     "uploading": "Birimo koherezwa...",
     "fieldSector": "Urwego",
@@ -389,6 +397,7 @@
   "referrals": {
     "title": "Kumenyekanisha",
     "shareText": "Sangiza umuyoboro wawe — uzahabwa amanota igihe uwo wamenyekanishije atanze itangazo rye rya mbere yishyuye cyangwa akiyandikisha ku ifatabuguzi.",
+    "linkLabel": "Umuyoboro wawe",
     "copy": "Koporora",
     "copied": "Byakoporowe!",
     "referredSignups": "Abiyandikishije binyuze muri wowe",
@@ -432,6 +441,19 @@
     "emptyDesc": "Bika ubushakashatsi kugirango umenyeshwe iyo habonetse itangazo rishya.",
     "sent": "Ryoherejwe",
     "failed": "Ntirwashobotse koherezwa"
+  },
+  "notificationTemplates": {
+    "listingLiveSubject": "Itangazo ryawe ryatangajwe",
+    "listingLiveBody": "Itangazo ryawe \"{title}\" ryatangajwe kuri Amatangazo. Rireba hano: {url}",
+    "subscriptionActiveSubject": "Ifatabuguzi ryawe rirakora",
+    "subscriptionActiveBody": "Ifatabuguzi ryawe rya Amatangazo rirakora kandi \"{title}\" ryatangajwe. Rireba hano: {url}",
+    "referralCreditSubject": "Wahawe amanota yo kumenyekanisha",
+    "referralCreditBody": "Wahawe amanota ya RWF {amount, number} yo kumenyekanisha kuri Amatangazo. Uzayakoreshe mu kwishyura itangazo rikurikira.",
+    "digestSubject": "Amatangazo mashya ahuye n'ubushakashatsi wabitse",
+    "digestHeading": "{category} — {count, plural, one {itangazo rishya # rihuye n'ubushakashatsi bwawe bwabitswe} other {amatangazo mashya # ahuye n'ubushakashatsi bwawe bwabitswe}}",
+    "digestMore": "N'ayandi {count}.",
+    "otpSubject": "Kode yawe yo kwemeza kuri Amatangazo",
+    "otpBody": "Kode yawe yo kwemeza kuri Amatangazo ni {code}. Irangira mu {minutes, plural, one {munota #} other {minota #}}. Ntituzigera tuyigusaba."
   },
   "boost": {
     "currentlyFeaturedUntil": "Iri ku isonga kugeza {date}.",

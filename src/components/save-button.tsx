@@ -1,9 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useFavorites } from "@/hooks/use-favorites";
 
 export function SaveButton({ listingId }: { listingId: string }) {
   const { isFavorited, toggle } = useFavorites();
+  const t = useTranslations("listing");
   const saved = isFavorited(listingId);
 
   return (
@@ -14,7 +17,7 @@ export function SaveButton({ listingId }: { listingId: string }) {
         e.stopPropagation();
         toggle(listingId);
       }}
-      aria-label={saved ? "Remove from saved" : "Save listing"}
+      aria-label={saved ? t("removeFromSaved") : t("saveListing")}
       className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
         saved
           ? "bg-danger-surface text-danger"

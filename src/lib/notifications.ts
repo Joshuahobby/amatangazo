@@ -1,8 +1,15 @@
 import type { NotificationChannel, Prisma, SavedSearch } from "@prisma/client";
 
 import { sendEmail } from "@/lib/email";
+import { digestMessage, translatorFor, type NotificationMessage } from "@/lib/notification-messages";
 import { prisma } from "@/lib/prisma";
 import { sendSms, sendWhatsApp } from "@/lib/sms";
+
+export {
+  listingPublishedMessage,
+  referralCreditMessage,
+  subscriptionActivatedMessage,
+} from "@/lib/notification-messages";
 
 /**
  * Epic 7 — notifications. Two entry points:
@@ -39,31 +46,30 @@ async function deliver(
   else await sendSms(user.phoneNumber, body);
 }
 
-/** Transactional notify — picks SMS when the user has a phone, else email. */
-export async function notifyUser(userId: string, message: string) {
+/**
+ * Transactional notify — picks SMS when the user has a phone, else email.
+ *
+ * Takes an unresolved NotificationMessage rather than a finished string so the
+ * copy can be rendered in the *recipient's* language, which is only known once
+ * the user row is loaded.
+ */
+export async function notifyUser(userId: string, message: NotificationMessage) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { phoneNumber: true, email: true },
+    select: { phoneNumber: true, email: true, preferredLanguage: true },
   });
   if (!user) return;
 
+  const { subject, body } = message(translatorFor(user.preferredLanguage));
   const channel: NotificationChannel = user.phoneNumber ? "SMS" : "EMAIL";
   let status: "sent" | "failed" = "sent";
   try {
-    await deliver(channel, user, "Amatangazo update", message);
+    await deliver(channel, user, subject, body);
   } catch (error) {
     status = "failed";
     console.error(`Transactional notification failed for user ${userId}`, error);
   }
   await prisma.notificationLog.create({ data: { userId, channel, status } });
-}
-
-export function listingPublishedMessage(listingTitle: string, listingUrl: string) {
-  return `Your listing "${listingTitle}" is now live on Amatangazo: ${listingUrl}`;
-}
-
-export function subscriptionActivatedMessage(listingTitle: string, listingUrl: string) {
-  return `Your Amatangazo subscription is active and "${listingTitle}" is now live: ${listingUrl}`;
 }
 
 // ── Saved-search digest (T7.3) ───────────────────────────────
@@ -112,12 +118,6 @@ export function buildSearchWhere(
   return where;
 }
 
-function composeDigest(search: SavedSearch, listings: { id: string; title: string }[], totalCount: number): string {
-  const lines = listings.map((l) => `- ${l.title}\n  ${BASE_URL}/listings/${l.id}`);
-  const more = totalCount > listings.length ? `\n...and ${totalCount - listings.length} more.` : "";
-  return `Amatangazo: ${totalCount} new ${search.category.toLowerCase()} listing${totalCount === 1 ? "" : "s"} matching your saved search:\n${lines.join("\n")}${more}`;
-}
-
 export type DigestRunResult = {
   searchesChecked: number;
   searchesMatched: number;
@@ -127,7 +127,7 @@ export type DigestRunResult = {
 
 export async function runNotificationDigest(): Promise<DigestRunResult> {
   const searches = await prisma.savedSearch.findMany({
-    include: { user: { select: { id: true, email: true, phoneNumber: true } } },
+    include: { user: { select: { id: true, email: true, phoneNumber: true, preferredLanguage: true } } },
   });
 
   const result: DigestRunResult = {
@@ -157,11 +157,16 @@ export async function runNotificationDigest(): Promise<DigestRunResult> {
     if (fresh.length === 0) continue;
 
     result.searchesMatched += 1;
-    const body = composeDigest(search, fresh.slice(0, MAX_LISTINGS_PER_DIGEST), fresh.length);
+    const { subject, body } = digestMessage(
+      search.category,
+      fresh.slice(0, MAX_LISTINGS_PER_DIGEST),
+      fresh.length,
+      BASE_URL,
+    )(translatorFor(search.user.preferredLanguage));
 
     let status: "sent" | "failed" = "sent";
     try {
-      await deliver(search.channel, search.user, "New listings matching your saved search", body);
+      await deliver(search.channel, search.user, subject, body);
     } catch (error) {
       status = "failed";
       console.error(`Digest delivery failed for saved search ${search.id}`, error);

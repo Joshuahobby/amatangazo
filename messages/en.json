@@ -22,6 +22,8 @@
   },
   "nav": {
     "main": "Main navigation",
+    "quick": "Quick navigation",
+    "skipToContent": "Skip to content",
     "home": "Home",
     "browse": "Browse",
     "jobs": "Jobs",
@@ -33,15 +35,18 @@
     "notifications": "Notifications",
     "account": "Account",
     "menuToggle": "Toggle navigation menu",
-    "searchPlaceholder": "Search listings…"
+    "searchPlaceholder": "Search listings..."
   },
   "auth": {
     "title": "Log in",
     "signInWithGoogle": "Sign in with Google",
     "orUseEmail": "Or use email",
+    "emailLabel": "Email address",
     "emailPlaceholder": "you@example.com",
     "sendCode": "Send code",
     "verify": "Verify",
+    "codeLabel": "Verification code",
+    "phoneLabel": "Phone number",
     "codePlaceholder": "6-digit code",
     "usePhoneInstead": "Use phone number instead",
     "phoneTitle": "Log in with phone",
@@ -85,7 +90,7 @@
     "noResultsHint": "Try adjusting your search terms or filters.",
     "showing": "Showing {count}",
     "loadMore": "Load more ({count} remaining)",
-    "loadingMore": "Loading…",
+    "loadingMore": "Loading...",
     "discoveryJOB": "High-paying jobs",
     "discoveryTENDER": "Urgent tenders",
     "discoveryAUCTION": "Ending soon",
@@ -93,6 +98,8 @@
     "searchFailed": "Could not load listings. Check your connection and try again."
   },
   "listing": {
+    "saveListing": "Save listing",
+    "removeFromSaved": "Remove from saved",
     "onlyVisibleToYou": "(only visible to you)",
     "postedBy": "Posted by",
     "verified": "Verified",
@@ -175,6 +182,7 @@
     "createdAsDraft": "Listing created as <b>DRAFT</b>. Pay to publish, or use your subscription if you have one.",
     "continueToCheckout": "Continue to checkout",
     "previewListing": "Preview listing",
+    "removePhoto": "Remove photo",
     "addPhoto": "Add photo",
     "uploading": "Uploading...",
     "fieldSector": "Sector",
@@ -213,7 +221,7 @@
     "languageEN": "English",
     "languageFR": "French",
     "languageRW": "Kinyarwanda",
-    "genericError": "Something went wrong. Please try again.",
+    "genericError": "Something went wrong. Try again.",
     "errorRequired": "is required",
     "errorMinLength": "must be at least {count} characters",
     "errorMinValue": "must be {count} or greater",
@@ -227,7 +235,7 @@
     "saving": "Saving...",
     "cancel": "Cancel",
     "uploadStartFailed": "Could not start the upload.",
-    "uploadStorageFailed": "Upload failed. Please try again.",
+    "uploadStorageFailed": "Upload failed. Try again.",
     "uploadAttachFailed": "Could not attach the image."
   },
   "checkout": {
@@ -249,9 +257,9 @@
     "listingIsLive": "Your listing is live",
     "viewListing": "View listing",
     "paymentFailed": "Payment failed or was declined.",
-    "couldNotPublish": "Couldn't publish this listing.",
-    "couldNotRedeemCredit": "Couldn't redeem this credit.",
-    "couldNotStartPayment": "Couldn't start the payment.",
+    "couldNotPublish": "Could not publish this listing.",
+    "couldNotRedeemCredit": "Could not redeem this credit.",
+    "couldNotStartPayment": "Could not start the payment.",
     "howItWorks": "How mobile money payment works",
     "step1": "Choose your plan and enter the phone number linked to your mobile money account.",
     "step2": "You'll get a payment prompt on that phone — enter your PIN to approve.",
@@ -389,6 +397,7 @@
   "referrals": {
     "title": "Referrals",
     "shareText": "Share your link — you earn a credit when someone you refer makes their first paid listing or subscribes.",
+    "linkLabel": "Your referral link",
     "copy": "Copy",
     "copied": "Copied!",
     "referredSignups": "Referred signups",
@@ -432,6 +441,19 @@
     "emptyDesc": "Save a search to get notified when new listings match.",
     "sent": "Sent",
     "failed": "Failed to send"
+  },
+  "notificationTemplates": {
+    "listingLiveSubject": "Your listing is live",
+    "listingLiveBody": "Your listing \"{title}\" is live on Amatangazo. View it: {url}",
+    "subscriptionActiveSubject": "Your subscription is active",
+    "subscriptionActiveBody": "Your Amatangazo subscription is active and \"{title}\" is live. View it: {url}",
+    "referralCreditSubject": "You earned a referral credit",
+    "referralCreditBody": "You earned a RWF {amount, number} referral credit on Amatangazo. Use it at checkout on your next listing.",
+    "digestSubject": "New listings matching your saved search",
+    "digestHeading": "{category} — {count, plural, one {# new listing matches your saved search} other {# new listings match your saved search}}",
+    "digestMore": "And {count} more.",
+    "otpSubject": "Your Amatangazo verification code",
+    "otpBody": "Your Amatangazo verification code is {code}. It expires in {minutes, plural, one {# minute} other {# minutes}}. We will never ask you for it."
   },
   "boost": {
     "currentlyFeaturedUntil": "Currently featured until {date}.",

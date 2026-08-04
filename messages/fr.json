@@ -22,6 +22,8 @@
   },
   "nav": {
     "main": "Navigation principale",
+    "quick": "Navigation rapide",
+    "skipToContent": "Aller au contenu",
     "home": "Accueil",
     "browse": "Annonces",
     "jobs": "Emplois",
@@ -33,12 +35,15 @@
     "notifications": "Notifications",
     "account": "Compte",
     "menuToggle": "Ouvrir/fermer le menu",
-    "searchPlaceholder": "Rechercher des annonces…"
+    "searchPlaceholder": "Rechercher des annonces..."
   },
   "auth": {
     "title": "Se connecter",
     "signInWithGoogle": "Se connecter avec Google",
     "orUseEmail": "Ou utiliser l'e-mail",
+    "emailLabel": "Adresse e-mail",
+    "codeLabel": "Code de vérification",
+    "phoneLabel": "Numéro de téléphone",
     "emailPlaceholder": "vous@exemple.com",
     "sendCode": "Envoyer le code",
     "verify": "Vérifier",
@@ -85,7 +90,7 @@
     "noResultsHint": "Essayez de modifier vos mots-clés ou vos filtres.",
     "showing": "{count} affichées",
     "loadMore": "Voir plus ({count} restantes)",
-    "loadingMore": "Chargement…",
+    "loadingMore": "Chargement...",
     "discoveryJOB": "Emplois bien rémunérés",
     "discoveryTENDER": "Appels d'offres urgents",
     "discoveryAUCTION": "Bientôt terminées",
@@ -93,6 +98,8 @@
     "searchFailed": "Impossible de charger les annonces. Vérifiez votre connexion et réessayez."
   },
   "listing": {
+    "saveListing": "Enregistrer l'annonce",
+    "removeFromSaved": "Ne plus enregistrer",
     "onlyVisibleToYou": "(visible uniquement par vous)",
     "postedBy": "Publié par",
     "verified": "Vérifié",
@@ -175,6 +182,7 @@
     "createdAsDraft": "Annonce créée en <b>BROUILLON</b>. Payez pour publier, ou utilisez votre abonnement si vous en avez un.",
     "continueToCheckout": "Passer au paiement",
     "previewListing": "Aperçu de l'annonce",
+    "removePhoto": "Retirer la photo",
     "addPhoto": "Ajouter une photo",
     "uploading": "Envoi en cours...",
     "fieldSector": "Secteur",
@@ -213,7 +221,7 @@
     "languageEN": "Anglais",
     "languageFR": "Français",
     "languageRW": "Kinyarwanda",
-    "genericError": "Une erreur s'est produite. Veuillez réessayer.",
+    "genericError": "Une erreur est survenue. Réessayez.",
     "errorRequired": "est requis",
     "errorMinLength": "doit contenir au moins {count} caractères",
     "errorMinValue": "doit être {count} ou plus",
@@ -227,7 +235,7 @@
     "saving": "Enregistrement...",
     "cancel": "Annuler",
     "uploadStartFailed": "Impossible de démarrer l'envoi.",
-    "uploadStorageFailed": "L'envoi a échoué. Veuillez réessayer.",
+    "uploadStorageFailed": "L'envoi a échoué. Réessayez.",
     "uploadAttachFailed": "Impossible d'ajouter l'image."
   },
   "checkout": {
@@ -389,6 +397,7 @@
   "referrals": {
     "title": "Parrainage",
     "shareText": "Partagez votre lien — vous gagnez un crédit lorsqu'une personne que vous parrainez publie sa première annonce payante ou s'abonne.",
+    "linkLabel": "Votre lien de parrainage",
     "copy": "Copier",
     "copied": "Copié !",
     "referredSignups": "Inscriptions parrainées",
@@ -432,6 +441,19 @@
     "emptyDesc": "Enregistrez une recherche pour être averti des nouvelles annonces.",
     "sent": "Envoyée",
     "failed": "Échec d'envoi"
+  },
+  "notificationTemplates": {
+    "listingLiveSubject": "Votre annonce est en ligne",
+    "listingLiveBody": "Votre annonce « {title} » est en ligne sur Amatangazo. Voir l'annonce : {url}",
+    "subscriptionActiveSubject": "Votre abonnement est actif",
+    "subscriptionActiveBody": "Votre abonnement Amatangazo est actif et « {title} » est en ligne. Voir l'annonce : {url}",
+    "referralCreditSubject": "Vous avez gagné un crédit de parrainage",
+    "referralCreditBody": "Vous avez gagné un crédit de parrainage de {amount, number} RWF sur Amatangazo. Utilisez-le au paiement de votre prochaine annonce.",
+    "digestSubject": "Nouvelles annonces correspondant à votre recherche enregistrée",
+    "digestHeading": "{category} — {count, plural, one {# nouvelle annonce correspond à votre recherche enregistrée} other {# nouvelles annonces correspondent à votre recherche enregistrée}}",
+    "digestMore": "Et {count} autres.",
+    "otpSubject": "Votre code de vérification Amatangazo",
+    "otpBody": "Votre code de vérification Amatangazo est {code}. Il expire dans {minutes, plural, one {# minute} other {# minutes}}. Nous ne vous le demanderons jamais."
   },
   "boost": {
     "currentlyFeaturedUntil": "Actuellement mis en avant jusqu'au {date}.",

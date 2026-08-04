@@ -3,8 +3,9 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
 import { authClient } from "@/lib/auth-client";
 import { isDevEnvironment } from "@/lib/env";
 
@@ -25,6 +26,15 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
   const [devCode, setDevCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const codeRef = useRef<HTMLInputElement>(null);
+
+  // Advancing to the code step swaps the form's contents but leaves focus on a
+  // Send button that no longer exists. Move it to the field now being asked
+  // for, so a keyboard or screen-reader user is told what changed and lands
+  // where they need to type.
+  useEffect(() => {
+    if (step === "enterCode") codeRef.current?.focus();
+  }, [step]);
 
   async function handleGoogleSignIn() {
     await authClient.signIn.social({ provider: "google", callbackURL: "/" });
@@ -95,22 +105,31 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
               <p className="text-xs text-muted">
                 Google sign-in isn&apos;t set up in this environment. Sign in as a test user instead:
               </p>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                value={devEmail}
-                onChange={(e) => setDevEmail(e.target.value)}
-                required
-                className="input"
-              />
-              <input
-                type="text"
-                placeholder="Name (optional)"
-                value={devName}
-                onChange={(e) => setDevName(e.target.value)}
-                className="input"
-              />
-              {googleError && <p className="form-error">{googleError}</p>}
+              {/* Dev-only block, so the copy stays English like the checkout
+                  and boost sandbox blocks rather than earning locale keys. */}
+              <label className="field">
+                Email
+                <input
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  value={devEmail}
+                  onChange={(e) => setDevEmail(e.target.value)}
+                  required
+                  className="input font-normal"
+                />
+              </label>
+              <label className="field">
+                Name (optional)
+                <input
+                  type="text"
+                  autoComplete="name"
+                  value={devName}
+                  onChange={(e) => setDevName(e.target.value)}
+                  className="input font-normal"
+                />
+              </label>
+              <StatusMessage tone="error">{googleError}</StatusMessage>
               <button type="submit" disabled={googleSubmitting} className="btn-outline">
                 Sign in as test user
               </button>
@@ -125,15 +144,21 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
         <h2 className="mb-2 text-sm font-semibold text-muted">{t("orUseEmail")}</h2>
         {step === "enterEmail" && (
           <form onSubmit={handleSendCode} className="flex flex-col gap-2">
-            <input
-              type="email"
-              placeholder={t("emailPlaceholder")}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input"
-            />
-            {error && <p className="form-error">{error}</p>}
+            <label className="field">
+              {t("emailLabel")}
+              <input
+                type="email"
+                autoComplete="email"
+                placeholder={t("emailPlaceholder")}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                aria-invalid={error ? true : undefined}
+                aria-describedby="login-email-error"
+                className="input font-normal"
+              />
+            </label>
+            <StatusMessage tone="error" id="login-email-error">{error}</StatusMessage>
             <button type="submit" disabled={submitting} className="btn-primary">
               {t("sendCode")}
             </button>
@@ -142,18 +167,24 @@ export function LoginForm({ googleConfigured }: { googleConfigured: boolean }) {
         {step === "enterCode" && (
           <form onSubmit={handleVerifyCode} className="flex flex-col gap-2">
             {devCode && <p className="text-xs text-muted">Dev mode — your code is {devCode}</p>}
-            <input
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              pattern="[0-9]*"
-              placeholder={t("codePlaceholder")}
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              required
-              className="input"
-            />
-            {error && <p className="form-error">{error}</p>}
+            <label className="field">
+              {t("codeLabel")}
+              <input
+                ref={codeRef}
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]*"
+                placeholder={t("codePlaceholder")}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                required
+                aria-invalid={error ? true : undefined}
+                aria-describedby="login-code-error"
+                className="input font-normal"
+              />
+            </label>
+            <StatusMessage tone="error" id="login-code-error">{error}</StatusMessage>
             <button type="submit" disabled={submitting} className="btn-primary">
               {t("verify")}
             </button>

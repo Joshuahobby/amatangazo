@@ -4,7 +4,9 @@ import { emailOTP, phoneNumber } from "better-auth/plugins";
 
 import { sendOtpEmail } from "@/lib/email";
 import { isGoogleConfigured } from "@/lib/google-auth";
+import { OTP_EXPIRY_SECONDS, otpMessage, translatorFor } from "@/lib/notification-messages";
 import { prisma } from "@/lib/prisma";
+import { languageForEmail, languageForPhone } from "@/lib/recipient-locale";
 import { linkReferralOnSignup } from "@/lib/referrals";
 import { sendOtpSms } from "@/lib/sms";
 import { REFERRAL_COOKIE } from "@/proxy";
@@ -52,13 +54,19 @@ export const auth = betterAuth({
 
   plugins: [
     emailOTP({
-      async sendVerificationOTP({ email, otp, type }) {
-        await sendOtpEmail(email, otp, type);
+      // Set explicitly rather than left to the plugin default, because the OTP
+      // copy states this window — see OTP_EXPIRY_SECONDS.
+      expiresIn: OTP_EXPIRY_SECONDS,
+      async sendVerificationOTP({ email, otp }) {
+        const { subject, body } = otpMessage(otp)(translatorFor(await languageForEmail(email)));
+        await sendOtpEmail(email, otp, subject, body);
       },
     }),
     phoneNumber({
+      expiresIn: OTP_EXPIRY_SECONDS,
       async sendOTP({ phoneNumber, code }) {
-        await sendOtpSms(phoneNumber, code);
+        const { body } = otpMessage(code)(translatorFor(await languageForPhone(phoneNumber)));
+        await sendOtpSms(phoneNumber, code, body);
       },
       signUpOnVerification: {
         getTempEmail: (phoneNumber) => `${phoneNumber.replace(/[^\d]/g, "")}@phone.amatangazo.local`,

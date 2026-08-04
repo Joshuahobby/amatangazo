@@ -20,6 +20,15 @@
   --foreground: #1c1917;
   --muted: #6b6560;
   --border: #e7e2d9;
+  /*
+   * Boundary colour for controls you type into. --border is 1.29:1 on white,
+   * which is fine for a card edge (decorative) but fails WCAG 1.4.11 on a text
+   * field, where the border is the only thing marking the control at all — the
+   * fill is white on an off-white page. 3.52:1 on surface, 3.35:1 on
+   * background. Same warm family as --border, just dark enough to be a real
+   * boundary; buttons keep --border because their label identifies them.
+   */
+  --border-control: #8f8878;
 
   --primary: #16704f; /* deep Rwandan green */
   --primary-hover: #115c40;
@@ -49,6 +58,7 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-border-control: var(--border-control);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-contrast: var(--primary-contrast);
@@ -78,11 +88,38 @@ body {
  * component classes don't each need to re-declare a ring.
  */
 @layer base {
-  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  /*
+   * tabindex="-1" is excluded deliberately: those elements are not tab stops,
+   * they are programmatic focus targets — the skip link's landing area in
+   * layout.tsx is one. Ringing them would draw a 2px outline around the whole
+   * content region the moment someone used the skip link, which reads as a
+   * rendering fault rather than as focus.
+   */
+  :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
     /* Longhands, not the `outline` shorthand: a shorthand carrying a var()
        becomes a pending-substitution value, and the colour was resolving to
        currentColor instead of --primary — leaving the ring's colour up to
        whatever text colour the element happened to have. */
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: var(--primary);
+    outline-offset: 2px;
+  }
+
+  /*
+   * A control can be visually hidden while its <label> is the thing actually on
+   * screen — the mobile-money provider tiles are built that way, so the radio
+   * itself is .sr-only and the card beside it is what you see.
+   *
+   * The rule above still matches that radio, but sr-only clips it to a 1px box
+   * with `clip: rect(0,0,0,0)`, so the ring was being drawn somewhere nobody
+   * could see it: tabbing to the payment-provider choice showed no focus at
+   * all. Hand the ring to the label, which is the visible control.
+   *
+   * Keyed on .sr-only rather than on the tile's own classes so any future
+   * visually-hidden input in a label is covered without touching this file.
+   */
+  label:has(.sr-only:focus-visible) {
     outline-width: 2px;
     outline-style: solid;
     outline-color: var(--primary);
@@ -165,7 +202,7 @@ body {
   }
 
   .input {
-    @apply block w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus:border-primary;
+    @apply block w-full rounded-lg border border-border-control bg-surface px-3 py-2 text-sm text-foreground transition-colors focus:border-primary;
   }
   /* Inline validation message under a field or form. */
   .form-error {
@@ -284,6 +321,16 @@ body {
   .ad-slot-label {
     @apply absolute left-2 top-2 rounded-full bg-surface/90 px-2 py-0.5 text-xs font-semibold text-muted;
   }
+}
+
+/*
+ * The mobile tab bar is pinned to the bottom edge, where a notched phone puts
+ * its home indicator. site-header.tsx was already asking for `pb-safe` — but
+ * Tailwind has no such utility, so the class did nothing and the bar's tap
+ * targets sat under the indicator. Define what the markup was already assuming.
+ */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /*

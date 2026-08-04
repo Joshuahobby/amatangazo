@@ -4,6 +4,7 @@ import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 
+import { useHydrated } from "@/hooks/use-hydrated";
 import { authClient } from "@/lib/auth-client";
 
 const CTA_CLASS =
@@ -51,6 +52,10 @@ export function PrimaryCta() {
   // is what the react-hooks "setState in an effect" rule flags. This reads the
   // value during render instead, with a server snapshot so hydration matches.
   const returning = useSyncExternalStore(subscribeNoop, readReturning, readReturningOnServer);
+  // Same reason the label already needs a server snapshot: the href branched on
+  // a session the server cannot see, so it mismatched on hydration too.
+  const hydrated = useHydrated();
+  const signedIn = hydrated && Boolean(session);
 
   // The write side stays in an effect — that's a genuine side effect, and only
   // the state update was the problem.
@@ -66,10 +71,10 @@ export function PrimaryCta() {
   // Returning-but-signed-out is the one case where the header isn't about
   // posting; everyone else gets the post prompt, routed to /login when there's
   // no account yet (same convention as the mobile PostFab).
-  const isLogin = !session && returning;
+  const isLogin = !signedIn && returning;
 
   return (
-    <Link href={session ? "/post" : "/login"} className={CTA_CLASS}>
+    <Link href={signedIn ? "/post" : "/login"} className={CTA_CLASS}>
       {!isLogin && (
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />

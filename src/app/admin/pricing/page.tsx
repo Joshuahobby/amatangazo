@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
 import { describeApiError } from "@/lib/api-error";
 import { mergeWithDefaults, type PricingTier, type TierPrice } from "@/lib/pricing";
 
@@ -77,12 +78,11 @@ export default function AdminPricingPage() {
         Changes apply immediately — checkout reads these rates on every request, no deploy needed.
       </p>
 
-      {message && <p className="mt-2 text-sm text-primary">{message}</p>}
-      {error && (
-        <p className="mt-2 form-error" role="alert">
-          {error}
-        </p>
-      )}
+      {/* The region stays mounted whether or not it holds text: role="alert"
+          announces on insertion, but a polite status mounted together with its
+          message is one a screen reader never hears change. */}
+      <StatusMessage tone="info" className="mt-2 text-sm text-primary">{message}</StatusMessage>
+      <StatusMessage tone="error" className="mt-2 form-error">{error}</StatusMessage>
 
       {loading ? (
         <div className="mt-4 skeleton h-32 max-w-lg" />

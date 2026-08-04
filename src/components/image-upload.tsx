@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
 import { describeApiError } from "@/lib/api-error";
 
 type UploadedImage = { id: string; url: string };
@@ -78,20 +79,25 @@ export function ImageUpload({ listingId, initialImages = [] }: { listingId: stri
           className="text-sm font-normal text-muted"
         />
       </label>
-      {uploading && <p className="mt-1 text-sm text-muted">{t("uploading")}</p>}
-      {error && <p className="mt-1 form-error">{error}</p>}
+      <StatusMessage tone="info" className="mt-1 text-sm text-muted">
+        {uploading ? t("uploading") : null}
+      </StatusMessage>
+      <StatusMessage tone="error" className="mt-1 form-error">{error}</StatusMessage>
       {images.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-2">
           {images.map((image) => (
             <div key={image.id} className="relative">
               {/* eslint-disable-next-line @next/next/no-img-element -- R2 URLs, not part of Next's image optimization domain list yet */}
               <img src={image.url} alt="" className="h-24 rounded-lg border border-border object-cover" />
+              {/* Was a bare "×" at 20px: announced as "× button" with no idea
+                  what it removed, and below the 24px minimum tap target. */}
               <button
                 type="button"
                 onClick={() => handleDelete(image.id)}
-                className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-foreground/70 text-xs text-white"
+                aria-label={t("removePhoto")}
+                className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-foreground/70 text-xs text-white"
               >
-                ×
+                <span aria-hidden>×</span>
               </button>
             </div>
           ))}

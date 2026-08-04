@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
+
 /**
  * `value` goes to the API, `labelKey` to the reader. Kept as pairs because the
  * API's reason vocabulary is lowercase and fixed, while the label is
@@ -42,7 +44,12 @@ export function ReportButton({ listingId }: { listingId: string }) {
     }
   }
 
-  if (done) return <p className="text-xs text-primary">{t("reportSubmitted")}</p>;
+  if (done)
+    return (
+      <StatusMessage tone="success" className="text-xs text-primary">
+        {t("reportSubmitted")}
+      </StatusMessage>
+    );
 
   return (
     <div className="relative">
@@ -55,10 +62,15 @@ export function ReportButton({ listingId }: { listingId: string }) {
           className="absolute right-0 top-full z-20 mt-1 w-64 rounded-xl border border-border bg-surface p-3 shadow-xl"
         >
           <p className="mb-2 text-xs font-medium text-foreground">{t("reportTitle")}</p>
+          {/* aria-label rather than a visible <label>: this popover is 16rem
+              wide with its own heading above, and both controls already show
+              their purpose (the empty option, the placeholder). What was
+              missing was only the programmatic name. */}
           <select
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             required
+            aria-label={t("reportSelectReason")}
             className="input mb-2 text-xs"
           >
             <option value="">{t("reportSelectReason")}</option>
@@ -70,10 +82,11 @@ export function ReportButton({ listingId }: { listingId: string }) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder={t("reportDetailsPlaceholder")}
+            aria-label={t("reportDetailsPlaceholder")}
             rows={3}
             className="input mb-2 text-xs"
           />
-          {error && <p className="mb-2 text-xs text-danger">{error}</p>}
+          <StatusMessage tone="error" className="mb-2 text-xs text-danger">{error}</StatusMessage>
           <div className="flex gap-2">
             <button type="submit" className="btn-danger btn-sm flex-1">{tc("submit")}</button>
             <button type="button" onClick={() => setOpen(false)} className="btn-outline btn-sm">{tc("cancel")}</button>

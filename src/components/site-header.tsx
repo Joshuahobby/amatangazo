@@ -93,10 +93,14 @@ export function SiteHeader() {
       )}
 
       {/* Mobile bottom tab bar — thumb-zone navigation with an emphasized Post
-          FAB in the centre as the primary action. */}
+          FAB in the centre as the primary action.
+
+          Labelled "quick", not "main": with the menu panel above open, both are
+          in the accessibility tree at once, and two landmarks reading "Main
+          navigation" give a screen-reader user no way to tell them apart. */}
       <nav
         className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-surface pb-safe lg:hidden"
-        aria-label={t("main")}
+        aria-label={t("quick")}
       >
         <div className="mx-auto flex max-w-md items-center justify-around px-2">
           <Link href="/" className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] text-muted transition-colors hover:text-primary">

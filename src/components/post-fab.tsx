@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 
+import { useHydrated } from "@/hooks/use-hydrated";
 import { authClient } from "@/lib/auth-client";
 
 /**
@@ -13,10 +14,15 @@ import { authClient } from "@/lib/auth-client";
 export function PostFab() {
   const { data: session } = authClient.useSession();
   const t = useTranslations("nav");
+  // The server cannot see the session, so branching on it during hydration
+  // rendered href="/login" on the server and href="/post" on the client —
+  // a mismatch React refuses to patch up, which left the FAB pointing at the
+  // wrong route for the rest of the page's life. Resolve after hydration.
+  const hydrated = useHydrated();
 
   return (
     <Link
-      href={session ? "/post" : "/login"}
+      href={hydrated && session ? "/post" : "/login"}
       className="flex flex-1 flex-col items-center gap-1 pt-1 text-[11px] font-semibold text-primary"
     >
       <span className="-mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-contrast shadow-md ring-4 ring-surface transition-transform active:scale-95">

@@ -4,6 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 import { MobileMoneyFields } from "@/components/mobile-money-fields";
+import { StatusMessage } from "@/components/status-message";
 import { describeApiError, readApiError } from "@/lib/api-error";
 import { isDevEnvironment } from "@/lib/env";
 import { type PawaPayProvider } from "@/lib/pawapay";
@@ -187,18 +188,22 @@ export function BoostButton({ listingId }: { listingId: string }) {
         </p>
       )}
 
+      {/* Kept outside the `waiting` branch below so the region is already in the
+          DOM when the notice lands — mounting a live region and its text in one
+          commit is why nothing gets announced. */}
+      <StatusMessage tone="info" className="mt-1 text-sm text-muted">
+        {phase === "waiting" ? t("waiting") : null}
+      </StatusMessage>
+
       {/* Waiting hides every other control, so without this the visitor whose
           prompt never arrived has no way back short of reloading the page. */}
       {phase === "waiting" && (
-        <>
-          <p className="mt-1 text-sm text-muted">{t("waiting")}</p>
-          <button type="button" onClick={() => setPhase("idle")} className="btn-outline btn-sm mt-2">
-            {t("stopWaiting")}
-          </button>
-        </>
+        <button type="button" onClick={() => setPhase("idle")} className="btn-outline btn-sm mt-2">
+          {t("stopWaiting")}
+        </button>
       )}
-      {message && <p className="mt-1 text-sm text-foreground">{message}</p>}
-      {error && <p className="mt-1 form-error">{error}</p>}
+      <StatusMessage tone="success" className="mt-1 text-sm text-foreground">{message}</StatusMessage>
+      <StatusMessage tone="error" className="mt-1 form-error">{error}</StatusMessage>
 
       {/* While the handset prompt is outstanding, hide every way to start a
           second payment for the same boost. */}

@@ -4,6 +4,8 @@ import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
+
 type VerificationInfo = {
   status: "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
   submittedAt: string | null;
@@ -133,7 +135,7 @@ export default function VerificationPage() {
               />
             </label>
           )}
-          {error && <p className="form-error">{error}</p>}
+          <StatusMessage tone="error">{error}</StatusMessage>
           <button type="submit" disabled={submitting || (!file && !documentUrl)} className="btn-primary">
             {submitting ? t("submitting") : t("submit")}
           </button>

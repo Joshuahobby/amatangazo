@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 // From lib/ad-slots, not lib/ads: this is a client component, and lib/ads
 // imports Prisma, which would pull `pg` into the browser bundle.
+import { StatusMessage } from "@/components/status-message";
 import { PLACED_AD_SLOTS } from "@/lib/ad-slots";
 
 type Ad = {
@@ -147,7 +148,9 @@ export default function AdminAdsPage() {
         Slots render nothing when no ad is ACTIVE and inside its date window — an unsold slot
         collapses rather than showing a placeholder.
       </p>
-      {message && <p className="mt-2 text-sm text-primary">{message}</p>}
+      {/* One channel for both outcomes here — polite, since a failed admin
+          action is not something to interrupt a screen reader mid-sentence. */}
+      <StatusMessage tone="info" className="mt-2 text-sm text-primary">{message}</StatusMessage>
 
       <h2 className="mt-6 font-semibold text-foreground">New ad</h2>
       <div className="mt-2 grid gap-2 sm:grid-cols-2">
@@ -204,7 +207,9 @@ export default function AdminAdsPage() {
           <input type="number" min={1} value={draft.weight} onChange={(e) => setDraft({ ...draft, weight: e.target.value })} className="input" />
         </label>
       </div>
-      {uploading && <p className="mt-1 text-sm text-muted">Uploading…</p>}
+      <StatusMessage tone="info" className="mt-1 text-sm text-muted">
+        {uploading ? "Uploading…" : null}
+      </StatusMessage>
       <button type="button" onClick={handleCreate} disabled={saving || uploading} className="btn-primary mt-3">
         {saving ? "Creating…" : "Create ad"}
       </button>
@@ -247,7 +252,14 @@ export default function AdminAdsPage() {
                 {ad.endsAt ? new Date(ad.endsAt).toLocaleDateString() : "—"}
               </td>
               <td>
-                <select value={ad.status} onChange={(e) => handleStatus(ad.id, e.target.value)} className="input w-auto py-1 text-xs">
+                {/* Named per row — a column of bare "Status" selects gives a
+                    screen reader no way to tell which ad it is standing in. */}
+                <select
+                  value={ad.status}
+                  onChange={(e) => handleStatus(ad.id, e.target.value)}
+                  aria-label={`Status for ${ad.name}`}
+                  className="input w-auto py-1 text-xs"
+                >
                   {STATUSES.map((s) => (
                     <option key={s} value={s}>{s}</option>
                   ))}
