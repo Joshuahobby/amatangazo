@@ -39,7 +39,7 @@ export default function ReferralsPage() {
       <div className="card mt-4">
         <p className="text-sm text-foreground">{t("shareText")}</p>
         <div className="mt-3 flex gap-2">
-          <input readOnly value={data.referralLink} className="input flex-1" />
+          <input readOnly aria-label={t("linkLabel")} value={data.referralLink} className="input flex-1" />
           <button
             type="button"
             onClick={() => {

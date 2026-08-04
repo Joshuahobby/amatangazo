@@ -3,8 +3,9 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
 import { authClient } from "@/lib/auth-client";
 
 type Step = "enterPhone" | "enterCode";
@@ -18,6 +19,13 @@ export default function PhoneLoginPage() {
   const [devCode, setDevCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const codeRef = useRef<HTMLInputElement>(null);
+
+  // See login-form.tsx: the step swap leaves focus on a button that no longer
+  // exists, so hand it to the field now being asked for.
+  useEffect(() => {
+    if (step === "enterCode") codeRef.current?.focus();
+  }, [step]);
 
   async function handleSendCode(event: React.FormEvent) {
     event.preventDefault();
@@ -58,15 +66,21 @@ export default function PhoneLoginPage() {
 
       {step === "enterPhone" && (
         <form onSubmit={handleSendCode} className="mt-8 flex flex-col gap-2">
-          <input
-            type="tel"
-            placeholder="2507XXXXXXXX"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            required
-            className="input"
-          />
-          {error && <p className="form-error">{error}</p>}
+          <label className="field">
+            {t("phoneLabel")}
+            <input
+              type="tel"
+              autoComplete="tel"
+              placeholder="2507XXXXXXXX"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+              aria-invalid={error ? true : undefined}
+              aria-describedby="phone-error"
+              className="input font-normal"
+            />
+          </label>
+          <StatusMessage tone="error" id="phone-error">{error}</StatusMessage>
           <button type="submit" disabled={submitting} className="btn-primary">
             {t("sendCode")}
           </button>
@@ -75,18 +89,24 @@ export default function PhoneLoginPage() {
       {step === "enterCode" && (
         <form onSubmit={handleVerifyCode} className="mt-8 flex flex-col gap-2">
           {devCode && <p className="text-xs text-muted">Dev mode — your code is {devCode}</p>}
-          <input
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            pattern="[0-9]*"
-            placeholder={t("codePlaceholder")}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            required
-            className="input"
-          />
-          {error && <p className="form-error">{error}</p>}
+          <label className="field">
+            {t("codeLabel")}
+            <input
+              ref={codeRef}
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              pattern="[0-9]*"
+              placeholder={t("codePlaceholder")}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              required
+              aria-invalid={error ? true : undefined}
+              aria-describedby="phone-code-error"
+              className="input font-normal"
+            />
+          </label>
+          <StatusMessage tone="error" id="phone-code-error">{error}</StatusMessage>
           <button type="submit" disabled={submitting} className="btn-primary">
             {t("verify")}
           </button>

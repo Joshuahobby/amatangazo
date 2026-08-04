@@ -22,6 +22,8 @@
   },
   "nav": {
     "main": "Navigation principale",
+    "quick": "Navigation rapide",
+    "skipToContent": "Aller au contenu",
     "home": "Accueil",
     "browse": "Annonces",
     "jobs": "Emplois",
@@ -39,6 +41,9 @@
     "title": "Se connecter",
     "signInWithGoogle": "Se connecter avec Google",
     "orUseEmail": "Ou utiliser l'e-mail",
+    "emailLabel": "Adresse e-mail",
+    "codeLabel": "Code de vérification",
+    "phoneLabel": "Numéro de téléphone",
     "emailPlaceholder": "vous@exemple.com",
     "sendCode": "Envoyer le code",
     "verify": "Vérifier",
@@ -93,6 +98,8 @@
     "searchFailed": "Impossible de charger les annonces. Vérifiez votre connexion et réessayez."
   },
   "listing": {
+    "saveListing": "Enregistrer l'annonce",
+    "removeFromSaved": "Ne plus enregistrer",
     "onlyVisibleToYou": "(visible uniquement par vous)",
     "postedBy": "Publié par",
     "verified": "Vérifié",
@@ -175,6 +182,7 @@
     "createdAsDraft": "Annonce créée en <b>BROUILLON</b>. Payez pour publier, ou utilisez votre abonnement si vous en avez un.",
     "continueToCheckout": "Passer au paiement",
     "previewListing": "Aperçu de l'annonce",
+    "removePhoto": "Retirer la photo",
     "addPhoto": "Ajouter une photo",
     "uploading": "Envoi en cours...",
     "fieldSector": "Secteur",
@@ -389,6 +397,7 @@
   "referrals": {
     "title": "Parrainage",
     "shareText": "Partagez votre lien — vous gagnez un crédit lorsqu'une personne que vous parrainez publie sa première annonce payante ou s'abonne.",
+    "linkLabel": "Votre lien de parrainage",
     "copy": "Copier",
     "copied": "Copié !",
     "referredSignups": "Inscriptions parrainées",

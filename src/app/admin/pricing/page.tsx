@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
+
 type PricingRow = { id: string; tier: string; category: string | null; price: number };
 
 const tierLabels: Record<string, string> = {
@@ -51,7 +53,7 @@ export default function AdminPricingPage() {
       <p className="page-subtitle">
         Changes apply immediately — checkout reads these rates on every request, no deploy needed.
       </p>
-      {message && <p className="mt-2 text-sm text-primary">{message}</p>}
+      <StatusMessage tone="info" className="mt-2 text-sm text-primary">{message}</StatusMessage>
       <table className="admin-table mt-4 max-w-lg">
         <tbody>
           {rows.map((row) => (
@@ -64,6 +66,7 @@ export default function AdminPricingPage() {
                     min={0}
                     value={drafts[row.tier] ?? ""}
                     onChange={(e) => setDrafts({ ...drafts, [row.tier]: e.target.value })}
+                    aria-label={`Price in RWF for ${tierLabels[row.tier] ?? row.tier}`}
                     className="input w-28 py-1"
                   />
                   RWF

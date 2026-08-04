@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
+
 export function ApplyButton({ listingId }: { listingId: string }) {
   const t = useTranslations("listing");
   const tc = useTranslations("common");
@@ -27,7 +29,12 @@ export function ApplyButton({ listingId }: { listingId: string }) {
     }
   }
 
-  if (done) return <p className="text-sm text-primary font-medium">{t("applySubmitted")}</p>;
+  if (done)
+    return (
+      <StatusMessage tone="success" className="text-sm text-primary font-medium">
+        {t("applySubmitted")}
+      </StatusMessage>
+    );
 
   return (
     <div className="relative">
@@ -44,10 +51,11 @@ export function ApplyButton({ listingId }: { listingId: string }) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={t("applyMessagePlaceholder")}
+            aria-label={t("applyMessagePlaceholder")}
             rows={3}
             className="input mb-2 text-xs"
           />
-          {error && <p className="mb-2 text-xs text-danger">{error}</p>}
+          <StatusMessage tone="error" className="mb-2 text-xs text-danger">{error}</StatusMessage>
           <div className="flex gap-2">
             <button type="submit" className="btn-primary btn-sm flex-1">{t("applySend")}</button>
             <button type="button" onClick={() => setOpen(false)} className="btn-outline btn-sm">{tc("cancel")}</button>

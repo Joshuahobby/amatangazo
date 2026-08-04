@@ -8,6 +8,7 @@ import { ListingRow, type ListingRowData } from "@/components/listing-row";
 import { ListingRowSkeleton } from "@/components/listing-row-skeleton";
 import { SaveButton } from "@/components/save-button";
 import { SaveSearchButton } from "@/components/save-search-button";
+import { StatusMessage } from "@/components/status-message";
 import { experienceLevels, listingCategories } from "@/lib/validations/listing";
 
 const SORT_OPTIONS = [
@@ -245,21 +246,25 @@ export function ListingsSearch({
         />
       )}
 
-      {/* Hidden only when the failure left nothing to count — a "0 results"
-          line beside the error would be the same false negative in another
-          place. A failed *load more* keeps its count, which is still true. */}
-      {!loading && !(failed && results.length === 0) && (
-        <p className="mt-4 text-sm text-muted" aria-live="polite">
-          {t("results", { count: total })}
-          {loadedCount < total && ` · ${t("showing", { count: loadedCount })}`}
-        </p>
-      )}
+      {/* Empty only when the failure left nothing to count — a "0 results" line
+          beside the error would be the same false negative in another place. A
+          failed *load more* keeps its count, which is still true.
 
-      {!loading && failed && (
-        <p className="mt-4 form-error" role="alert">
-          {t("searchFailed")}
-        </p>
-      )}
+          The region itself stays mounted through the loading pass. It used to
+          unmount with its text and come back with the new count, which is a
+          mutation no screen reader was present to hear: the polite region did
+          not exist at the moment it changed. */}
+      <StatusMessage tone="info" className="mt-4 text-sm text-muted">
+        {!loading && !(failed && results.length === 0)
+          ? `${t("results", { count: total })}${
+              loadedCount < total ? ` · ${t("showing", { count: loadedCount })}` : ""
+            }`
+          : null}
+      </StatusMessage>
+
+      <StatusMessage tone="error" className="mt-4 form-error">
+        {!loading && failed ? t("searchFailed") : null}
+      </StatusMessage>
 
       {!loading && !failed && results.length === 0 && (
         <div className="mt-12 text-center">

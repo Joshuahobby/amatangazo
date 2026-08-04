@@ -67,6 +67,7 @@ export function MobileMoneyFields({
           value={phoneNumber}
           onChange={(e) => onPhoneNumberChange(e.target.value)}
           inputMode="numeric"
+          autoComplete="tel"
           placeholder="2507XXXXXXXX"
           className="input font-normal"
         />

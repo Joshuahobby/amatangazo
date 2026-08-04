@@ -22,14 +22,21 @@ export function UserMenu() {
   const tn = useTranslations("nav");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
     const onPointer = (e: MouseEvent) => {
+      // Deliberately no focus restore: a click elsewhere should leave focus
+      // where it was clicked. Only Escape hands it back.
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      // The menu holding focus unmounts on close; without this, focus dropped
+      // to <body> and the reader lost their place in the header.
+      triggerRef.current?.focus();
     };
     document.addEventListener("mousedown", onPointer);
     document.addEventListener("keydown", onKey);
@@ -53,9 +60,9 @@ export function UserMenu() {
   return (
     <div ref={ref} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
         aria-expanded={open}
         aria-label={name || t("dashboard")}
         className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary transition-colors hover:bg-primary/15 active:scale-95"
@@ -63,14 +70,16 @@ export function UserMenu() {
         {initials}
       </button>
 
+      {/* No role="menu" — see the note in language-switcher.tsx. These are two
+          links and a button, reachable with Tab, which is what they actually
+          are. */}
       {open && (
-        <div role="menu" className="absolute right-0 z-50 mt-1 w-52 overflow-hidden rounded-lg border border-border bg-surface py-1 shadow-lg">
+        <div className="absolute right-0 z-50 mt-1 w-52 overflow-hidden rounded-lg border border-border bg-surface py-1 shadow-lg">
           <div className="border-b border-border px-3 py-2">
             <p className="truncate text-sm font-semibold text-foreground">{name || session.user.email}</p>
             {name && session.user.email && <p className="truncate text-xs text-muted">{session.user.email}</p>}
           </div>
           <Link
-            role="menuitem"
             href="/dashboard"
             onClick={() => setOpen(false)}
             className="block px-3 py-2 text-sm text-foreground transition-colors hover:bg-primary/5"
@@ -78,7 +87,6 @@ export function UserMenu() {
             {t("dashboard")}
           </Link>
           <Link
-            role="menuitem"
             href="/notifications"
             onClick={() => setOpen(false)}
             className="block px-3 py-2 text-sm text-foreground transition-colors hover:bg-primary/5"
@@ -86,7 +94,6 @@ export function UserMenu() {
             {tn("notifications")}
           </Link>
           <button
-            role="menuitem"
             type="button"
             onClick={async () => {
               setOpen(false);

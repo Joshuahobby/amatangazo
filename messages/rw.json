@@ -22,6 +22,8 @@
   },
   "nav": {
     "main": "Urutonde nyamukuru",
+    "quick": "Urutonde rwihuse",
+    "skipToContent": "Jya ku bikubiyemo",
     "home": "Ahabanza",
     "browse": "Amatangazo",
     "jobs": "Akazi",
@@ -39,6 +41,9 @@
     "title": "Injira",
     "signInWithGoogle": "Injira ukoresheje Google",
     "orUseEmail": "Cyangwa ukoreshe imeyili",
+    "emailLabel": "Imeyili",
+    "codeLabel": "Kode yo kwemeza",
+    "phoneLabel": "Numero ya telefoni",
     "emailPlaceholder": "wowe@urugero.com",
     "sendCode": "Ohereza kode",
     "verify": "Emeza",
@@ -93,6 +98,8 @@
     "searchFailed": "Ntibyashobotse gupakira amatangazo. Reba interineti yawe wongere ugerageze."
   },
   "listing": {
+    "saveListing": "Bika itangazo",
+    "removeFromSaved": "Kura mu byabitswe",
     "onlyVisibleToYou": "(ribonwa nawe gusa)",
     "postedBy": "Ryatanzwe na",
     "verified": "Byemejwe",
@@ -175,6 +182,7 @@
     "createdAsDraft": "Itangazo ryabitswe nka <b>AGATEGANYO</b>. Ishyura kugira ngo ritangazwe, cyangwa ukoreshe ifatabuguzi ryawe niba urifite.",
     "continueToCheckout": "Komeza wishyure",
     "previewListing": "Reba itangazo",
+    "removePhoto": "Kura ifoto",
     "addPhoto": "Ongeraho ifoto",
     "uploading": "Birimo koherezwa...",
     "fieldSector": "Urwego",
@@ -389,6 +397,7 @@
   "referrals": {
     "title": "Kumenyekanisha",
     "shareText": "Sangiza umuyoboro wawe — uzahabwa amanota igihe uwo wamenyekanishije atanze itangazo rye rya mbere yishyuye cyangwa akiyandikisha ku ifatabuguzi.",
+    "linkLabel": "Umuyoboro wawe",
     "copy": "Koporora",
     "copied": "Byakoporowe!",
     "referredSignups": "Abiyandikishije binyuze muri wowe",

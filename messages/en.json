@@ -22,6 +22,8 @@
   },
   "nav": {
     "main": "Main navigation",
+    "quick": "Quick navigation",
+    "skipToContent": "Skip to content",
     "home": "Home",
     "browse": "Browse",
     "jobs": "Jobs",
@@ -39,9 +41,12 @@
     "title": "Log in",
     "signInWithGoogle": "Sign in with Google",
     "orUseEmail": "Or use email",
+    "emailLabel": "Email address",
     "emailPlaceholder": "you@example.com",
     "sendCode": "Send code",
     "verify": "Verify",
+    "codeLabel": "Verification code",
+    "phoneLabel": "Phone number",
     "codePlaceholder": "6-digit code",
     "usePhoneInstead": "Use phone number instead",
     "phoneTitle": "Log in with phone",
@@ -93,6 +98,8 @@
     "searchFailed": "Could not load listings. Check your connection and try again."
   },
   "listing": {
+    "saveListing": "Save listing",
+    "removeFromSaved": "Remove from saved",
     "onlyVisibleToYou": "(only visible to you)",
     "postedBy": "Posted by",
     "verified": "Verified",
@@ -175,6 +182,7 @@
     "createdAsDraft": "Listing created as <b>DRAFT</b>. Pay to publish, or use your subscription if you have one.",
     "continueToCheckout": "Continue to checkout",
     "previewListing": "Preview listing",
+    "removePhoto": "Remove photo",
     "addPhoto": "Add photo",
     "uploading": "Uploading...",
     "fieldSector": "Sector",
@@ -389,6 +397,7 @@
   "referrals": {
     "title": "Referrals",
     "shareText": "Share your link — you earn a credit when someone you refer makes their first paid listing or subscribes.",
+    "linkLabel": "Your referral link",
     "copy": "Copy",
     "copied": "Copied!",
     "referredSignups": "Referred signups",

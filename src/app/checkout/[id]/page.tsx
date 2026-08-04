@@ -5,6 +5,7 @@ import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
 import { MobileMoneyFields } from "@/components/mobile-money-fields";
+import { StatusMessage } from "@/components/status-message";
 import { describeApiError } from "@/lib/api-error";
 import { isDevEnvironment } from "@/lib/env";
 import { type PawaPayProvider } from "@/lib/pawapay";
@@ -130,6 +131,12 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     return (
       <main className="page-sm text-center">
         <h1 className="page-title">{t("listingIsLive")}</h1>
+        {/* The heading carries this visually, but swapping page content client
+            side is not a navigation — nothing re-reads the h1, so the one
+            moment that confirms the payment worked would otherwise be silent. */}
+        <StatusMessage tone="success" className="sr-only">
+          {t("listingIsLive")}
+        </StatusMessage>
         <Link href={`/listings/${id}`} className="btn-primary mt-4 inline-flex">
           {t("viewListing")}
         </Link>
@@ -143,7 +150,12 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     <main className="page-sm">
       <h1 className="page-title">{t("title")}</h1>
 
-      {phase === "waiting" && <p className="mt-4 text-sm text-muted">{t("waiting")}</p>}
+      {/* Mounted in every phase, not just while waiting: the region has to
+          already exist for the handset-prompt notice to be announced when it
+          arrives. */}
+      <StatusMessage tone="info" className="mt-4 text-sm text-muted">
+        {phase === "waiting" ? t("waiting") : null}
+      </StatusMessage>
 
       {phase !== "waiting" && info.hasActiveSubscription && (
         <div className="card mt-4">
@@ -230,12 +242,14 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
             </ol>
           </div>
 
-          {error && (
-            <p className="mt-3 form-error">
-              {error}
-              {phase === "failed" && ` ${t("tryAgainBelow")}`}
-            </p>
-          )}
+          {/* Stays beside the pay button rather than being hoisted to the top
+              with the waiting notice — a payment error belongs next to the
+              control that retries it. role="alert" announces on insertion, so
+              the waiting → failed transition is covered even though this
+              subtree is unmounted while waiting. */}
+          <StatusMessage tone="error" className="mt-3 form-error">
+            {error ? `${error}${phase === "failed" ? ` ${t("tryAgainBelow")}` : ""}` : null}
+          </StatusMessage>
 
           <button type="button" onClick={handlePay} disabled={submitting} className="btn-primary mt-4 w-full">
             {t("payWithMobileMoney")}

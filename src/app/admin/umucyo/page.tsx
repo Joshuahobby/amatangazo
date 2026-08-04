@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { StatusMessage } from "@/components/status-message";
+
 type ScrapeLog = {
   id: string;
   runAt: string;
@@ -53,7 +55,7 @@ export default function AdminUmucyoPage() {
       <button type="button" onClick={handleRun} disabled={running} className="btn-primary btn-sm mt-4">
         {running ? "Running..." : "Run scrape now"}
       </button>
-      {message && <p className="mt-2 text-sm text-muted">{message}</p>}
+      <StatusMessage tone="info" className="mt-2 text-sm text-muted">{message}</StatusMessage>
 
       <table className="admin-table mt-4">
         <thead>
